@@ -1,6 +1,7 @@
 import express from "express";
 import http from "http";
 import { WebSocketServer } from "ws";
+import { onSocketConnect } from "./helpers/websockets.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -18,18 +19,7 @@ app.get("/", (req, res) => {
   res.send(`<h1>Server is Running!</h1>`);
 });
 
-wss.on("connection", (ws) => {
-  ws.on("error", console.error);
-
-  ws.on("message", async function message(data) {
-    const json = await JSON.parse(data.toString());  
-    if(json.console) {
-      ws.send(JSON.stringify({console: `> ${json.console}`}))
-    }
-  });
-
-  ws.send(JSON.stringify({console: "Hello from server!"}));
-});
+wss.on("connection", onSocketConnect);
 
 server.listen(process.env.SERVER_PORT, (err) => {
   if (err) {
