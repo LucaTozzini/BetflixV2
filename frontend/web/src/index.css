@@ -11,4 +11,5 @@ p {
 
 #root {
   display: flex;
+  font-family: 'Courier New', Courier, monospace;
 }
