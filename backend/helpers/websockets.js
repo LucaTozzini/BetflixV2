@@ -7,7 +7,7 @@ An EventEmitter is used to advertise the change in server connections to each cl
 firing everytime a new connection is established or a connection is closed
 */
 
-import { _status, _instruct, processInstruct, dbEvent } from "./dbManager.js";
+import { _status, _instruct, processInstruct, dbEvent } from "../database/manager.js";
 import EventEmitter from "node:events";
 
 const connEvent = new EventEmitter();
