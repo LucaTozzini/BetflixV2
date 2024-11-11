@@ -10,9 +10,11 @@ export default function Console() {
     const s = new WebSocket("ws://localhost:5340");
     s.addEventListener("message", async (event) => {
       const data = await JSON.parse(event.data);
-      console.log(data)
+      console.log(data);
       if (data.console) {
         document.getElementById("lines").innerHTML += `<p>${data.console}</p>`;
+        document.getElementById("lines").scrollTop =
+          document.getElementById("lines").scrollHeight;
       }
     });
     s.addEventListener("close", (event) => console.log(event));
@@ -37,7 +39,7 @@ export default function Console() {
   }
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} id="outlet">
       <div id="lines"></div>
       <div>
         <p>{">"}</p>
