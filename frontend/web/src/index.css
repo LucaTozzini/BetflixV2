@@ -3,13 +3,47 @@ html, body, #root {
   padding: 0;
   height: 100%;
   width: 100%;
+  overflow: hidden;
+}
+
+h1 {
+  font-size: 3.5rem;
+}
+
+h2 {
+  font-size: 2.5rem;
 }
 
 p {
   margin: 0;
 }
 
+a, button {
+ cursor: pointer; 
+}
+
 #root {
+  --color: black;
+  --dim-color: rgb(182, 182, 182);
+
+  --border-color: rgb(231, 231, 231);
+  --background-color: rgb(252, 252, 252);
+
+  --nav-background-color: white;
+  
+  --table-background-color: white;
+
   display: flex;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: sans-serif;
+  background-color: var(--background-color);
+  color: var(--color);
+}
+
+#root.dark {
+  
+}
+
+#outlet {
+  flex: 1;
+  overflow: auto;
 }
