@@ -1,12 +1,13 @@
 import styles from "../styles/navbar.module.css"
+import { Link } from "react-router-dom"
 
 export default function Navbar(){
   return (
     <nav className={styles.container}>
       <div>
-      <a href="/">1</a>
-      <a href="/">2</a>
-      <a href="/console">3</a>
+      <Link to="/">1</Link>
+      <Link to="/">2</Link>
+      <Link to="/console">3</Link>
       </div>
       <div></div>
     </nav>
