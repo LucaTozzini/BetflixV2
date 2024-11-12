@@ -5,6 +5,7 @@ import "./index.css";
 
 import Root from "./screens/root";
 import Console from "./screens/console";
+import Browse from "./screens/browse";
 import Media from "./screens/media";
 
 const router = createBrowserRouter([
@@ -14,12 +15,16 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Media />,
+        element: <Browse />,
       },
       {
         path: "/console",
         element: <Console />,
       },
+      {
+        path: "/media/:mediaId",
+        element: <Media />
+      }
     ],
   },
 ]);
