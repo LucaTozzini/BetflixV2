@@ -9,6 +9,7 @@
 }
 
 .table > div:last-child {
+  margin-top: 1rem;
   border: var(--border);
   border-radius: .3rem;
   overflow: hidden;
@@ -18,12 +19,12 @@
 
 .row {
   display: grid;
-  grid-template-columns: 4rem 1fr 6rem 6rem;
+  grid-template-columns: 1fr 6rem 6rem;
   text-decoration: none;
   color: var(--color);
 }
 
-a.row:not(:has(button:hover)):hover {
+a.row:hover {
   text-decoration: underline;
 }
 
@@ -35,27 +36,28 @@ a.row:not(:has(button:hover)):hover {
   font-weight: bold;
 }
 
-.row > * {
-  padding: .5rem 0;
+.row > div {
+  padding: .5rem 1rem;
   overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
-  display: flex;
-  align-items: center;
+  text-overflow: ellipsis;
+  align-self: center;
 }
 
-.row:not(:first-child) > div:not(:last-child) {
+a.row > div.title, a.row > div.year {
   border-right: var(--border)
 }
 
-.row > *:not(:nth-child(2)) {
-  display: flex;
-  justify-content: center;
+.row > *:not(:nth-child(1)) {
+  text-align: center;
 }
 
 .row > button {
   background-color: transparent;
   border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 
