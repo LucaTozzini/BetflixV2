@@ -1,6 +1,13 @@
 .container {
-  padding: 3rem;
+  padding: var(--margins);
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+}
+
+.container > h1 > span {
+  color: var(--dim-color);
+}
+
+.container button {
+  font-size: 1.5rem;
 }
