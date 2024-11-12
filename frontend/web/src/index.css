@@ -6,12 +6,20 @@ html, body, #root {
   overflow: hidden;
 }
 
+h1, h2, h3, p {
+  margin: 0;
+}
+
 h1 {
   font-size: 3.5rem;
 }
 
 h2 {
   font-size: 2.5rem;
+}
+
+h3 {
+  font-size: 1.5rem;
 }
 
 p {
@@ -23,6 +31,8 @@ a, button {
 }
 
 #root {
+  --margins: 4rem 8vw;
+
   --color: black;
   --dim-color: rgb(182, 182, 182);
 
