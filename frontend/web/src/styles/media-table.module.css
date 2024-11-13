@@ -37,7 +37,7 @@ a.row:hover {
 }
 
 .row > div {
-  padding: .5rem 1rem;
+  padding: .5rem 1.5rem;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
