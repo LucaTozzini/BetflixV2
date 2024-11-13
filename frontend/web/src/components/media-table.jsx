@@ -17,9 +17,9 @@ export function MediaTable({ title, children }) {
   );
 }
 
-export function MediaRow({ media_id, tmdb_id, title, year, type }) {
+export function MediaRow({ mediaId, tmdbId, title, year, type }) {
   return (
-    <Link to={"/media/"+media_id} className={styles.row}>
+    <Link to={mediaId ? `/media/${mediaId}` : `/external/${tmdbId}`} className={styles.row}>
       <div className={styles.title}>{title}</div>
       <div className={styles.year}>{year ?? "-"}</div>
       <div className={styles.type}>{type}</div>
