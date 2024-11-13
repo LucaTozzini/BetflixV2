@@ -16,7 +16,7 @@ export default function Browse() {
         {latest.data?.map((i) => (
           <MediaRow
             key={i.media_id}
-            media_id={i.media_id}
+            mediaId={i.media_id}
             title={i.title}
             type={i.type}
             year={i.year}
@@ -26,7 +26,7 @@ export default function Browse() {
 
       <MediaTable title={"Popular Movies"}>
         {popularMovies.data?.map((i) => (
-          <MediaRow key={i.id} tmdb_id={i.id} title={i.title} type={"movie"} />
+          <MediaRow key={i.id} tmdbId={i.id} title={i.title} type={"movie"} />
         ))}
       </MediaTable>
     </div>
