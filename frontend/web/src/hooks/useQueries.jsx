@@ -9,10 +9,10 @@ export default function useQueries() {
   }
 
   /**
-   * @param {number} offset 
-   * @param {number} limit 
-   * @param {string} order 
-   * @param {string} type 
+   * @param {number} offset
+   * @param {number} limit
+   * @param {string} order
+   * @param {string} type
    */
   async function selectMediaCollection(offset, limit, order, desc, type) {
     const queryParams = `${[
@@ -32,7 +32,7 @@ export default function useQueries() {
   }
 
   /**
-   * @param {number} mediaId 
+   * @param {number} mediaId
    */
   async function selectMedia(mediaId) {
     const response = await fetch(`http://${SERVER}/v1/media/${mediaId}`);
@@ -41,11 +41,33 @@ export default function useQueries() {
   }
 
   async function fetchPopularMovies() {
-    const response = await fetch(`http://${SERVER}/v1/popular-movies`);
+    const response = await fetch(`http://${SERVER}/v1/external/popular-movies`);
     const json = await response.json();
-    console.log(json)
     setData(json);
   }
 
-  return { data, selectMedia, selectMediaCollection, fetchPopularMovies };
+  async function fetchMovieDetails(tmdbId) {
+    const response = await fetch(
+      `http://${SERVER}/v1/external/movies/${tmdbId}`
+    );
+    const json = await response.json();
+    setData(json);
+  }
+
+  async function fetchMovieTorrents(imdbId) {
+    const response = await fetch(
+      `http://${SERVER}/v1/external/torrents/${imdbId}`
+    );
+    const json = await response.json();
+    setData(json);
+  }
+
+  return {
+    data,
+    selectMedia,
+    selectMediaCollection,
+    fetchPopularMovies,
+    fetchMovieDetails,
+    fetchMovieTorrents,
+  };
 }
