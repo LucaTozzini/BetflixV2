@@ -11,7 +11,8 @@ https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
 
 import express from "express";
 import { selectMediaCollection, selectMedia } from "../database/queries.js";
-import { fetchPopularMovies } from "./tmdbLink.js";
+import { fetchPopularMovies, fetchMovieDetails } from "./tmdbLink.js";
+import { fetchMovieTorrents } from "./yifiLink.js";
 const router = express.Router();
 const v1 = express.Router();
 
@@ -35,12 +36,11 @@ v1.get("/media/:mediaId", async (req, res) => {
   const media = await selectMedia(req.params.mediaId);
   if (media) {
     res.json(media);
-  } 
-  /* 
+  } else {
+    /* 
   sqlite3 will return undefined if the row is not found.
   In this case send a Not Found response as the server was not able to find the resource
   */
-  else {
     res.sendStatus(404);
   }
 });
@@ -64,10 +64,20 @@ v1.get(
   }
 );
 
-v1.get("/popular-movies", async (req, res) => {
+v1.get("/external/popular-movies", async (req, res) => {
   const popular = await fetchPopularMovies();
   res.json(popular);
-})
+});
+
+v1.get("/external/movies/:tmdbId", async (req, res) => {
+  const details = await fetchMovieDetails(req.params.tmdbId);
+  res.json(details);
+});
+
+v1.get("/external/torrents/:imdbId", async (req, res) => {
+  const torrents = await fetchMovieTorrents(req.params.imdbId);
+  res.json(torrents);
+});
 // #endregion
 
 router.use("/v1", v1);
