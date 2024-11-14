@@ -12,6 +12,7 @@ import EventEmitter from "node:events";
 import dbPromise from "./connection.js";
 import { getVideoDurationInSeconds as getDuration } from "get-video-duration";
 import { createDB, purgeDB } from "./maintenance.js";
+import { existsPath } from "./queries.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -61,35 +62,46 @@ async function scanMovies(root) {
     const db = await dbPromise;
     const content = fs.readdirSync(root);
     for (const item of content) {
-      const stats = fs.statSync(path.join(root, item));
-      const item_path = path.join(root, item);
-      if (stats.isDirectory()) {
-        scanMovies(item_path, db);
-      } else if (VALID_EXT.includes(path.extname(item))) {
-        const match = item.match(
-          /^(?<title>.+)[^A-Za-z0-9]+(?<year>(19\d{2}|20\d{2}))[^A-Za-z0-9]/
-        );
-        
-        const title = match?.groups?.title ?? item;
-        const year = match?.groups?.year ?? null
+      try {
+        const item_path = path.join(root, item);
+        const stats = fs.statSync(item_path);
+        if (stats.isDirectory()) {
+          scanMovies(item_path, db);
+          continue;
+        }
 
-        const duration = await getDuration(item_path);
+        // Skip the file if it is of an invalid type
+        const validType = VALID_EXT.includes(path.extname(item));
+        // Skip the file if it's already in the database
+        const inDB = await existsPath(item_path);
+        if (validType && !inDB) {
+          const match = item.match(
+            /^(?<title>.+)[^A-Za-z0-9]+(?<year>(19\d{2}|20\d{2}))[^A-Za-z0-9]/
+          );
 
-        await new Promise((res, rej) =>
-          db.run(
-            "INSERT INTO media(path, title, year, duration, type) VALUES (?,?,?,?,?)",
-            [
-              item_path, // path
-              title,
-              year, 
-              Math.floor(duration), // duration (seconds)
-              "movie", // type
-            ],
-            (err) => (err ? rej(err) : res())
-          )
-        );
+          const title = match?.groups?.title ?? item;
+          const year = match?.groups?.year ?? null;
 
-        dbUpdate(_status, _instruct, `Found movie | ${title} (${year})`)
+          const duration = await getDuration(item_path);
+
+          await new Promise((res, rej) =>
+            db.run(
+              "INSERT INTO media(path, title, year, duration, type) VALUES (?,?,?,?,?)",
+              [
+                item_path, // path
+                title,
+                year,
+                Math.floor(duration), // duration (seconds)
+                "movie", // type
+              ],
+              (err) => (err ? rej(err) : res())
+            )
+          );
+
+          dbUpdate(_status, _instruct, `Found movie | ${title} (${year})`);
+        }
+      } catch (err) {
+        console.error(err.message);
       }
     }
   } catch (err) {
