@@ -12,23 +12,31 @@ export default function Browse() {
 
   return (
     <div id="outlet" className={styles.container}>
-      <MediaTable title={"Latest"}>
-        {latest.data?.map((i) => (
-          <MediaRow
-            key={i.media_id}
-            mediaId={i.media_id}
-            title={i.title}
-            type={i.type}
-            year={i.year}
-          />
-        ))}
-      </MediaTable>
+      <div className={styles.wrap}>
+        <MediaTable title={"Latest"}>
+          {latest.data?.map((i) => (
+            <MediaRow
+              key={i.media_id}
+              mediaId={i.media_id}
+              title={i.title}
+              type={i.type}
+              year={i.year}
+            />
+          ))}
+        </MediaTable>
 
-      <MediaTable title={"Popular Movies"}>
-        {popularMovies.data?.map((i) => (
-          <MediaRow key={i.id} tmdbId={i.id} title={i.title} type={"movie"} />
-        ))}
-      </MediaTable>
+        <MediaTable title={"Popular Movies"}>
+          {popularMovies.data?.map((i) => (
+            <MediaRow
+              key={i.id}
+              tmdbId={i.id}
+              title={i.title}
+              year={i.release_date?.split("-")[0]}
+              type={"movie"}
+            />
+          ))}
+        </MediaTable>
+      </div>
     </div>
   );
 }
