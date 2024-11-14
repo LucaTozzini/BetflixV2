@@ -1,68 +1,55 @@
-/* Inspiration for this design was found here: https://dribbble.com/shots/24265345-Crisp-CRM-Intuitive-Database-for-CRM */
-
-.table {
-  --border: 1px solid var(--border-color);
+.container {
+  width: 100%;
 }
 
-.table > h2 > span {
+.container > h2 {
+  margin-bottom: 1rem;
+}
+
+.container > h2 > span {
   color: var(--dim-color);
 }
 
-.table > div:last-child {
-  margin-top: 1rem;
-  border: var(--border);
-  border-radius: .3rem;
-  overflow: hidden;
-  background-color: var(--table-background-color);
-  font-size: 1.1rem;
+.wrap {
+  width: 100%;
+  overflow: auto;
 }
 
-.row {
-  display: grid;
-  grid-template-columns: 1fr 6rem 6rem;
-  text-decoration: none;
-  color: var(--color);
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border: solid 1px var(--border-color);
+  --cell-padding-hor: 1rem;
+  --cell-padding-ver: .5rem;
 }
 
-a.row:hover {
+.table thead {
+  border-bottom: solid 1px var(--border-color);
+}
+
+.table > tbody tr {
+  cursor: pointer;
+}
+
+.table > tbody tr:hover {
   text-decoration: underline;
 }
 
-.row:not(:last-child) {
-  border-bottom: var(--border)
+.table tbody > tr:nth-of-type(2n) {
+  background-color: var(--table-zebra-color);
 }
 
-.row:first-child {
-  font-weight: bold;
-}
-
-.row > div {
-  padding: .5rem 1.5rem;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  align-self: center;
-}
-
-a.row > div.title, a.row > div.year {
-  border-right: var(--border)
-}
-
-.row > *:not(:nth-child(1)) {
+.table td, .table th {
   text-align: center;
+  padding: var(--cell-padding-ver) var(--cell-padding-hor);
 }
 
-.row > button {
-  background-color: transparent;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.table td:first-child, .table th:first-child {
+  text-align: left;
+  padding-left: calc(2*var(--cell-padding-hor));
+  width: 80%;
 }
 
-
-.row > button > img {
-  border: var(--border);
-  border-radius: 50%;
-  aspect-ratio: 1;
+.table td:last-child, .table th:last-child {
+  padding-right: calc(2*var(--cell-padding-hor));
 }
