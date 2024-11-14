@@ -28,13 +28,17 @@ export default function Console() {
   }, []);
 
   function onKeyPress(e) {
-    if (
-      e.code == "Enter" &&
-      socket &&
-      document.getElementById("text-input").value.trim().length
-    ) {
-      socket.send(document.getElementById("text-input").value.trim());
-      document.getElementById("text-input").value = "";
+    if (e.code === "Enter") {
+      const textInput = document.getElementById("text-input");
+      const textInputValue = textInput.value.trim();
+
+      if (textInputValue === "clr") {
+        document.getElementById("lines").innerHTML = "";
+      } else if (socket && textInputValue.length) {
+        socket.send(textInputValue);
+      }
+
+      textInput.value = "";
     }
   }
 
