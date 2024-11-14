@@ -24,6 +24,7 @@ h3 {
 
 p {
   margin: 0;
+  font-size: 1rem;
 }
 
 a, button {
@@ -32,6 +33,8 @@ a, button {
 
 #root {
   --margins: 4rem 8vw;
+  --content-width: min(90%, 60rem);
+  --content-padding-top: 2rem;
 
   --color: black;
   --dim-color: rgb(182, 182, 182);
@@ -42,6 +45,9 @@ a, button {
   --nav-background-color: white;
   
   --table-background-color: white;
+  --table-zebra-color: rgba(0, 0, 0, 0.03);
+
+  --search-background: linear-gradient(white, rgb(247, 247, 247));
 
   display: flex;
   font-family: sans-serif;
