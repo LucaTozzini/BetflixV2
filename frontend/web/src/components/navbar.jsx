@@ -6,7 +6,7 @@ export default function Navbar(){
     <nav className={styles.container}>
       <div>
       <Link to="/">1</Link>
-      <Link to="/">2</Link>
+      <Link to="/search">2</Link>
       <Link to="/console">3</Link>
       </div>
       <div></div>
