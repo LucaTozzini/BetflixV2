@@ -21,14 +21,13 @@ Since this is a local server not exposed to the public this should not be a secu
 */
 app.use(cors());
 
+app.use("/", router);
 
-// This is the error handling for ALL routes in the HTTP server (unless try/catch is included in a specific endpoint) 
+// Define this after all other app.use https://expressjs.com/en/guide/error-handling.html 
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send("Something broke!");
 });
-
-app.use("/", router);
 
 wss.on("connection", onSocketConnect);
 
