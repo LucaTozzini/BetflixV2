@@ -1,0 +1,44 @@
+.wrap {
+  width: 100%;
+  overflow: auto;
+}
+
+.table {
+  border-collapse: collapse;
+  background-color: var(--table-background-color);
+  width: 100%;
+  border: solid 1px var(--border-color);
+  text-align: left;
+  --cell-padding-hor: 1rem;
+  --cell-padding-ver: .5rem;
+  overflow: auto;
+}
+
+.table thead {
+  text-transform: capitalize;
+  border-bottom: solid 1px var(--border-color);
+}
+
+.table > tbody tr:nth-of-type(2n) {
+  background-color: var(--table-zebra-color);
+}
+
+.table th, .table td {
+  padding: var(--cell-padding-ver) var(--cell-padding-hor);
+}
+
+.table th:first-child, .table td:first-child {
+  padding-left: calc(2*var(--cell-padding-hor));
+}
+
+.table th:last-child, .table td:last-child {
+  padding-right: calc(2*var(--cell-padding-hor));
+}
+
+.table td > button {
+  width: 100%;
+}
+
+.table td:last-child {
+  width: 1rem;
+}
