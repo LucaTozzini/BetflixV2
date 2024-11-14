@@ -8,13 +8,23 @@ export default function useQueries() {
     return !value || !key ? null : `${key}=${value}`;
   }
 
+  async function genericGET(url) {
+    const response = await fetch(url);
+    if (response.ok) {
+      const json = await response.json();
+      setData(json);
+    } else {
+      setData(null)
+    }
+  }
+
   /**
    * @param {number} offset
    * @param {number} limit
    * @param {string} order
    * @param {string} type
    */
-  async function selectMediaCollection(offset, limit, order, desc, type) {
+  function selectMediaCollection(offset, limit, order, desc, type) {
     const queryParams = `${[
       parString("offset", offset),
       parString("limit", limit),
@@ -25,41 +35,44 @@ export default function useQueries() {
       .filter((i) => i)
       .join("&")}`;
 
-    const response = await fetch(`http://${SERVER}/v1/media?${queryParams}`);
-    const json = await response.json();
-
-    setData(json);
+    genericGET(`http://${SERVER}/v1/media?${queryParams}`);
   }
 
   /**
    * @param {number} mediaId
    */
-  async function selectMedia(mediaId) {
-    const response = await fetch(`http://${SERVER}/v1/media/${mediaId}`);
-    const json = await response.json();
-    setData(json);
+  function selectMedia(mediaId) {
+    genericGET(`http://${SERVER}/v1/media/${mediaId}`);
   }
 
-  async function fetchPopularMovies() {
-    const response = await fetch(`http://${SERVER}/v1/external/popular-movies`);
-    const json = await response.json();
-    setData(json);
+  /**
+   * Fetch current popular movies from TMDb
+   */
+  function fetchPopularMovies() {
+    genericGET(`http://${SERVER}/v1/external/popular-movies`);
   }
 
-  async function fetchMovieDetails(tmdbId) {
-    const response = await fetch(
-      `http://${SERVER}/v1/external/movies/${tmdbId}`
-    );
-    const json = await response.json();
-    setData(json);
+  function fetchMovies(query, year) {
+    const queryParams = `${[parString("query", query), parString("year", year)]
+      .filter((i) => i)
+      .join("&")}`;
+    genericGET(`http://${SERVER}/v1/external/movies?${queryParams}`);
   }
 
-  async function fetchMovieTorrents(imdbId) {
-    const response = await fetch(
-      `http://${SERVER}/v1/external/torrents/${imdbId}`
-    );
-    const json = await response.json();
-    setData(json);
+  /**
+   * Fetch movie details from TMDb
+   * @param {number} tmdbId
+   */
+  function fetchMovieDetails(tmdbId) {
+    genericGET(`http://${SERVER}/v1/external/movies/${tmdbId}`);
+  }
+
+  /**
+   * Fetch available torrents for movie from Yifi
+   * @param {string} imdbId
+   */
+  function fetchMovieTorrents(imdbId) {
+    genericGET(`http://${SERVER}/v1/external/torrents/${imdbId}`);
   }
 
   return {
@@ -67,6 +80,7 @@ export default function useQueries() {
     selectMedia,
     selectMediaCollection,
     fetchPopularMovies,
+    fetchMovies,
     fetchMovieDetails,
     fetchMovieTorrents,
   };
