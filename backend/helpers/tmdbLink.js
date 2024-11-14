@@ -34,7 +34,7 @@ export async function fetchPopularMovies() {
 
 /**
  * Fetch the details for a single movie
- * @param {number} tmdbId 
+ * @param {number} tmdbId
  * @returns {Promise}
  */
 export async function fetchMovieDetails(tmdbId) {
@@ -51,6 +51,32 @@ export async function fetchMovieDetails(tmdbId) {
     const response = await fetch(url, options);
     const json = await response.json();
     return json;
+  } catch (err) {
+    throw err;
+  }
+}
+
+/**
+ * Serach for movies in TMDb
+ * Note: query is required
+ * @param {string} query
+ * @param {int} year
+ */
+export async function fetchMovies(query, year) {
+  try {
+    const url = `${API_ADDRESS}/search/movie?query=${query}${
+      year ? `&year=${year}` : ""
+    }`;
+    const options = {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${process.env.TMDB_READ_TOKEN}`,
+      },
+    };
+    const response = await fetch(url, options);
+    const json = await response.json();
+    return json.results;
   } catch (err) {
     throw err;
   }
