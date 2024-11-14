@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.input {
+  background: var(--search-background);
+  font-size: 2.2rem;
+  border: none;
+  outline: none;
+  
+  padding: 2rem;
+  
+  color: var(--color);
+  font-weight: bold;
+}
+
+.input::placeholder {
+  color: var(--dim-color);
+  font-weight: normal;
+}
+
+.wrap {
+  width: var(--content-width);
+  margin: 0 auto;
+  padding-top: var(--content-padding-top);
+}
