@@ -6,7 +6,9 @@ import "./index.css";
 import Root from "./screens/root";
 import Console from "./screens/console";
 import Browse from "./screens/browse";
-import {ExternalMedia, LocalMedia} from "./screens/media";
+import Search from "./screens/search";
+import Video from "./screens/video";
+import { ExternalMedia, LocalMedia } from "./screens/media";
 
 const router = createBrowserRouter([
   {
@@ -18,6 +20,10 @@ const router = createBrowserRouter([
         element: <Browse />,
       },
       {
+        path: "/search",
+        element: <Search />,
+      },
+      {
         path: "/console",
         element: <Console />,
       },
@@ -26,8 +32,12 @@ const router = createBrowserRouter([
         element: <LocalMedia />,
       },
       {
-        path: "/external/:imdbId",
+        path: "/external/:tmdbId",
         element: <ExternalMedia />,
+      },
+      {
+        path: "/video/:mediaId",
+        element: <Video />,
       },
     ],
   },
