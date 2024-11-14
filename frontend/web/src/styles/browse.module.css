@@ -1,5 +1,10 @@
 .container {
-  padding: var(--margins);
+  padding-top: var(--content-padding-top);
+}
+
+.wrap {
+  max-width: var(--content-width);
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 5rem;
