@@ -14,7 +14,7 @@ import dbPromise from "./connection.js";
  * @param {string} order
  * @param {boolean} desc
  * @param {string} type
- * @return {Promise<[]>}
+ * @return {Promise<Array<object>>}
  */
 export function selectMediaCollection(offset, limit, order, desc, type) {
   // If no type is specified, assume all types are requested
@@ -43,13 +43,30 @@ export function selectMediaCollection(offset, limit, order, desc, type) {
 /**
  * Retrieves a single media row with the given media_id
  * @param {number} mediaId
- * @returns
+ * @returns {Promise<object>}
  */
 export function selectMedia(mediaId) {
   return new Promise((res, rej) =>
     dbPromise.then((db) =>
       db.get("SELECT * FROM media WHERE media_id = ?", [mediaId], (err, row) =>
         err ? rej(err) : res(row)
+      )
+    )
+  );
+}
+
+/**
+ * Checks if the path is already in the database
+ * @param {string} path 
+ * @returns {Promise<boolean>}
+ */
+export function existsPath(path) {
+  return new Promise((res, rej) =>
+    dbPromise.then((db) =>
+      db.get(
+        "SELECT EXISTS(SELECT path FROM media WHERE path = ?) AS ex",
+        [path],
+        (err, row) => (err ? rej(err) : res(row.ex))
       )
     )
   );
