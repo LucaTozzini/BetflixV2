@@ -1,0 +1,9 @@
+.container {
+  display: flex;
+}
+
+.video {
+  overflow: hidden;
+  flex: 1;
+  background-color: black;
+}
