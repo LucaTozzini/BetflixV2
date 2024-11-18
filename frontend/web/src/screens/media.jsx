@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useQueries from "../hooks/useQueries";
 import { TorrentsTable, TorrentRow } from "../components/torrents-table";
@@ -57,9 +57,19 @@ export function LocalMedia() {
   const { mediaId } = useParams();
   const media = useQueries();
 
+  useLayoutEffect(() => {
+    document.title = "Media | Betflix";
+  }, []);
+
   useEffect(() => {
     media.selectMedia(mediaId);
   }, []);
+
+  useEffect(() => {
+    if (media.data) {
+      document.title = `${media.data.title} | Betflix`;
+    }
+  }, [media.data]);
 
   return (
     <div id="outlet" className={styles.container}>
@@ -80,12 +90,17 @@ export function ExternalMedia() {
   const media = useQueries();
   const torrents = useQueries();
 
+  useLayoutEffect(() => {
+    document.title = "Media | Betflix";
+  }, []);
+
   useEffect(() => {
     media.fetchMovieDetails(tmdbId);
   }, []);
 
   useEffect(() => {
     if (media.data?.imdb_id) {
+      document.title = `${media.data.title} | Betflix`;
       torrents.fetchMovieTorrents(media.data.imdb_id);
       console.log(media.data);
     }
