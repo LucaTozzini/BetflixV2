@@ -7,51 +7,96 @@ An EventEmitter is used to advertise the change in server connections to each cl
 firing everytime a new connection is established or a connection is closed
 */
 
-import { _status, _instruct, processInstruct, dbEvent } from "../database/manager.js";
+import {
+  _status,
+  _instruct,
+  processInstruct,
+  dbEvent,
+} from "../database/manager.js";
+import { progressEvent, getDownloads } from "./torrents.js";
+import { v4 as uuidv4 } from "uuid";
 import EventEmitter from "node:events";
 
 const connEvent = new EventEmitter();
-let connections = 0;
+const consoleConnections = {};
+const downloadsConnections = {};
 
-/**
- * @param {string} console
- * @returns {string}
- */
-function jsonString(console) {
-  return JSON.stringify({
-    console,
-    db_status: _status,
-    db_instruct: _instruct,
-    connections,
+function broadcastConsole(msg) {
+  const ids = Object.keys(consoleConnections);
+  for (const id of ids) {
+    consoleConnections[id].send(
+      JSON.stringify({
+        console: msg,
+        db_status: _status,
+        db_instruct: _instruct,
+        connections: ids.length,
+      })
+    );
+  }
+}
+
+function broadcastDownloads(obj) {
+  const ids = Object.keys(downloadsConnections);
+  for (const id of ids) {
+    downloadsConnections[id].send(JSON.stringify(obj));
+  }
+}
+
+dbEvent.addListener("update", broadcastConsole);
+connEvent.addListener("update", () => broadcastConsole(null));
+progressEvent.addListener("update", broadcastDownloads);
+
+function consoleConnect(ws) {
+  const id = uuidv4();
+  consoleConnections[id] = ws;
+  connEvent.emit("update");
+
+  ws.on("error", console.error);
+  ws.on("message", async function message(data) {
+    const instruct = data.toString();
+    if (!processInstruct(instruct)) {
+      ws.send(
+        JSON.stringify({
+          console: "Instruction Unrecognized -> " + instruct,
+          db_status: _status,
+          db_instruct: _instruct,
+          connections: Object.keys(consoleConnections).length,
+        })
+      );
+    }
+  });
+  ws.on("close", () => {
+    delete consoleConnections[id];
+    connEvent.emit("update");
+  });
+
+  ws.send(
+    JSON.stringify({
+      console: "Hello from server!",
+      db_status: _status,
+      db_instruct: _instruct,
+      connections: Object.keys(consoleConnections).length,
+    })
+  );
+}
+
+function downloadsConnect(ws) {
+  const id = uuidv4();
+  downloadsConnections[id] = ws;
+  ws.send(JSON.stringify(getDownloads()));
+  ws.on("close", () => {
+    delete downloadsConnections[id];
   });
 }
 
 /**
  * @param {WebSocket} ws
+ * @param {any} req
  */
-export function onSocketConnect(ws) {
-  connections += 1;
-  connEvent.emit("update");
-
-  const dbListener = (msg) => ws.send(jsonString(msg));
-  const connListener = () => ws.send(jsonString(null));
-
-  dbEvent.on("update", dbListener);
-  connEvent.on("update", connListener);
-  
-  ws.on("error", console.error);
-  ws.on("message", async function message(data) {
-    const instruct = data.toString();
-    if (!processInstruct(instruct)) {
-      ws.send(jsonString(`! Instruction Not Recognized | ${instruct}`));
-    }
-  });
-  ws.on("close", () => {
-    connections -= 1;
-    dbEvent.off("update", dbListener);
-    connEvent.off("update", connListener);
-    connEvent.emit("update");
-  });
-
-  ws.send(jsonString("Hello from Server!"));
+export function onSocketConnect(ws, req) {
+  if (req.url === "/downloads") {
+    downloadsConnect(ws);
+  } else {
+    consoleConnect(ws);
+  }
 }
