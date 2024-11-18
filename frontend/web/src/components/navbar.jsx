@@ -5,9 +5,10 @@ export default function Navbar(){
   return (
     <nav className={styles.container}>
       <div>
-      <Link to="/">1</Link>
-      <Link to="/search">2</Link>
-      <Link to="/console">3</Link>
+      <Link to="/">Brws</Link>
+      <Link to="/search">Srch</Link>
+      <Link to="/downloads">Dwnl</Link>
+      <Link to="/console">Cons</Link>
       </div>
       <div></div>
     </nav>
