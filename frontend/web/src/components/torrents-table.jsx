@@ -24,28 +24,34 @@ import styles from "../styles/torrents-table.module.css";
 export function TorrentsTable({ children }) {
   return (
     <div className={styles.wrap}>
-    <table className={styles.table}>
-      <thead>
-        <tr>
-          <th data-cell="quality">quality</th>
-          <th data-cell="type">type</th>
-          <th data-cell="seeds">seeds</th>
-          <th data-cell="peers">peers</th>
-          <th data-cell="size">size</th>
-          <th data-cell="codec">codec</th>
-          <th data-cell="uploaded">uploaded</th>
-          <th data-cell="get"></th>
-        </tr>
-      </thead>
-      <tbody>
-        {children}
-      </tbody>
-    </table>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th data-cell="quality">quality</th>
+            <th data-cell="type">type</th>
+            <th data-cell="seeds">seeds</th>
+            <th data-cell="peers">peers</th>
+            <th data-cell="size">size</th>
+            <th data-cell="codec">codec</th>
+            <th data-cell="uploaded">uploaded</th>
+            <th data-cell="get"></th>
+          </tr>
+        </thead>
+        <tbody>{children}</tbody>
+      </table>
     </div>
   );
 }
 
-export function TorrentRow({ quality, type, seeds, peers, size, codec, uploaded }) {
+export function TorrentRow({
+  quality,
+  type,
+  seeds,
+  peers,
+  size,
+  codec,
+  uploaded,
+}) {
   return (
     <tr>
       <td data-cell="quality">{quality}</td>
