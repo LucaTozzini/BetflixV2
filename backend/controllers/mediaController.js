@@ -17,9 +17,9 @@ async function mediaDetails(req, res) {
     res.json(media);
   } else {
     /* 
-  sqlite3 will return undefined if the row is not found.
-  In this case send a Not Found response as the server was not able to find the resource
-  */
+    sqlite3 will return undefined if the row is not found.
+    In this case send a Not Found response as the server was not able to find the resource
+    */
     res.sendStatus(404);
   }
 }
@@ -29,13 +29,17 @@ async function seasons(req, res) {
 }
 
 async function season(req, res) {
-  res.json()
+  res.json();
 }
 
 async function episode(req, res) {
-  res.json()
-} 
+  res.json();
+}
 
 export default {
-  mediaCollection, mediaDetails, seasons, season, episode
-}
+  mediaCollection,
+  mediaDetails,
+  seasons,
+  season,
+  episode,
+};
