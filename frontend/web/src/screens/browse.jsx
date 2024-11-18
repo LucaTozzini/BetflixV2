@@ -1,10 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { MediaTable, MediaRow } from "../components/media-table";
 import useQueries from "../hooks/useQueries";
 import styles from "../styles/browse.module.css";
 export default function Browse() {
   const latest = useQueries();
   const popularMovies = useQueries();
+
+  useLayoutEffect(() => {
+    document.title = "Browse | Betflix"
+  }, [])
+
   useEffect(() => {
     latest.selectMediaCollection(null, 30, "year", true, null);
     popularMovies.fetchPopularMovies();
