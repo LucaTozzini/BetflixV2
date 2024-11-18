@@ -14,7 +14,7 @@ export default function useQueries() {
       const json = await response.json();
       setData(json);
     } else {
-      setData(null)
+      setData(null);
     }
   }
 
@@ -35,14 +35,14 @@ export default function useQueries() {
       .filter((i) => i)
       .join("&")}`;
 
-    genericGET(`http://${SERVER}/v1/media?${queryParams}`);
+    genericGET(`http://${SERVER}/media?${queryParams}`);
   }
 
   /**
    * @param {number} mediaId
    */
   function selectMedia(mediaId) {
-    genericGET(`http://${SERVER}/v1/media/${mediaId}`);
+    genericGET(`http://${SERVER}/media/${mediaId}`);
   }
 
   /**
@@ -56,7 +56,7 @@ export default function useQueries() {
     const queryParams = `${[parString("query", query), parString("year", year)]
       .filter((i) => i)
       .join("&")}`;
-    genericGET(`http://${SERVER}/v1/external/movies?${queryParams}`);
+    genericGET(`http://${SERVER}/external/movies?${queryParams}`);
   }
 
   /**
@@ -64,7 +64,7 @@ export default function useQueries() {
    * @param {number} tmdbId
    */
   function fetchMovieDetails(tmdbId) {
-    genericGET(`http://${SERVER}/v1/external/movies/${tmdbId}`);
+    genericGET(`http://${SERVER}/external/movies/${tmdbId}`);
   }
 
   /**
@@ -72,7 +72,7 @@ export default function useQueries() {
    * @param {string} imdbId
    */
   function fetchMovieTorrents(imdbId) {
-    genericGET(`http://${SERVER}/v1/external/torrents/${imdbId}`);
+    genericGET(`http://${SERVER}/external/torrents/${imdbId}`);
   }
 
   return {
