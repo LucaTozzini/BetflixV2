@@ -3,9 +3,12 @@ import http from "http";
 import cors from "cors";
 import { WebSocketServer } from "ws";
 import { onSocketConnect } from "./helpers/websockets.js";
+//
 import mediaRouter from "./routes/media.js";
 import externalRouter from "./routes/external.js";
 import streamRouter from "./routes/stream.js";
+import torrentsRouter from "./routes/torrents.js";
+//
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -29,6 +32,7 @@ app.use(cors());
 app.use("/media", mediaRouter);
 app.use("/external", externalRouter);
 app.use("/stream", streamRouter);
+app.use("/torrents", torrentsRouter);
 
 /*
 Global error handler
