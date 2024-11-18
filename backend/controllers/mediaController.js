@@ -1,4 +1,4 @@
-import { selectMediaCollection, selectMedia } from "../database/queries";
+import { selectMediaCollection, selectMedia } from "../database/queries.js";
 
 async function mediaCollection(req, res) {
   const mediaCollection = await selectMediaCollection(
