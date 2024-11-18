@@ -49,7 +49,7 @@ export default function useQueries() {
    * Fetch current popular movies from TMDb
    */
   function fetchPopularMovies() {
-    genericGET(`http://${SERVER}/v1/external/popular-movies`);
+    genericGET(`http://${SERVER}/external/popular-movies`);
   }
 
   function fetchMovies(query, year) {
