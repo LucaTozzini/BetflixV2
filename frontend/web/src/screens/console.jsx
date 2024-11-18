@@ -1,31 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import styles from "../styles/console.module.css";
+import useSocket from "../hooks/useSocket";
 
 export default function Console() {
-  const [socket, setSocket] = useState(null);
-  const [status, setStatus] = useState(null);
-  const [instruct, setInstruct] = useState(null);
+  const socket = useSocket("");
+
+  async function handleMessage(msg) {
+    const data = await JSON.parse(msg);
+    if (data.console) {
+      document.getElementById("lines").innerHTML += `<p>${data.console}</p>`;
+      document.getElementById("lines").scrollTop =
+        document.getElementById("lines").scrollHeight;
+    }
+  }
 
   useEffect(() => {
-    const s = new WebSocket("ws://localhost:5340");
-    s.addEventListener("message", async (event) => {
-      const data = await JSON.parse(event.data);
-      console.log(data);
-      if (data.console) {
-        document.getElementById("lines").innerHTML += `<p>${data.console}</p>`;
-        document.getElementById("lines").scrollTop =
-          document.getElementById("lines").scrollHeight;
-      }
-    });
-    s.addEventListener("close", (event) => console.log(event));
-    setSocket(s);
-
+    document.title = "Console | Betflix";
     document.getElementById("text-input").select();
-
-    return () => {
-      s.close(1000, "Page closed");
-    };
   }, []);
+
+  useEffect(() => {
+    if (socket.msg) {
+      handleMessage(socket.msg);
+    }
+  }, [socket.msg]);
 
   function onKeyPress(e) {
     if (e.code === "Enter") {
@@ -34,7 +32,7 @@ export default function Console() {
 
       if (textInputValue === "clr") {
         document.getElementById("lines").innerHTML = "";
-      } else if (socket && textInputValue.length) {
+      } else if (socket.open && textInputValue.length) {
         socket.send(textInputValue);
       }
 
