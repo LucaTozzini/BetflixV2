@@ -4,10 +4,11 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 
 import Root from "./screens/root";
-import Console from "./screens/console";
-import Browse from "./screens/browse";
-import Search from "./screens/search";
 import Video from "./screens/video";
+import Search from "./screens/search";
+import Browse from "./screens/browse";
+import Console from "./screens/console";
+import Downloads from "./screens/downloads";
 import { ExternalMedia, LocalMedia } from "./screens/media";
 
 const router = createBrowserRouter([
@@ -36,10 +37,14 @@ const router = createBrowserRouter([
         element: <ExternalMedia />,
       },
       {
-        path: "/video/:mediaId",
-        element: <Video />,
+        path: "/downloads",
+        element: <Downloads />,
       },
     ],
+  },
+  {
+    path: "/video/:mediaId",
+    element: <Video />,
   },
 ]);
 
