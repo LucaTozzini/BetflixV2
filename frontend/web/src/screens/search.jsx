@@ -1,9 +1,13 @@
 import styles from "../styles/search.module.css";
 import useQueries from "../hooks/useQueries";
 import { MediaTable, MediaRow } from "../components/media-table";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 export default function Search() {
   const externalMovies = useQueries();
+
+  useLayoutEffect(() => {
+    document.title = "Search | Betflix"
+  }, [])
 
   useEffect(() => {
     document.getElementById("search-input").select();
