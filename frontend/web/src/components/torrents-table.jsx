@@ -20,6 +20,8 @@ Example of a torrent object
 */
 
 import styles from "../styles/torrents-table.module.css";
+import usePosts from "../hooks/usePosts";
+import { useNavigate } from "react-router-dom";
 
 export function TorrentsTable({ children }) {
   return (
@@ -51,7 +53,10 @@ export function TorrentRow({
   size,
   codec,
   uploaded,
+  url
 }) {
+  const {postTorrent}  = usePosts()
+  const navigate = useNavigate()
   return (
     <tr>
       <td data-cell="quality">{quality}</td>
@@ -62,7 +67,12 @@ export function TorrentRow({
       <td data-cell="codec">{codec}</td>
       <td data-cell="uploaded">{uploaded}</td>
       <td>
-        <button>Get</button>
+        <button onClick={async () => {
+          const response = await postTorrent(url); 
+          if(response === 201) {
+            navigate("/downloads")
+          } 
+        }}>Get</button>
       </td>
     </tr>
   );
