@@ -1,0 +1,26 @@
+.container {
+  
+}
+
+.results {
+  display: flex;
+  gap: 1rem;
+}
+
+.mediaItem {
+  width: 10rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.mediaItem > img {
+  width: 100%;
+  aspect-ratio: 2/3;
+  object-fit: cover;
+  /* background-color: aqua; */
+}
+
+.mediaItem > p > span {
+  color: var(--dim-color);
+  font-weight: bolder;
+}
