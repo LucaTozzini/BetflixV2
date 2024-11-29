@@ -21,7 +21,15 @@ async function createDB() {
           episode_num INT,
           duration INT,
           UNIQUE(media_id, season_num, episode_num)
-        )
+        );
+        CREATE TABLE IF NOT EXISTS link (
+          media_id INT PRIMARY KEY,
+          tmdb_id INT UNIQUE,
+          poster TEXT,
+          backdrop TEXT,
+          overview TEXT,
+          genres TEXT
+        );
         `,
         (err) => (err ? rej(err) : res())
       );
@@ -35,7 +43,7 @@ async function purgeDB() {
   const db = await dbPromise;
   try {
     await new Promise((res, rej) => {
-      db.exec("DROP TABLE media; DROP TABLE episodes", (err) =>
+      db.exec("DROP TABLE media; DROP TABLE episodes; DROP TABLE link;", (err) =>
         err ? rej(err) : res()
       );
     });
