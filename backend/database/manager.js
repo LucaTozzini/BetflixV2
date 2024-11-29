@@ -12,7 +12,7 @@ import EventEmitter from "node:events";
 import dbPromise from "./connection.js";
 import { getVideoDurationInSeconds as getDuration } from "get-video-duration";
 import { createDB, purgeDB } from "./maintenance.js";
-import { existsPath } from "./queries.js";
+import { existsPath, selectMedia } from "./queries.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -75,11 +75,13 @@ async function scanMovies(root) {
         // Skip the file if it's already in the database
         const inDB = await existsPath(item_path);
         if (validType && !inDB) {
+          // Try to extract title and year from filename
+          // Assume the string format is "title year otherstuff"
           const match = item.match(
             /^(?<title>.+)[^A-Za-z0-9]+(?<year>(19\d{2}|20\d{2}))[^A-Za-z0-9]/
           );
 
-          const title = match?.groups?.title ?? item;
+          const title = match?.groups?.title.replaceAll(".", " ").trim() ?? item;
           const year = match?.groups?.year ?? null;
 
           const duration = await getDuration(item_path);
@@ -171,4 +173,4 @@ function processInstruct(instruct) {
   return false;
 }
 
-export { _status, _instruct, dbEvent, processInstruct };
+export { _status, _instruct, dbEvent, processInstruct, link };
