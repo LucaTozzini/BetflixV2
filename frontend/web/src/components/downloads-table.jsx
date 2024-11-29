@@ -41,7 +41,12 @@ export function DownloadsRow({ name, progress, timeRemaining, downloadSpeed }) {
       <td data-cell="name">{name}</td>
       <td data-cell="progress">{progress}%</td>
       <td data-cell="timeRemaining">{msToString(timeRemaining)}</td>
-      <td data-cell="downloadSpeed">{downloadSpeed}</td>
+      {/* 
+      downloadSpeed is given in bytes per second
+      convert it to mb per second
+        bytes/1000000 = megabytes
+      */}
+      <td data-cell="downloadSpeed">{Math.floor(downloadSpeed / 1_000_000)} mb/sec</td>
     </tr>
   );
 }
