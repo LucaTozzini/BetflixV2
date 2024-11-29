@@ -9,6 +9,7 @@ import Search from "./screens/search";
 import Browse from "./screens/browse";
 import Console from "./screens/console";
 import Downloads from "./screens/downloads";
+import LinkMedia from "./screens/linkMedia";
 import { ExternalMedia, LocalMedia } from "./screens/media";
 
 const router = createBrowserRouter([
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
       {
         path: "/downloads",
         element: <Downloads />,
+      },
+      {
+        path: "/link-media/:mediaId",
+        element: <LinkMedia />,
       },
     ],
   },
