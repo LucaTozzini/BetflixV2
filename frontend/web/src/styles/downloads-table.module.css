@@ -1,7 +1,26 @@
 .wrap {
-
+  width: 100%;
+  overflow: auto;
 }
 
 .table {
+  width: 100%;
+  border-collapse: collapse;
+  border: solid 1px var(--border-color);
+  --cell-padding-hor: .5rem;
+  --cell-padding-ver: .2rem;
+}
 
+.table thead {
+  border-bottom: solid 1px var(--border-color);
+  text-transform: capitalize;
+}
+
+.table td, .table th {
+  text-align: left;
+  padding: var(--cell-padding-ver) var(--cell-padding-hor);
+}
+
+.table tbody > tr:nth-of-type(2n) {
+  background-color: var(--table-zebra-color);
 }
