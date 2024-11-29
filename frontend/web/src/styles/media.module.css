@@ -6,6 +6,7 @@
 .container > img {
   height: 22rem;
   object-fit: cover;
+  object-position: center 30%;
 }
 
 .wrap {
