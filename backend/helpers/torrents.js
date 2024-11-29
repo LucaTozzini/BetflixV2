@@ -11,7 +11,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 const client = new WebTorrent();
-client.on("error", err => console.error("\nWebTorrent Error", err.message));
+client.on("error", (err) => console.error("\nWebTorrent Error", err.message));
 
 export function getDownloads() {
   return client.torrents.map((torrent) => ({
@@ -53,13 +53,24 @@ async function bufferFromURL(fileURL) {
  * Add torrent to downloads
  * @param {string} fileURL
  */
-export async function addTorrent(fileURL) {
-  const buffer = await bufferFromURL(fileURL);
-  client.add(buffer, { path: process.env.TORRENTS_PATH }, (torrent) => {
-    torrent.on("download", progressUpdate);
+export function addTorrent(fileURL) {
+  return new Promise(async (res, rej) => {
+    try {
+      const buffer = await bufferFromURL(fileURL);
+      client.add(buffer, { path: process.env.MOVIES_PATH }, (torrent) => {
+        res();
+        torrent.on("download", progressUpdate);
+        torrent.on("done", () =>
+          torrent.destroy((err) => {
+            if (err) {
+              console.error(err.message);
+            }
+            progressUpdate();
+          })
+        );
+      });
+    } catch (err) {
+      rej(err);
+    }
   });
 }
-
-addTorrent(
-  "https://yts.mx/torrent/download/0C4D131A037FB44A1C0ACFC98302F6D32905D66A"
-);
