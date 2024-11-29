@@ -52,6 +52,10 @@ export default function useQueries() {
     genericGET(`http://${SERVER}/external/popular-movies`);
   }
 
+  /**
+   * @param {string} query 
+   * @param {int} year 
+   */
   function fetchMovies(query, year) {
     const queryParams = `${[parString("query", query), parString("year", year)]
       .filter((i) => i)
