@@ -102,7 +102,6 @@ export function ExternalMedia() {
     if (media.data?.imdb_id) {
       document.title = `${media.data.title} | Betflix`;
       torrents.fetchMovieTorrents(media.data.imdb_id);
-      console.log(media.data);
     }
   }, [media.data]);
 
@@ -130,6 +129,7 @@ export function ExternalMedia() {
               size={i.size}
               codec={i.video_codec}
               uploaded={i.date_uploaded.split(" ")[0]}
+              url={i.url}
             />
           ))}
         </TorrentsTable>
