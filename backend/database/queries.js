@@ -57,7 +57,7 @@ export function selectMedia(mediaId) {
 
 /**
  * Checks if the path is already in the database
- * @param {string} path 
+ * @param {string} path
  * @returns {Promise<boolean>}
  */
 export function existsPath(path) {
@@ -66,6 +66,18 @@ export function existsPath(path) {
       db.get(
         "SELECT EXISTS(SELECT path FROM media WHERE path = ?) AS ex",
         [path],
+        (err, row) => (err ? rej(err) : res(row.ex))
+      )
+    )
+  );
+}
+
+export function existsMediaId(mediaId) {
+  return new Promise((res, rej) =>
+    dbPromise.then((db) =>
+      db.get(
+        "SELECT EXISTS(SELECT * FROM media WHERE media_id = ?) AS ex",
+        [mediaId],
         (err, row) => (err ? rej(err) : res(row.ex))
       )
     )
