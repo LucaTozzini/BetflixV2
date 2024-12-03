@@ -244,7 +244,9 @@ async function scanShows(root) {
               const { seasonNum, episodeNum } = extractEpisodeData(item);
 
               // Skip if no match
-              if (!seasonNum || !episodeNum) continue;
+              if (!seasonNum || !episodeNum) {
+                continue;
+              }
 
               const duration = await getDuration(path.join(subfolder, item));
 
