@@ -1,8 +1,11 @@
 import { useEffect, useLayoutEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useQueries from "../hooks/useQueries";
+import { Link } from "react-router-dom";
 import { TorrentsTable, TorrentRow } from "../components/torrents-table";
 import styles from "../styles/media.module.css";
+import useDeletes from "../hooks/useDeletes";
+import { EpisodeRow, EpisodesTable } from "../components/episodes-table";
 
 const TMDB_IMG_BASE = "https://image.tmdb.org/t/p/original";
 
@@ -27,9 +30,18 @@ function secondsToString(s) {
     .join(" ");
 }
 
-const MediaInfo = ({ title, year, duration, buttons, genres, overview }) => {
-  const navigate = useNavigate();
+const MediaInfo = ({
+  title,
+  year,
+  duration,
+  buttons,
+  linked,
+  genres,
+  overview,
+}) => {
   const { mediaId } = useParams();
+  const { deleteLink } = useDeletes();
+  const navigate = useNavigate();
 
   return (
     <div className={styles.info}>
@@ -38,15 +50,25 @@ const MediaInfo = ({ title, year, duration, buttons, genres, overview }) => {
       </h1>
       <h3>
         {secondsToString(duration)}{" "}
-        <span className={styles.genres}>
-          {genres ? `| ${genres.join(", ")}` : ""}
-        </span>
+        <span className={styles.genres}>{genres}</span>
       </h3>
       {buttons && (
-        <span>
-          <button onClick={() => navigate(`/video/${mediaId}`)}>Play</button>
-          <button>Link</button>
-        </span>
+        <div className={styles.buttons}>
+          <Link to={`/video/${mediaId}`}>Play</Link>
+          {!linked && <Link to={`/link-media/${mediaId}`}>Link</Link>}
+          {linked && (
+            <button
+              onClick={async () => {
+                const response = await deleteLink(mediaId);
+                if (response.ok) {
+                  navigate(0);
+                }
+              }}
+            >
+              Unlink
+            </button>
+          )}
+        </div>
       )}
       <p>{overview}</p>
     </div>
@@ -56,30 +78,64 @@ const MediaInfo = ({ title, year, duration, buttons, genres, overview }) => {
 export function LocalMedia() {
   const { mediaId } = useParams();
   const media = useQueries();
-
-  useLayoutEffect(() => {
-    document.title = "Media | Betflix";
-  }, []);
+  const mediaLink = useQueries();
+  const episodes = useQueries();
+  const seasons = useQueries();
 
   useEffect(() => {
+    document.title = "Media | Betflix";
     media.selectMedia(mediaId);
+    mediaLink.selectLink({ mediaId });
   }, []);
 
   useEffect(() => {
     if (media.data) {
       document.title = `${media.data.title} | Betflix`;
+      if (media.data.type === "show") {
+        seasons.selectSeasons(mediaId);
+      }
     }
   }, [media.data]);
 
+  useEffect(() => {
+    if (seasons.data) {
+      console.log(seasons.data)
+      episodes.selectSeason(mediaId, seasons.data[0].season_num);
+    }
+  }, [seasons.data]);
+
+  const Episodes = () => {
+    return (
+      <EpisodesTable>
+        {episodes.data?.map((i) => (
+          <EpisodeRow
+            key={`${i.media_id}_${i.season_num}_${i.episode_num}`}
+            mediaId={i.media_id}
+            seasonNum={i.season_num}
+            episodeNum={i.episode_num}
+            duration={i.duration}
+          />
+        ))}
+      </EpisodesTable>
+    );
+  };
+
   return (
     <div id="outlet" className={styles.container}>
+      {mediaLink.data?.backdrop && (
+        <img src={TMDB_IMG_BASE + mediaLink.data?.backdrop} alt="backdrop" />
+      )}
       <div className={styles.wrap}>
         <MediaInfo
-          title={media.data?.title}
+          title={mediaLink.data?.title ?? media.data?.title}
           year={media.data?.year}
-          duration={secondsToString(media.data?.duration)}
+          duration={media.data?.duration}
+          overview={mediaLink.data?.overview}
+          genres={mediaLink.data?.genres}
           buttons={true}
+          linked={mediaLink.data != null}
         />
+        {media.data?.type === "show" && <Episodes />}
       </div>
     </div>
   );
@@ -88,15 +144,24 @@ export function LocalMedia() {
 export function ExternalMedia() {
   const { tmdbId } = useParams();
   const media = useQueries();
+  const link = useQueries();
   const torrents = useQueries();
+  const navigate = useNavigate();
 
   useLayoutEffect(() => {
     document.title = "Media | Betflix";
   }, []);
 
   useEffect(() => {
+    link.selectLink({ tmdbId });
     media.fetchMovieDetails(tmdbId);
   }, []);
+
+  useEffect(() => {
+    if (link.data?.media_id) {
+      navigate(`/media/${link.data.media_id}`, { replace: true });
+    }
+  }, [link.data]);
 
   useEffect(() => {
     if (media.data?.imdb_id) {
@@ -116,7 +181,7 @@ export function ExternalMedia() {
           year={media.data?.release_date?.split("-")[0]}
           duration={media.data?.runtime * 60}
           overview={media.data?.overview}
-          genres={media.data?.genres?.map((i) => i.name)}
+          genres={media.data?.genres?.map((i) => i.name).join(", ")}
         />
         <TorrentsTable>
           {torrents.data?.map((i, index) => (
