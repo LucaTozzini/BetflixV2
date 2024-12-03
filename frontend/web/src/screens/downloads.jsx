@@ -19,7 +19,7 @@ export default function Downloads() {
 
   return (
     <div id="outlet" className={styles.container}>
-      <h2>Active Downloads <span>{data?.length ?? 0}</span></h2>
+      <h2>⬇️ Active Downloads <span>{data?.length ?? 0}</span></h2>
       <DownloadsTable>
         {data?.map((i) => (
           <DownloadsRow
