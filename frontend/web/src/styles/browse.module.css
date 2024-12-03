@@ -1,11 +1,8 @@
-.container {
-  padding: var(--content-padding-top) 0;
-}
-
 .wrap {
   max-width: var(--content-width);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 5rem;
+  padding: var(--content-margin-vertical) 0;
 }
