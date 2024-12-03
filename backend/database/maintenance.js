@@ -16,15 +16,14 @@ async function createDB() {
         CREATE TABLE IF NOT EXISTS episodes (
           media_id INT,
           path TEXT PRIMARY KEY,
-          title TEXT,
           season_num INT,
           episode_num INT,
-          duration INT,
-          UNIQUE(media_id, season_num, episode_num)
+          duration INT
         );
         CREATE TABLE IF NOT EXISTS link (
           media_id INT PRIMARY KEY,
-          tmdb_id INT UNIQUE,
+          tmdb_id INT,
+          title TEXT,
           poster TEXT,
           backdrop TEXT,
           overview TEXT,
