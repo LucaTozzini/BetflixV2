@@ -8,8 +8,11 @@ export default function useQueries() {
     return !value || !key ? null : `${key}=${value}`;
   }
 
-  async function genericGET(url) {
-    const response = await fetch(url);
+  /**
+   * @param {string} endpoint
+   */
+  async function genericGET(endpoint) {
+    const response = await fetch(`http://${SERVER}${endpoint}`);
     if (response.ok) {
       const json = await response.json();
       setData(json);
@@ -35,32 +38,63 @@ export default function useQueries() {
       .filter((i) => i)
       .join("&")}`;
 
-    genericGET(`http://${SERVER}/media?${queryParams}`);
+    genericGET(`/media?${queryParams}`);
   }
 
   /**
    * @param {number} mediaId
    */
   function selectMedia(mediaId) {
-    genericGET(`http://${SERVER}/media/${mediaId}`);
+    genericGET(`/media/${mediaId}`);
+  }
+
+  /**
+   * @param {number} mediaId
+   */
+  function selectSeasons(mediaId) {
+    genericGET(`/media/${mediaId}/seasons`);
+  }
+
+  function selectSeason(mediaId, seasonNum) {
+    genericGET(`/media/${mediaId}/seasons/${seasonNum}`);
   }
 
   /**
    * Fetch current popular movies from TMDb
    */
   function fetchPopularMovies() {
-    genericGET(`http://${SERVER}/external/popular-movies`);
+    genericGET(`/external/popular-movies`);
   }
 
   /**
-   * @param {string} query 
-   * @param {int} year 
+   * @param {{mediaId: number, tmdbId: number}} param0 Either mediaId or tmdbId
+   */
+  function selectLink({ mediaId, tmdbId }) {
+    if (mediaId) {
+      genericGET(`/link?mediaId=${mediaId}`);
+    } else {
+      genericGET(`/link?tmdbId=${tmdbId}`);
+    }
+  }
+
+  /**
+   * @param {string} query required
+   * @param {number} year optional
    */
   function fetchMovies(query, year) {
-    const queryParams = `${[parString("query", query), parString("year", year)]
-      .filter((i) => i)
-      .join("&")}`;
-    genericGET(`http://${SERVER}/external/movies?${queryParams}`);
+    let parms = `query=${query}`;
+    if (year) parms += `&year=${year}`;
+    genericGET(`/external/movies?${parms}`);
+  }
+
+  /**
+   * @param {string} query required
+   * @param {number} year optional
+   */
+  function fetchShows(query, year) {
+    let parms = `query=${query}`;
+    if (year) parms += `&year=${year}`;
+    genericGET(`/external/shows?${parms}`);
   }
 
   /**
@@ -68,7 +102,7 @@ export default function useQueries() {
    * @param {number} tmdbId
    */
   function fetchMovieDetails(tmdbId) {
-    genericGET(`http://${SERVER}/external/movies/${tmdbId}`);
+    genericGET(`/external/movies/${tmdbId}`);
   }
 
   /**
@@ -76,16 +110,24 @@ export default function useQueries() {
    * @param {string} imdbId
    */
   function fetchMovieTorrents(imdbId) {
-    genericGET(`http://${SERVER}/external/torrents/${imdbId}`);
+    genericGET(`/torrents?imdbId=${imdbId}`);
   }
 
+  function searchMedia(title) {
+    genericGET(`/search?title=${title}`);
+  }
   return {
     data,
     selectMedia,
     selectMediaCollection,
     fetchPopularMovies,
+    selectLink,
     fetchMovies,
+    fetchShows,
+    selectSeasons,
+    selectSeason,
     fetchMovieDetails,
     fetchMovieTorrents,
+    searchMedia,
   };
 }
