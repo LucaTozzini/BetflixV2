@@ -4,10 +4,11 @@ import { MediaTable, MediaRow } from "../components/media-table";
 import { useEffect, useLayoutEffect } from "react";
 export default function Search() {
   const externalMovies = useQueries();
+  const localMedia = useQueries();
 
   useLayoutEffect(() => {
-    document.title = "Search | Betflix"
-  }, [])
+    document.title = "Search | Betflix";
+  }, []);
 
   useEffect(() => {
     document.getElementById("search-input").select();
@@ -15,6 +16,7 @@ export default function Search() {
 
   function handleChange(e) {
     externalMovies.fetchMovies(e.target.value);
+    localMedia.searchMedia(e.target.value);
   }
 
   return (
@@ -27,8 +29,22 @@ export default function Search() {
         placeholder="Search for movies and tv shows..."
       />
       <div className={styles.wrap}>
+        {localMedia.data && localMedia.data.length > 0 && (
+          <MediaTable title={"Local Media"}>
+            {localMedia.data.map((i) => (
+              <MediaRow
+                key={i.media_id}
+                mediaId={i.media_id}
+                title={i.link_title ?? i.title}
+                year={i.year}
+                type={i.type}
+                genres={i.genres}
+              />
+            ))}
+          </MediaTable>
+        )}
         {externalMovies.data && (
-          <MediaTable title={"External Movies"}>
+          <MediaTable title={"TMDb Movies"}>
             {externalMovies.data.map((i) => (
               <MediaRow
                 key={i.id}
