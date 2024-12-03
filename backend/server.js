@@ -8,6 +8,8 @@ import mediaRouter from "./routes/media.js";
 import externalRouter from "./routes/external.js";
 import streamRouter from "./routes/stream.js";
 import torrentsRouter from "./routes/torrents.js";
+import linkRouter from "./routes/link.js";
+import searchRouter from "./routes/search.js";
 //
 import dotenv from "dotenv";
 dotenv.config();
@@ -29,9 +31,11 @@ Since this is a local server not exposed to the public this should not be a secu
 app.use(cors());
 
 // Use routers
+app.use("/link", linkRouter);
 app.use("/media", mediaRouter);
-app.use("/external", externalRouter);
 app.use("/stream", streamRouter);
+app.use("/search", searchRouter);
+app.use("/external", externalRouter);
 app.use("/torrents", torrentsRouter);
 
 /*
