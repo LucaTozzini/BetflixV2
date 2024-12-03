@@ -99,7 +99,6 @@ export function LocalMedia() {
 
   useEffect(() => {
     if (seasons.data) {
-      console.log(seasons.data)
       episodes.selectSeason(mediaId, seasons.data[0].season_num);
     }
   }, [seasons.data]);
