@@ -6,9 +6,8 @@
 .table {
   width: 100%;
   border-collapse: collapse;
+  background-color: var(--table-background-color);
   border: solid 1px var(--border-color);
-  --cell-padding-hor: .5rem;
-  --cell-padding-ver: .2rem;
 }
 
 .table thead {
