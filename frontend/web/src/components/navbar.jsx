@@ -1,16 +1,17 @@
-import styles from "../styles/navbar.module.css"
-import { Link } from "react-router-dom"
+import styles from "../styles/navbar.module.css";
+import { Link } from "react-router-dom";
 
-export default function Navbar(){
+export default function Navbar() {
   return (
     <nav className={styles.container}>
       <div>
-      <Link to="/">Brws</Link>
-      <Link to="/search">Srch</Link>
-      <Link to="/downloads">Dwnl</Link>
-      <Link to="/console">Cons</Link>
+        <Link to="/">🎬 Browse</Link>
+        <Link to="/search">🔎 Search</Link>
+        <Link to="/downloads">⬇️ Downloads</Link>
       </div>
-      <div></div>
+      <div>
+        <Link to="/console">🖥️ Console</Link>
+      </div>
     </nav>
-  )
+  );
 }
