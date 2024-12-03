@@ -16,11 +16,10 @@
 }
 
 .table {
+  background-color: var(--table-background-color);
   width: 100%;
   border-collapse: collapse;
   border: solid 1px var(--border-color);
-  --cell-padding-hor: 1rem;
-  --cell-padding-ver: .5rem;
 }
 
 .table thead {
@@ -39,17 +38,15 @@
   background-color: var(--table-zebra-color);
 }
 
-.table td, .table th {
-  text-align: center;
-  padding: var(--cell-padding-ver) var(--cell-padding-hor);
-}
-
 .table td:first-child, .table th:first-child {
-  text-align: left;
-  padding-left: calc(2*var(--cell-padding-hor));
-  width: 80%;
+  padding-left: calc(var(--cell-padding-hor));
 }
 
 .table td:last-child, .table th:last-child {
-  padding-right: calc(2*var(--cell-padding-hor));
+  padding-right: calc(var(--cell-padding-hor));
+}
+
+.table td, .table th {
+  text-align: left; 
+  padding: var(--cell-padding-ver) var(--cell-padding-hor);
 }
