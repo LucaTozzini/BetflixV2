@@ -2,8 +2,8 @@ import {
   fetchPopularMovies,
   fetchMovies,
   fetchMovieDetails,
+  fetchShows,
 } from "../helpers/tmdbLink.js";
-import { fetchMovieTorrents } from "../helpers/yifiLink.js";
 
 async function popularMovies(req, res) {
   const popular = await fetchPopularMovies();
@@ -15,8 +15,17 @@ async function movies(req, res) {
     res.sendStatus(400);
     return;
   }
-  const movies = await fetchMovies(req.query.query, req.query.year);
-  res.json(movies);
+  const data = await fetchMovies(req.query.query, req.query.year);
+  res.json(data);
+}
+
+async function shows(req, res) {
+  if (!req.query.query) {
+    res.sendStatus(400);
+    return;
+  }
+  const data = await fetchShows(req.query.query, req.query.year);
+  res.json(data);
 }
 
 async function movieDetails(req, res) {
@@ -24,18 +33,11 @@ async function movieDetails(req, res) {
   res.json(details);
 }
 
-async function torrents(req, res) {
-  const torrents = await fetchMovieTorrents(req.params.imdbId);
-  if (torrents) {
-    res.json(torrents);
-  } else {
-    res.sendStatus(404);
-  }
-}
+
 
 export default {
   popularMovies,
   movies,
+  shows,
   movieDetails,
-  torrents,
 };
