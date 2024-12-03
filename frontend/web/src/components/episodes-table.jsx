@@ -42,7 +42,11 @@ export function EpisodesTable({ children }) {
 export function EpisodeRow({ mediaId, seasonNum, episodeNum, duration }) {
   const navigate = useNavigate();
   return (
-    <tr onClick={() => navigate(`/video/${mediaId}`)}>
+    <tr
+      onClick={() =>
+        navigate(`/video/${mediaId}?s=${seasonNum}&e=${episodeNum}`)
+      }
+    >
       <td data-cell="seasonNum">{seasonNum}</td>
       <td data-cell="episodeNum">{episodeNum}</td>
       <td data-cell="duration">{secondsToString(duration)}</td>
