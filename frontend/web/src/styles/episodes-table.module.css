@@ -1,0 +1,48 @@
+.wrap {
+  width: 100%;
+  overflow: auto;
+}
+
+.table {
+  background-color: var(--table-background-color);
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  border: solid 1px var(--border-color);
+}
+
+.table thead {
+  border-bottom: solid 1px var(--border-color);
+}
+
+.table td, .table th {
+  text-align: left; 
+  padding: var(--cell-padding-ver) var(--cell-padding-hor);
+}
+
+.table tbody > tr:nth-of-type(2n) {
+  background-color: var(--table-zebra-color);
+}
+
+.table td:first-child, .table th:first-child {
+  padding-left: calc(var(--cell-padding-hor));
+}
+
+.table td:last-child, .table th:last-child {
+  padding-right: calc(var(--cell-padding-hor));
+}
+
+.table td[data-cell=play] {
+}
+
+.table td[data-cell=play] a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 1rem;
+  background-color: var(--dim-color);
+  flex: 1;
+
+}
