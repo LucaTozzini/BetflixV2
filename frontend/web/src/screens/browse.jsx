@@ -18,19 +18,20 @@ export default function Browse() {
   return (
     <div id="outlet" className={styles.container}>
       <div className={styles.wrap}>
-        <MediaTable title={"Latest"}>
+        <MediaTable title={"💿 Latest on Disc"}>
           {latest.data?.map((i) => (
             <MediaRow
               key={i.media_id}
               mediaId={i.media_id}
-              title={i.title}
+              title={i.link_title ?? i.title}
               type={i.type}
               year={i.year}
+              genres={i.genres}
             />
           ))}
         </MediaTable>
 
-        <MediaTable title={"Popular Movies"}>
+        <MediaTable title={"🌐 Popular Movies on TMDb"}>
           {popularMovies.data?.map((i) => (
             <MediaRow
               key={i.id}
