@@ -69,7 +69,7 @@ export function TorrentRow({
       <td>
         <button onClick={async () => {
           const response = await postTorrent(url); 
-          if(response === 201) {
+          if(response.status === 201) {
             navigate("/downloads")
           } 
         }}>Get</button>
