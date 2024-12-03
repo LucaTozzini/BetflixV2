@@ -16,17 +16,30 @@ TMDb movie search result example (ommitted irrelevant):
   },
   ...
 ]
-vote_count: 10222
+
+TMDb show search result example (ommitted irrelevant):
+[
+  {
+    backdrop_path: "/rXrpYOveFl76ivMmyb2612T7Q8w.jpg"
+    id: 111345
+    poster_path: "/8v3Sqv9UcIUC4ebmpKWROqPBINZ.jpg"
+    first_air_date: "2024-03-14"
+    name: "The Last of Us"
+  },
+  ...
+]
 */
-const TMDB_IMG_BASE = "https://image.tmdb.org/t/p/original";
+const TMDB_IMG_BASE = "https://image.tmdb.org/t/p/w300";
 
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styles from "../styles/linkMedia.module.css";
 import useQueries from "../hooks/useQueries";
 import usePosts from "../hooks/usePosts";
+import { useNavigate } from "react-router-dom";
 
 export default function LinkMedia() {
+  const navigate = useNavigate();
   const { mediaId } = useParams();
   const search = useQueries();
   const local = useQueries();
@@ -50,12 +63,12 @@ export default function LinkMedia() {
 
   useEffect(() => {
     if (year !== null && title) {
-      console.log(title, year);
-      search.fetchMovies(title, year);
+      if (local.data.type === "movie") search.fetchMovies(title, year);
+      else search.fetchShows(title, year);
     }
   }, [year, title]);
 
-  const MediaItem = ({ title, year, imageURL }) => (
+  const MediaItem = ({ tmdbId, title, year, imageURL }) => (
     <div className={styles.mediaItem}>
       <img
         src={
@@ -69,8 +82,9 @@ export default function LinkMedia() {
       </p>
       <button
         onClick={async () => {
-          const status = await postLink(mediaId, tmdbId);
-          if (status === 201) {
+          const response = await postLink(mediaId, tmdbId, local.data.type);
+          if (response.ok) {
+            navigate(`/media/${mediaId}`);
           }
         }}
       >
@@ -98,8 +112,12 @@ export default function LinkMedia() {
           <MediaItem
             key={i.id}
             tmdbId={i.id}
-            title={i.title}
-            year={i.release_date?.split("-")[0]}
+            title={local.data.type === "movie" ? i.title : i.name}
+            year={
+              i[
+                local.data.type === "movie" ? "release_date" : "first_air_date"
+              ]?.split("-")[0]
+            }
             imageURL={i.poster_path ? `${TMDB_IMG_BASE}${i.poster_path}` : null}
           />
         ))}
