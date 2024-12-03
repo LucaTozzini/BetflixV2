@@ -46,7 +46,7 @@ export function DownloadsRow({ name, progress, timeRemaining, downloadSpeed }) {
       convert it to mb per second
         bytes/1000000 = megabytes
       */}
-      <td data-cell="downloadSpeed">{Math.floor(downloadSpeed / 1_000_000)} mb/sec</td>
+      <td data-cell="downloadSpeed">{Math.floor(downloadSpeed / 10_000) / 100} mb/sec</td>
     </tr>
   );
 }
