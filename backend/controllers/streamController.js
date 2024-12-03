@@ -1,10 +1,10 @@
 import fs from "fs";
-import { selectMedia } from "../database/queries.js";
+import { selectMedia } from "../database/reads.js";
 import { mimeType, CHUNK_SIZE } from "../helpers/stream.js";
 
 async function streamMovie(req, res) {
   const media = await selectMedia(req.params.mediaId);
-  if (!media) {
+  if (!media || media.type === "show") {
     res.sendStatus(404);
     return;
   }
