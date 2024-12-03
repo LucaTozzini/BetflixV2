@@ -9,8 +9,6 @@
   width: 100%;
   border: solid 1px var(--border-color);
   text-align: left;
-  --cell-padding-hor: 1rem;
-  --cell-padding-ver: .5rem;
   overflow: auto;
 }
 
@@ -28,11 +26,11 @@
 }
 
 .table th:first-child, .table td:first-child {
-  padding-left: calc(2*var(--cell-padding-hor));
+  padding-left: calc(var(--cell-padding-hor));
 }
 
 .table th:last-child, .table td:last-child {
-  padding-right: calc(2*var(--cell-padding-hor));
+  padding-right: calc(var(--cell-padding-hor));
 }
 
 .table td > button {
