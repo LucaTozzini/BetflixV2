@@ -24,4 +24,8 @@
   width: var(--content-width);
   margin: 0 auto;
   padding-top: var(--content-padding-top);
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+  margin-bottom: 5rem;
 }
