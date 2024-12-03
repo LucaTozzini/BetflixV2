@@ -8,6 +8,7 @@
 }
 
 .mediaItem {
+  flex-shrink: 0;
   width: 10rem;
   cursor: pointer;
   user-select: none;
