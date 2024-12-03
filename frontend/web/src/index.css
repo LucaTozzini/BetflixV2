@@ -32,10 +32,19 @@ a, button {
 }
 
 #root {
+  display: flex;
+  font-family: sans-serif;
+  background-color: var(--background-color);
+  color: var(--color);
+
   --margins: 4rem 8vw;
   --content-width: min(90%, 60rem);
   --content-padding-top: 2rem;
+  --content-margin-vertical: 5rem;
+  --cell-padding-hor: 1rem;
+  --cell-padding-ver: .5rem;
 
+  /* Light Theme */
   --color: black;
   --dim-color: rgb(182, 182, 182);
 
@@ -48,15 +57,21 @@ a, button {
   --table-zebra-color: rgba(0, 0, 0, 0.03);
 
   --search-background: linear-gradient(white, rgb(247, 247, 247));
-
-  display: flex;
-  font-family: sans-serif;
-  background-color: var(--background-color);
-  color: var(--color);
 }
 
 #root.dark {
+  --color: white;
+  --dim-color: rgb(143, 143, 143);
+
+  --border-color: rgb(61, 61, 61);
+  --background-color: black;
+
+  --nav-background-color: rgb(10, 10, 10);
   
+  --table-background-color: rgb(10, 10, 10);
+  --table-zebra-color: rgba(255, 255, 255, 0.03);
+
+  --search-background: linear-gradient(black, rgb(29, 29, 29));
 }
 
 #outlet {
