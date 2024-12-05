@@ -1,9 +1,3 @@
-.container p,
-.container input[type="text"] {
-  font-family: monospace;
-  font-size: 1.3rem;
-}
-
 .container {
   background: rgb(20, 20, 20);
   color: rgb(0, 255, 0);
@@ -12,10 +6,15 @@
   overflow: hidden;
 }
 
+.container p,
+.container input[type="text"] {
+  font-family: monospace;
+  font-size: 1.3rem;
+}
+
 .container > div:first-child {
   flex: 1;
   overflow: auto;
-  padding: 1rem;
 }
 
 .container > div:last-child {
@@ -32,4 +31,23 @@
   flex: 1;
   border: none;
   outline: none;
+}
+
+.topSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.topSection > div:last-child {
+  flex: 1;
+  overflow: auto;
+}
+
+.topSection > div {
+  padding: 1rem;
+}
+
+.infoContainer {
+  background-color: var(--background-color);
+  color: var(--color);
 }
