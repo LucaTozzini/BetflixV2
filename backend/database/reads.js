@@ -51,14 +51,14 @@ import dbPromise from "./connection.js";
  */
 export function selectMediaCollection(offset, limit, order, desc, type) {
   // If no type is specified, assume all types are requested
-  const typeA = type ? type : "movie";
-  const typeB = type ? type : "show";
+  const typeA = type && type !== "any" ? type : "movie";
+  const typeB = type && type !== "any" ? type : "show";
 
   return new Promise((res, rej) => {
     dbPromise.then((db) => {
       const validColumns = ["year", "title", "duration"];
       db.all(
-        `SELECT media.*, link.title AS link_title, genres
+        `SELECT media.*, link.title AS link_title, backdrop, poster, genres
         FROM media
         LEFT JOIN link ON media.media_id = link.media_id 
         WHERE type = ? OR type = ? 
@@ -82,8 +82,13 @@ export function selectMediaCollection(offset, limit, order, desc, type) {
 export function selectMedia(mediaId) {
   return new Promise((res, rej) =>
     dbPromise.then((db) =>
-      db.get("SELECT * FROM media WHERE media_id = ?", [mediaId], (err, row) =>
-        err ? rej(err) : res(row)
+      db.get(
+        `SELECT media.*, link.title AS link_title, tmdb_id, backdrop, poster, genres, overview
+        FROM media 
+        LEFT JOIN link ON link.media_id = media.media_id 
+        WHERE media.media_id = ?`,
+        [mediaId],
+        (err, row) => (err ? rej(err) : res(row))
       )
     )
   );
@@ -212,7 +217,7 @@ export function existsMediaId(mediaId) {
 }
 
 /**
- * @param {string} path 
+ * @param {string} path
  * @returns {Promise<boolean>}
  */
 export function existsEpisodePath(path) {
