@@ -106,6 +106,14 @@ export default function useQueries() {
   }
 
   /**
+   * Fetch show details from TMDb
+   * @param {number} tmdbId
+   */
+  function fetchShowDetails(tmdbId) {
+    genericGET(`/external/shows/${tmdbId}`);
+  }
+
+  /**
    * Fetch available torrents for movie from Yifi
    * @param {string} imdbId
    */
@@ -127,6 +135,7 @@ export default function useQueries() {
     selectSeasons,
     selectSeason,
     fetchMovieDetails,
+    fetchShowDetails,
     fetchMovieTorrents,
     searchMedia,
   };
