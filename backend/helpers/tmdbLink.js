@@ -78,7 +78,7 @@
  * @property {boolean} adult
  * @property {string} backdrop_path
  * @property {Array<{id: number, credit_id: number, gender: number, profile_path: string}>} created_by
- * @property {Array<number>} episode_run_time 
+ * @property {Array<number>} episode_run_time
  * @property {string} first_air_date
  * @property {Array<{id: number, name: string}>} genres
  * @property {string} homepage
@@ -107,7 +107,7 @@
  * @property {string} type
  * @property {number} vote_average
  * @property {number} vote_count
- * 
+ *
  */
 
 /**
@@ -159,17 +159,17 @@ export async function fetchMovieDetails(tmdbId) {
 }
 
 /**
- * @param {number} tmdbId 
+ * @param {number} tmdbId
  * @returns {Promise<showDetails>}
  */
 export async function fetchShowDetails(tmdbId) {
   try {
-    const url = `${API_ADDRESS}/tv/${tmdbId}`
+    const url = `${API_ADDRESS}/tv/${tmdbId}`;
     const response = await fetch(url, GET_OPTIONS);
-    const json = await response.json()
+    const json = await response.json();
     return json;
-  } catch(err) {
-    throw err
+  } catch (err) {
+    throw err;
   }
 }
 
