@@ -6,5 +6,6 @@ externalRouter.get("/popular-movies", externalController.popularMovies);
 externalRouter.get("/movies", externalController.movies);
 externalRouter.get("/movies/:tmdbId", externalController.movieDetails);
 externalRouter.get("/shows", externalController.shows);
+externalRouter.get("/shows/:tmdbId", externalController.showDetails);
 
 export default externalRouter;
