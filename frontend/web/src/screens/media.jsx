@@ -37,6 +37,7 @@ const MediaInfo = ({
   buttons,
   linked,
   genres,
+  vote, // Assume out of 5
   overview,
 }) => {
   const { mediaId } = useParams();
@@ -50,7 +51,13 @@ const MediaInfo = ({
       </h1>
       <h3>
         {secondsToString(duration)}{" "}
-        <span className={styles.genres}>{genres}</span>
+        <span className={styles.genres}>{genres}</span>{" "}
+        {vote && (
+          <span>
+            {"⭐".repeat(vote)}
+            {"🍅".repeat(5 - vote)}
+          </span>
+        )}
       </h3>
       {buttons && (
         <div className={styles.buttons}>
@@ -79,6 +86,7 @@ export function LocalMedia() {
   const { mediaId } = useParams();
   const media = useQueries();
   const mediaLink = useQueries();
+  const external = useQueries();
   const episodes = useQueries();
   const seasons = useQueries();
 
@@ -87,6 +95,16 @@ export function LocalMedia() {
     media.selectMedia(mediaId);
     mediaLink.selectLink({ mediaId });
   }, []);
+
+  useEffect(() => {
+    if (mediaLink.data) {
+      if(media.data.type === "movie") {
+        external.fetchMovieDetails(mediaLink.data.tmdb_id);
+      } else {
+        external.fetchShowDetails(mediaLink.data.tmdb_id)
+      }
+    }
+  }, [mediaLink.data]);
 
   useEffect(() => {
     if (media.data) {
@@ -105,17 +123,24 @@ export function LocalMedia() {
 
   const Episodes = () => {
     return (
-      <EpisodesTable>
-        {episodes.data?.map((i) => (
-          <EpisodeRow
-            key={`${i.media_id}_${i.season_num}_${i.episode_num}`}
-            mediaId={i.media_id}
-            seasonNum={i.season_num}
-            episodeNum={i.episode_num}
-            duration={i.duration}
-          />
-        ))}
-      </EpisodesTable>
+      <>
+        <select name="" id="">
+          {seasons.data?.map(({ season_num }) => (
+            <option>Season {season_num}</option>
+          ))}
+        </select>
+        <EpisodesTable>
+          {episodes.data?.map((i) => (
+            <EpisodeRow
+              key={`${i.media_id}_${i.season_num}_${i.episode_num}`}
+              mediaId={i.media_id}
+              seasonNum={i.season_num}
+              episodeNum={i.episode_num}
+              duration={i.duration}
+            />
+          ))}
+        </EpisodesTable>
+      </>
     );
   };
 
@@ -133,6 +158,11 @@ export function LocalMedia() {
           genres={mediaLink.data?.genres}
           buttons={true}
           linked={mediaLink.data != null}
+          vote={
+            external.data?.vote_average
+              ? parseInt(external.data?.vote_average / 2)
+              : null
+          }
         />
         {media.data?.type === "show" && <Episodes />}
       </div>
@@ -147,11 +177,8 @@ export function ExternalMedia() {
   const torrents = useQueries();
   const navigate = useNavigate();
 
-  useLayoutEffect(() => {
-    document.title = "Media | Betflix";
-  }, []);
-
   useEffect(() => {
+    document.title = "Media | Betflix";
     link.selectLink({ tmdbId });
     media.fetchMovieDetails(tmdbId);
   }, []);
@@ -164,6 +191,7 @@ export function ExternalMedia() {
 
   useEffect(() => {
     if (media.data?.imdb_id) {
+      console.log(media.data);
       document.title = `${media.data.title} | Betflix`;
       torrents.fetchMovieTorrents(media.data.imdb_id);
     }
@@ -181,6 +209,11 @@ export function ExternalMedia() {
           duration={media.data?.runtime * 60}
           overview={media.data?.overview}
           genres={media.data?.genres?.map((i) => i.name).join(", ")}
+          vote={
+            media.data?.vote_average
+              ? parseInt(media.data?.vote_average / 2)
+              : null
+          } // vote_average range = [0, 10], convert to [0, 5]
         />
         <TorrentsTable>
           {torrents.data?.map((i, index) => (
