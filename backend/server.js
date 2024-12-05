@@ -30,6 +30,9 @@ Since this is a local server not exposed to the public this should not be a secu
 */
 app.use(cors());
 
+// 
+app.get("/", (req, res) => res.sendStatus(200))
+
 // Use routers
 app.use("/link", linkRouter);
 app.use("/media", mediaRouter);
