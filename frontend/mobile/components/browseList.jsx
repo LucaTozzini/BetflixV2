@@ -5,7 +5,7 @@ const IMG_BASE = "https://image.tmdb.org/t/p/w780";
 export function BrowseList({ title, children }) {
   return (
     <View>
-      <Text style={{ fontWeight: "bold" }}>{title}</Text>
+      {title && <Text style={{ fontWeight: "bold" }}>{title}</Text>}
       <View style={{gap: 20}}>{children}</View>
     </View>
   );

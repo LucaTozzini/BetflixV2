@@ -1,6 +1,6 @@
 import { Slot } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
-import NavBar from "../components/nav";
+import { StyleSheet, View } from "react-native";
+import Tabs from "../components/tabs";
 
 export default () => {
   return (
@@ -8,7 +8,7 @@ export default () => {
       <View style={styles.slotContainer}>
         <Slot />
       </View>
-      <NavBar />
+      <Tabs />
     </>
   );
 };

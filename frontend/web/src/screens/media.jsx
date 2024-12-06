@@ -97,14 +97,14 @@ export function LocalMedia() {
   }, []);
 
   useEffect(() => {
-    if (mediaLink.data) {
-      if(media.data.type === "movie") {
+    if (mediaLink.data && media.data) {
+      if (media.data.type === "movie") {
         external.fetchMovieDetails(mediaLink.data.tmdb_id);
       } else {
-        external.fetchShowDetails(mediaLink.data.tmdb_id)
+        external.fetchShowDetails(mediaLink.data.tmdb_id);
       }
     }
-  }, [mediaLink.data]);
+  }, [mediaLink.data, media.data]);
 
   useEffect(() => {
     if (media.data) {
@@ -125,8 +125,8 @@ export function LocalMedia() {
     return (
       <>
         <select name="" id="">
-          {seasons.data?.map(({ season_num }) => (
-            <option>Season {season_num}</option>
+          {seasons.data?.map(({ season_num }, i) => (
+            <option key={i}>Season {season_num}</option>
           ))}
         </select>
         <EpisodesTable>
@@ -160,7 +160,7 @@ export function LocalMedia() {
           linked={mediaLink.data != null}
           vote={
             external.data?.vote_average
-              ? parseInt(external.data?.vote_average / 2)
+              ? Math.round(external.data?.vote_average / 2)
               : null
           }
         />
@@ -211,7 +211,7 @@ export function ExternalMedia() {
           genres={media.data?.genres?.map((i) => i.name).join(", ")}
           vote={
             media.data?.vote_average
-              ? parseInt(media.data?.vote_average / 2)
+              ? Math.round(media.data?.vote_average / 2)
               : null
           } // vote_average range = [0, 10], convert to [0, 5]
         />

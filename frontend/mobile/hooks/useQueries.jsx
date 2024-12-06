@@ -19,7 +19,7 @@ export default function useQueries() {
       const json = await response.json();
       setData(json);
     } else {
-      console.error("genericGET NOT OK, status", response.ok)
+      console.error("genericGET NOT OK on", `http://${SERVER}${endpoint}`, "status", response.status)
       setData(null);
     }
   }
