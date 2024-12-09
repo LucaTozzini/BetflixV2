@@ -1,20 +1,29 @@
-import { Slot } from "expo-router";
-import { StyleSheet, View } from "react-native";
-import Tabs from "../components/tabs";
-
+import { Stack } from "expo-router";
+import { View, Text } from "react-native";
+import useZeroconf from "../hooks/useZeroconf";
+import ServerContext from "../contexts/serverContext";
+import ThemeContext from "../contexts/themeContext";
+import useTheme from "../hooks/useTheme";
+import { useEffect } from "react";
 export default () => {
-  return (
-    <>
-      <View style={styles.slotContainer}>
-        <Slot />
+  const serverAddress = useZeroconf();
+  const theme = useTheme();
+  useEffect(() => {
+    // theme.setDarkTheme()
+  }, [])
+  if (!serverAddress) {
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <Text style={{ fontSize: 30 }}>Looking For Server...</Text>
       </View>
-      <Tabs />
-    </>
+    );
+  }
+
+  return (
+    <ThemeContext.Provider value={theme}>
+      <ServerContext.Provider value={serverAddress}>
+        <Stack screenOptions={{ headerShown: false }} />
+      </ServerContext.Provider>
+    </ThemeContext.Provider>
   );
 };
-
-const styles = StyleSheet.create({
-  slotContainer: {
-    flex: 1,
-  },
-});

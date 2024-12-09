@@ -1,25 +1,33 @@
-import { useState } from "react";
-
-// On emulator don't use localhost even if from the same device as server
-const SERVER = "192.168.1.76:5340";
+import { useState, useContext } from "react";
+import ServerContext from "../contexts/serverContext";
 
 export default function useQueries() {
+  const serverAddress = useContext(ServerContext)
   const [data, setData] = useState(null);
 
   function parString(key, value) {
     return !value || !key ? null : `${key}=${value}`;
   }
 
+  function reset() {
+    setData(null);
+  }
+
   /**
    * @param {string} endpoint
    */
   async function genericGET(endpoint) {
-    const response = await fetch(`http://${SERVER}${endpoint}`);
+    const response = await fetch(`http://${serverAddress}${endpoint}`);
     if (response.ok) {
       const json = await response.json();
       setData(json);
     } else {
-      console.error("genericGET NOT OK on", `http://${SERVER}${endpoint}`, "status", response.status)
+      console.error(
+        "genericGET NOT OK on",
+        `http://${SERVER}${endpoint}`,
+        "status",
+        response.status
+      );
       setData(null);
     }
   }
@@ -129,6 +137,7 @@ export default function useQueries() {
   }
   return {
     data,
+    reset,
     selectMedia,
     selectMediaCollection,
     fetchPopularMovies,

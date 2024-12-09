@@ -1,14 +1,73 @@
-import { View, Text } from "react-native"
-export default function MediaView({title, year, genres, vote, overview}) {
+// TMDb Image docs: https://developer.themoviedb.org/docs/image-basics
+const IMAGE_BASE = "https://image.tmdb.org/t/p/w780";
+import { useContext, useState } from "react";
+import { View, Text, Image, Pressable } from "react-native";
+import ThemeContext from "../contexts/themeContext";
+import Ionicons from "@expo/vector-icons/Ionicons";
+
+export default function MediaView({
+  title,
+  year,
+  genres,
+  vote,
+  overview,
+  backdrop,
+  children,
+  marginHorizontal,
+}) {
+  const theme = useContext(ThemeContext);
+  const [expand, setExpand] = useState(false);
   return (
     <View>
-      <View >
-        <Text style={{fontSize: 50, fontWeight: "bold"}}>{title}</Text>
-        <Text style={{fontSize: 40, color: "darkgrey"}}>{year}</Text>
-        <Text style={{fontSize: 20, color: "darkgrey", fontWeight: "bold"}}>{genres}</Text>
-        {vote && <Text style={{fontSize: 20}}>{"⭐".repeat(vote)}{"🍅".repeat(5-vote)}</Text>}
-        <Text style={{fontSize: 20}}>{overview}</Text>
+      {backdrop && (
+        <Image
+          source={{ uri: `${IMAGE_BASE}/${backdrop}` }}
+          style={{ aspectRatio: 2 }}
+        />
+      )}
+      <View style={{ marginHorizontal }}>
+        <Text style={{ fontSize: 50, fontWeight: "bold", color: theme.color }}>
+          {title}
+        </Text>
+        {year && (
+          <Text style={{ fontSize: 37, color: theme.colorDim }}>{year}</Text>
+        )}
+        {genres && (
+          <Text
+            style={{ fontSize: 20, color: theme.colorDim, fontWeight: "bold" }}
+          >
+            {genres}
+          </Text>
+        )}
+        {vote && (
+          <View style={{ flexDirection: "row" }}>
+            {/* There has to be a better way to do this */}
+            {"a"
+              .repeat(vote)
+              .split("")
+              .map((i) => (
+                <Ionicons name="star-sharp" size={20} color={theme.color} />
+              ))}
+            {"a"
+              .repeat(5 - vote)
+              .split("")
+              .map((i) => (
+                <Ionicons name="star-outline" size={20} color={theme.color} />
+              ))}
+          </View>
+        )}
+        {children}
+        {overview && (
+          <Pressable onPress={() => setExpand(!expand)}>
+            <Text
+              style={{ fontSize: 20, color: theme.color }}
+              numberOfLines={expand ? null : 3}
+            >
+              {overview}
+            </Text>
+          </Pressable>
+        )}
       </View>
     </View>
-  )
+  );
 }

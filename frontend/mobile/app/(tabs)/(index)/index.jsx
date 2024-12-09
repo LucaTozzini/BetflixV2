@@ -1,14 +1,11 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
-import useQueries from "../hooks/useQueries";
-import { useEffect, useState } from "react";
-import { BrowseItem, BrowseList } from "../components/browseList";
+import { View, ScrollView, StyleSheet } from "react-native";
+import { Button } from "../../../components/buttons";
+import useQueries from "../../../hooks/useQueries";
+import { useContext, useEffect, useState } from "react";
+import { BrowseItem, BrowseList } from "../../../components/browseList";
+import ThemeContext from "../../../contexts/themeContext";
 export default () => {
+  const theme = useContext(ThemeContext);
   const [browseType, setBrowseType] = useState(0);
   const latest = useQueries();
   const popular = useQueries();
@@ -19,24 +16,22 @@ export default () => {
   }, []);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
       <View style={styles.buttons}>
-        <TouchableOpacity
-          style={[styles.button, browseType === 0 ? styles.buttonSelected : {}]}
-          onPress={() => setBrowseType(0)}
-        >
-          <Text style={styles.buttonText}>Latest on Disc</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.button, browseType === 1 ? styles.buttonSelected : {}]}
-          onPress={() => setBrowseType(1)}
-        >
-          <Text style={styles.buttonText}>Popular Movies</Text>
-        </TouchableOpacity>
+        <Button
+          handlePress={() => setBrowseType(0)}
+          text="Latest on Disc"
+          focused={browseType === 0}
+        />
+        <Button
+          handlePress={() => setBrowseType(1)}
+          text="Popular Movies"
+          focused={browseType === 1}
+        />
       </View>
 
       {/* Set height of parent View for ScrollView height to be properly set */}
-      <ScrollView>
+      <ScrollView contentContainerStyle={styles.scroll}>
         {browseType === 0 && (
           <BrowseList>
             {latest.data?.map((i) => (
@@ -47,6 +42,7 @@ export default () => {
                 year={i.year}
                 type={i.type}
                 backdrop={i.backdrop}
+                duration={i.duration}
               />
             ))}
           </BrowseList>
@@ -62,6 +58,7 @@ export default () => {
                 year={i.release_date.split("-")[0]}
                 type="movie"
                 backdrop={i.backdrop_path}
+                duration={i.duration}
               />
             ))}
           </BrowseList>
@@ -74,22 +71,13 @@ export default () => {
 const styles = StyleSheet.create({
   buttons: {
     flexDirection: "row",
-    marginHorizontal: 10,
-    gap: 10,
-    marginBottom: 10,
-  },
-  button: {
     padding: 10,
-    borderWidth: 1,
-    flex: 1,
-    borderColor: "grey",
+    gap: 10,
+    // borderBottomWidth: 1,
+    // borderColor: "grey"
   },
-  buttonSelected: {
-    backgroundColor: "lightblue",
-    fontWeight: "bold",
-  },
-  buttonText: {
-    fontSize: 20,
-    textAlign: "center",
+  scroll: {
+    marginHorizontal: 10,
+    paddingBottom: 20,
   },
 });
