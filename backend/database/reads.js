@@ -242,14 +242,14 @@ export function searchMedia(title) {
         // For universal ordering, set "difference" using corresponding title
         `SELECT * 
         FROM (
-          SELECT media.*, NULL AS link_title, link.genres, LENGTH(media.title) - LENGTH(?) AS difference   
+          SELECT media.*, NULL AS link_title, link.genres, link.backdrop, link.poster, LENGTH(media.title) - LENGTH(?) AS difference
           FROM media 
           LEFT JOIN link ON link.media_id = media.media_id
           WHERE media.title LIKE ? AND link.title IS NULL
           
           UNION
           
-          SELECT media.*, link.title AS link_title, link.genres, LENGTH(link.title) - LENGTH(?) AS difference
+          SELECT media.*, link.title AS link_title, link.genres, link.backdrop, link.poster, LENGTH(link.title) - LENGTH(?) AS difference
           FROM media
           JOIN link ON link.media_id = media.media_id
           WHERE link.title LIKE ?
