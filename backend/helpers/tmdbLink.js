@@ -182,7 +182,7 @@ export async function fetchShowDetails(tmdbId) {
  */
 export async function fetchMovies(query, year) {
   try {
-    let url = `${API_ADDRESS}/search/movie?query=${query}`;
+    let url = `${API_ADDRESS}/search/movie?include_adult=false&query=${query}`;
     if (year) url += `&year=${year}`;
     const response = await fetch(url, GET_OPTIONS);
     const json = await response.json();
