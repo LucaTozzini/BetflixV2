@@ -11,6 +11,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 const client = new WebTorrent();
+let timeout = null;
 client.on("error", (err) => console.error("\nWebTorrent Error", err.message));
 
 export function getDownloads() {
@@ -31,8 +32,17 @@ The progressEvent aims to create that functionality
 */
 export const progressEvent = new EventEmitter();
 
+/*
+Throttle updates to 1 per second
+This is done by setting the timeout if one is not already active
+Once the timeout expires it will send the status at the time of expiration
+*/
 function progressUpdate() {
-  progressEvent.emit("update", getDownloads());
+  if (timeout) return;
+  timeout = new setTimeout(() => {
+    progressEvent.emit("update", getDownloads());
+    timeout = null;
+  }, 1000);
 }
 
 /**
