@@ -3,6 +3,7 @@ import http from "http";
 import cors from "cors";
 import { WebSocketServer } from "ws";
 import { onSocketConnect } from "./helpers/websockets.js";
+import "./helpers/mdns.js"
 //
 import mediaRouter from "./routes/media.js";
 import externalRouter from "./routes/external.js";
@@ -61,7 +62,7 @@ server.listen(process.env.SERVER_PORT, (err) => {
     process.exit(1);
   }
   console.log(
-    "Server listening on port",
+    "HTTP server listening on port",
     process.env.SERVER_PORT,
     `\nConnect from this machine @ http://localhost:${process.env.SERVER_PORT}`
   );
