@@ -2,7 +2,8 @@ import fs from "fs";
 import path from "path";
 import { selectMedia, selectEpisode } from "../database/reads.js";
 
-const CHUNK_SIZE = 10 ** 6;
+// If chunks are too small, expo-player not happy
+const CHUNK_SIZE = (10 ** 6) * 10;
 
 const MIME = {
   ".aac": "audio/aac",
@@ -19,8 +20,8 @@ const MIME = {
 };
 
 /**
- * @param {string} videoPath 
- * @returns {string} 
+ * @param {string} videoPath
+ * @returns {string}
  */
 function mimeType(videoPath) {
   const ext = path.extname(videoPath);
@@ -38,13 +39,15 @@ function pipeStream(req, res, videoPath) {
   // header.range is expected to be like -> 'bytes=0-'
   const range = req.headers.range?.match(/bytes=(?<start>[0-9]+)-.*/);
   const start = parseInt(range?.groups?.start ?? 0);
-  const end = Math.min(start + CHUNK_SIZE, videoSize - 1); // if start+chunk is past the end range, use the last byte instead
+  let end = Math.min(start + CHUNK_SIZE, videoSize - 1); // if start+chunk is past the end range, use the last byte instead
+
 
   res.writeHead(206, {
     "Content-Range": `bytes ${start}-${end}/${videoSize}`,
     "Accept-Ranges": "bytes",
     "Content-Length": end - start + 1, // add 1 because bytes are zero-indexed
     "Content-Type": mimeType(videoPath) ?? "",
+    "Connection": "close"
   });
 
   const stream = fs.createReadStream(videoPath, { start, end });
@@ -70,9 +73,9 @@ async function streamMovie(req, res) {
 }
 
 /**
- * @param {import('express').Request} req 
- * @param {import('express').Response} res 
- * @returns 
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns
  */
 async function streamEpisode(req, res) {
   const media = await selectMedia(req.params.mediaId);
