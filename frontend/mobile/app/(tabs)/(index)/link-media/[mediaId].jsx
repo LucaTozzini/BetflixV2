@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { ScrollView, StyleSheet, TextInput, View } from "react-native";
 import usePosts from "../../../../hooks/usePosts";
 import useQueries from "../../../../hooks/useQueries";
 import { BrowseItem, BrowseList } from "../../../../components/browseList";
+import ThemeContext from "../../../../contexts/themeContext";
 
 export default () => {
+  const theme = useContext(ThemeContext);
   const { mediaId } = useLocalSearchParams();
   const local = useQueries();
   const matches = useQueries();
@@ -13,13 +15,13 @@ export default () => {
   const [title, setTitle] = useState(null);
   const [year, setYear] = useState(null);
 
-  async function handleLink(tmdbId){
-    if(!local.data) return
-    const response = await postLink(mediaId, tmdbId, local.data.type)
-    if(response.ok) {
-      router.push(`/local-media/${mediaId}`)
+  async function handleLink(tmdbId) {
+    if (!local.data) return;
+    const response = await postLink(mediaId, tmdbId, local.data.type);
+    if (response.ok) {
+      router.push(`/local-media/${mediaId}`);
     } else {
-      console.error("Media Link not successful")
+      console.error("Media Link not successful");
     }
   }
 
@@ -47,7 +49,7 @@ export default () => {
   // #endregion
 
   return (
-    <View style={styles.container}>
+    <View style={{flex: 1, backgroundColor: theme.backgroundColor}}>
       <View style={styles.inputs}>
         <TextInput
           style={styles.titleInput}
@@ -76,7 +78,7 @@ export default () => {
                 }
                 backdrop={i.backdrop_path}
                 type={local.data.type}
-                handlePress={ () => handleLink(i.id)}
+                handlePress={() => handleLink(i.id)}
               />
             ))}
         </BrowseList>
@@ -86,7 +88,6 @@ export default () => {
 };
 
 const styles = StyleSheet.create({
-  container: {backgroundColor: "white", flex: 1},
   inputs: {
     flexDirection: "row",
     padding: 10,
@@ -103,5 +104,5 @@ const styles = StyleSheet.create({
     width: 100,
     fontSize: 20,
   },
-  scroll: {marginHorizontal: 10},
+  scroll: { marginHorizontal: 10 },
 });
