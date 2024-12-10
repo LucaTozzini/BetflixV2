@@ -22,7 +22,7 @@ export default () => {
       }}
     >
       <Text style={{ fontSize: 17, color: theme.color }}>{name}</Text>
-      <Text style={{color: theme.color}}>{secToString(timeRemaining)}</Text>
+      <Text style={{color: theme.color}}>{secToString(timeRemaining, true)}</Text>
       <View
         style={{
           borderRadius: 100,
