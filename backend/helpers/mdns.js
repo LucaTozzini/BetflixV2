@@ -14,19 +14,18 @@ dotenv.config();
 
 const MULTICAST_ADDRESS = "224.0.0.251";
 const MULTICAST_PORT = 5353;
-const TTL = 450; // in seconds
+const TTL = 100; // in seconds
 
 const allInterf = os.networkInterfaces();
 const validInterf = [];
 for (const type in allInterf)
   for (const interf of allInterf[type]) {
-    
     // skip internal/virtual interfaces (VPNs)
-    if (interf.mac === "00:00:00:00:00:00" || interf.internal) continue; 
-    
+    if (interf.mac === "00:00:00:00:00:00" || interf.internal) continue;
+
     // Only use IPv4 for now
     if (interf.family !== "IPv4") continue;
-    
+
     validInterf.push({ address: interf.address, family: interf.family });
   }
 
@@ -81,7 +80,7 @@ for (const interf of validInterf) {
     });
   }
 
-  server.on("message", (msg, rinfo) => {
+  function handleMessage(msg, rinfo) {
     const packet = dnsPacket.decode(msg, 0);
     if (packet.type === "query") {
       const answers = [];
@@ -99,18 +98,24 @@ for (const interf of validInterf) {
       }
       if (answers.length) respond(answers, rinfo.port, rinfo.address);
     }
-  });
+  }
 
   server.on("error", (err) => {
     console.error(err.stack);
     server.close();
   });
 
+  server.on("message", handleMessage);
+
   server.on("listening", () => {
     const address = server.address();
     console.log(`mDNS server listening @ ${address.address}:${address.port}`);
     server.addMembership(MULTICAST_ADDRESS, interf.address);
-    respond([answerPTR], MULTICAST_PORT, MULTICAST_ADDRESS);
+    respond(
+      [answerPTR, answerA, answerSRV, answerTXT],
+      MULTICAST_PORT,
+      MULTICAST_ADDRESS
+    );
   });
 
   server.bind(MULTICAST_PORT, interf.address);
