@@ -22,7 +22,7 @@ export default function MediaView({
       {backdrop && (
         <Image
           source={{ uri: `${IMAGE_BASE}/${backdrop}` }}
-          style={{ aspectRatio: 2 }}
+          style={{ aspectRatio: 1.7 }}
         />
       )}
       <View style={{ marginHorizontal }}>
@@ -45,14 +45,14 @@ export default function MediaView({
             {"a"
               .repeat(vote)
               .split("")
-              .map((i) => (
-                <Ionicons name="star-sharp" size={20} color={theme.color} />
+              .map((i, index) => (
+                <Ionicons key={index} name="star-sharp" size={20} color={theme.color} />
               ))}
             {"a"
               .repeat(5 - vote)
               .split("")
-              .map((i) => (
-                <Ionicons name="star-outline" size={20} color={theme.color} />
+              .map((i, index) => (
+                <Ionicons key={index} name="star-outline" size={20} color={theme.color} />
               ))}
           </View>
         )}
