@@ -7,7 +7,6 @@ import ThemeContext from "../../contexts/themeContext";
 
 export default () => {
   const theme = useContext(ThemeContext);
-  console.log(theme)
   const [searchText, setSearchText] = useState(null);
   const [searchType, setSearchType] = useState(0);
   const media = useQueries();
