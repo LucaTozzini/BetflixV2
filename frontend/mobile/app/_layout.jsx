@@ -5,12 +5,13 @@ import ServerContext from "../contexts/serverContext";
 import ThemeContext from "../contexts/themeContext";
 import useTheme from "../hooks/useTheme";
 import { useEffect } from "react";
+import { StatusBar } from "expo-status-bar";
 export default () => {
   const serverAddress = useZeroconf();
   const theme = useTheme();
   useEffect(() => {
-    // theme.setDarkTheme()
-  }, [])
+    theme.setLightTheme();
+  }, []);
   if (!serverAddress) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -22,6 +23,11 @@ export default () => {
   return (
     <ThemeContext.Provider value={theme}>
       <ServerContext.Provider value={serverAddress}>
+        <StatusBar
+          translucent={false}
+          style={theme.statusBarStyle}
+          backgroundColor={theme.backgroundColor}
+        />
         <Stack screenOptions={{ headerShown: false }} />
       </ServerContext.Provider>
     </ThemeContext.Provider>
