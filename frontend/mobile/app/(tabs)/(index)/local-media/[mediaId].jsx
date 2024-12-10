@@ -43,7 +43,6 @@ export default () => {
 
   useEffect(() => {
     if (media.data) {
-      console.log(media.data.title)
       if (media.data.type === "show") {
         seasons.selectSeasons(mediaId);
       }
@@ -100,7 +99,7 @@ export default () => {
       </MediaView>
       {media.data?.type === "show" && (
         <View style={styles.episodes}>
-          <Button handlePress={() => setShowModal(true)} text="Select Season" />
+          {seasons.data?.length > 1 && <Button handlePress={() => setShowModal(true)} text="Select Season" />}
           {season.data?.map((i) => (
             <EpisodeButton
               key={i.season_num + "_" + i.episode_num}
