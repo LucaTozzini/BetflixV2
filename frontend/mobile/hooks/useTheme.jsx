@@ -7,9 +7,6 @@ export default function useTheme() {
   const [highlightColor, setHighlightColor] = useState("lightblue");
   const [statusBarStyle, setStatusBarStyle] = useState("light");
 
-  const [h1Size, setH1Size] = useState(20);
-  const [h2Size, setH2Size] = useState(17);
-
   function setLightTheme() {
     setStatusBarStyle("dark");
     setColor("black");
@@ -29,8 +26,6 @@ export default function useTheme() {
   return {
     color,
     colorDim,
-    h1Size,
-    h2Size,
     statusBarStyle,
     backgroundColor,
     highlightColor,
