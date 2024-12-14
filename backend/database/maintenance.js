@@ -24,8 +24,8 @@ async function createDB() {
           media_id INT PRIMARY KEY,
           tmdb_id INT,
           title TEXT,
-          poster TEXT,
-          backdrop TEXT,
+          poster_path TEXT,
+          backdrop_path TEXT,
           overview TEXT,
           genres TEXT
         );
