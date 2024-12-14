@@ -11,8 +11,8 @@ import dbPromise from "./connection.js";
  * Insert local to external link
  * @param {number} mediaId
  * @param {number} tmdbId
- * @param {string} poster
- * @param {string} backdrop
+ * @param {string} poster_path
+ * @param {string} backdrop_path
  * @param {string} overview
  * @param {string} genres
  * @returns {Promise<object>}
@@ -21,16 +21,16 @@ export function insertLink(
   mediaId,
   tmdbId,
   title,
-  poster,
-  backdrop,
+  poster_path,
+  backdrop_path,
   overview,
   genres
 ) {
   return new Promise((res, rej) =>
     dbPromise.then((db) =>
       db.run(
-        "INSERT INTO link (media_id, tmdb_id, title, poster, backdrop, overview, genres) VALUES (?,?,?,?,?,?,?)",
-        [mediaId, tmdbId, title, poster, backdrop, overview, genres],
+        "INSERT INTO link (media_id, tmdb_id, title, poster_path, backdrop_path, overview, genres) VALUES (?,?,?,?,?,?,?)",
+        [mediaId, tmdbId, title, poster_path, backdrop_path, overview, genres],
         (err) => (err ? rej(err) : res())
       )
     )
