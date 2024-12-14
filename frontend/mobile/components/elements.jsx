@@ -1,4 +1,5 @@
 import {
+  RefreshControl,
   ScrollView,
   Text,
   TextInput,
@@ -9,21 +10,22 @@ import { useContext } from "react";
 import ThemeContext from "../contexts/themeContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-const fontTiny = 15;
-const fontSmall = 20;
-const fontMedium = 30;
-const fontLarge = 35;
+const fontTiny = 13;
+const fontSmall = 18;
+const fontMedium = 23;
+const fontLarge = 30;
 const fontHuge = 40;
 
-export const Body = ({ children, pad }) => {
+const padding = 15;
+
+export const Div = ({ children, pad }) => {
   const theme = useContext(ThemeContext);
   return (
     <View
       style={{
         flex: 1,
         backgroundColor: theme.backgroundColor,
-        padding: pad ? 13 : 0,
-        gap: 10,
+        padding: pad ? padding : 0,
       }}
     >
       {children}
@@ -31,19 +33,36 @@ export const Body = ({ children, pad }) => {
   );
 };
 
-export const Div = ({ children, pad }) => {
+export const Scroll = ({
+  children,
+  pad,
+  refreshing,
+  onRefresh,
+  stickyHeaderIndices,
+  gap,
+}) => {
   return (
-    <ScrollView contentContainerStyle={{ gap: 10, padding: pad ? 13 : 0 }}>
+    <ScrollView
+      contentContainerStyle={{ gap, padding: pad ? padding : 0 }}
+      refreshControl={
+        onRefresh ? (
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        ) : null
+      }
+      stickyHeaderIndices={stickyHeaderIndices}
+    >
       {children}
     </ScrollView>
   );
 };
 
-export const H1 = ({ children, dim, serif }) => {
+export const H1 = ({ children, dim, serif, numberOfLines }) => {
+  if (!children) return;
   const theme = useContext(ThemeContext);
 
   return (
     <Text
+      numberOfLines={numberOfLines}
       style={{
         color: theme[dim ? "colorDim" : "color"],
         fontSize: fontHuge,
@@ -56,11 +75,13 @@ export const H1 = ({ children, dim, serif }) => {
   );
 };
 
-export const H2 = ({ children, dim, serif }) => {
+export const H2 = ({ children, dim, serif, numberOfLines }) => {
+  if (!children) return;
   const theme = useContext(ThemeContext);
 
   return (
     <Text
+      numberOfLines={numberOfLines}
       style={{
         color: theme[dim ? "colorDim" : "color"],
         fontSize: fontLarge,
@@ -73,10 +94,13 @@ export const H2 = ({ children, dim, serif }) => {
   );
 };
 
-export const H3 = ({ children, dim, serif }) => {
+export const H3 = ({ children, dim, serif, numberOfLines }) => {
+  if (!children) return;
   const theme = useContext(ThemeContext);
+
   return (
     <Text
+      numberOfLines={numberOfLines}
       style={{
         color: theme[dim ? "colorDim" : "color"],
         fontSize: fontMedium,
@@ -88,14 +112,16 @@ export const H3 = ({ children, dim, serif }) => {
   );
 };
 
-export const P = ({ children, center, dim }) => {
+export const P = ({ children, center, dim, numberOfLines, tiny }) => {
+  if (!children) return;
   const theme = useContext(ThemeContext);
 
   return (
     <Text
+      numberOfLines={numberOfLines}
       style={{
         color: theme[dim ? "colorDim" : "color"],
-        fontSize: fontSmall,
+        fontSize: tiny ? fontTiny : fontSmall,
         textAlign: center ? "center" : undefined,
       }}
     >
@@ -112,25 +138,29 @@ export const P = ({ children, center, dim }) => {
 |___________________| |_|
 
 */
-export const SearchBar = ({ placeholder, value, setValue, onSubmit }) => {
+export const SearchBar = ({
+  placeholder,
+  value,
+  setValue,
+  onSubmit,
+  autoFocus,
+}) => {
   const theme = useContext(ThemeContext);
   return (
     <View
       style={{
-        flexDirection: "row",
-        alignItems: "stretch",
-        height: 47,
-        gap: 10,
+        padding,
+        backgroundColor: theme.backgroundColor,
       }}
     >
       <View
         style={{
           flexDirection: "row",
           gap: 10,
-          borderColor: "grey",
+          borderColor: theme.colorDim,
           borderWidth: 1,
           alignItems: "center",
-          paddingHorizontal: 7,
+          paddingVertical: 7,
           borderRadius: 50,
           flex: 1,
           paddingHorizontal: 10,
@@ -138,6 +168,7 @@ export const SearchBar = ({ placeholder, value, setValue, onSubmit }) => {
       >
         <Ionicons name="search-outline" size={25} color={theme.color} />
         <TextInput
+          autoFocus={autoFocus}
           numberOfLines={1}
           style={{ flex: 1, color: theme.color, fontSize: fontSmall }}
           placeholder={placeholder}
@@ -146,28 +177,18 @@ export const SearchBar = ({ placeholder, value, setValue, onSubmit }) => {
           value={value}
           onSubmitEditing={onSubmit ?? null}
         />
-      </View>
-
-      <View
-        style={{
-          display: value === null || value === "" ? "none" : "flex",
-          aspectRatio: 1,
-          borderRadius: "50%",
-          borderWidth: 1,
-          borderColor: "grey",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <TouchableOpacity onPress={() => setValue(null)}>
-          <Ionicons name="close-outline" size={25} color={theme.color} />
-        </TouchableOpacity>
+        {value !== null && (
+          <TouchableOpacity onPress={() => setValue(null)}>
+            <Ionicons name="close-outline" size={25} color={theme.color} />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
 };
 
 export const Button = ({ children, grow, onPress }) => {
+  const theme = useContext(ThemeContext);
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -177,6 +198,7 @@ export const Button = ({ children, grow, onPress }) => {
         borderWidth: 1,
         borderColor: "grey",
         justifyContent: "center",
+        backgroundColor: theme.buttonBackgroundColor,
         borderRadius: 10,
         alignItems: "center",
         gap: 10,
@@ -197,7 +219,7 @@ export const Chip = ({ children }) => {
         fontSize: fontTiny,
         textAlign: "center",
 
-        paddingHorizontal: 15,
+        paddingHorizontal: 8,
         paddingVertical: 5,
 
         borderWidth: 1,
@@ -209,3 +231,5 @@ export const Chip = ({ children }) => {
     </Text>
   );
 };
+
+export const Footer = ({}) => <View style={{ height: 30 }} />;

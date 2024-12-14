@@ -1,6 +1,12 @@
-import { Image, ImageBackground, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  ImageBackground,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { router } from "expo-router";
-import { LinearGradient } from 'expo-linear-gradient';
+import { LinearGradient } from "expo-linear-gradient";
 import secToString from "../helpers/secToString";
 
 const IMG_BASE = "https://image.tmdb.org/t/p/w780";
@@ -19,10 +25,10 @@ export function BrowseItem({
   tmdbId,
   title,
   year,
-  backdrop,
+  backdrop_path,
   type,
   handlePress,
-  duration
+  duration,
 }) {
   if (!handlePress) {
     let href = `/local-media/${mediaId}`;
@@ -32,10 +38,36 @@ export function BrowseItem({
 
   return (
     <TouchableOpacity onPress={handlePress}>
-      <ImageBackground source={{ uri: backdrop ? `${IMG_BASE}/${backdrop}` : null }} style={{aspectRatio: 1.78, backgroundColor: "grey", borderRadius: 10, overflow: "hidden"}}>
-        <LinearGradient colors={["transparent", "rgba(0,0,0,0.5)"]} locations={[0, 1]} style={{flex: 1, justifyContent: "flex-end", padding: 10, paddingRight: "20%"}}>
-          <Text style={{color:"white", fontSize: 18, fontWeight: "bold"}} numberOfLines={1}>{title}</Text>
-          <Text style={{color:"gainsboro", fontSize: 13, fontWeight: "bold"}}>{year} {duration && "| "+secToString(duration)}</Text>
+      <ImageBackground
+        source={{ uri: backdrop_path ? `${IMG_BASE}/${backdrop_path}` : null }}
+        style={{
+          aspectRatio: 1.78,
+          backgroundColor: "grey",
+          borderRadius: 10,
+          overflow: "hidden",
+        }}
+      >
+        <LinearGradient
+          colors={["transparent", "rgba(0,0,0,0.5)"]}
+          locations={[0, 1]}
+          style={{
+            flex: 1,
+            justifyContent: "flex-end",
+            padding: 10,
+            paddingRight: "20%",
+          }}
+        >
+          <Text
+            style={{ color: "white", fontSize: 18, fontWeight: "bold" }}
+            numberOfLines={1}
+          >
+            {title}
+          </Text>
+          <Text
+            style={{ color: "gainsboro", fontSize: 13, fontWeight: "bold" }}
+          >
+            {year} {duration && "| " + secToString(duration)}
+          </Text>
         </LinearGradient>
       </ImageBackground>
     </TouchableOpacity>

@@ -4,6 +4,7 @@ import { useContext, useState } from "react";
 import { View, Text, Image, Pressable } from "react-native";
 import ThemeContext from "../contexts/themeContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { H1, H2, P } from "./elements";
 
 export default function MediaView({
   title,
@@ -26,19 +27,10 @@ export default function MediaView({
         />
       )}
       <View style={{ marginHorizontal }}>
-        <Text style={{ fontSize: 50, fontWeight: "bold", color: theme.color }}>
-          {title}
-        </Text>
-        {year && (
-          <Text style={{ fontSize: 37, color: theme.colorDim }}>{year}</Text>
-        )}
-        {genres && (
-          <Text
-            style={{ fontSize: 20, color: theme.colorDim, fontWeight: "bold" }}
-          >
-            {genres}
-          </Text>
-        )}
+        <H1>{title}</H1>
+        <H2 dim>{year}</H2>
+        <P dim>{genres}</P>
+
         {vote && (
           <View style={{ flexDirection: "row" }}>
             {/* There has to be a better way to do this */}
@@ -46,27 +38,31 @@ export default function MediaView({
               .repeat(vote)
               .split("")
               .map((i, index) => (
-                <Ionicons key={index} name="star-sharp" size={20} color={theme.color} />
+                <Ionicons
+                  key={index}
+                  name="star-sharp"
+                  size={20}
+                  color={theme.color}
+                />
               ))}
             {"a"
               .repeat(5 - vote)
               .split("")
               .map((i, index) => (
-                <Ionicons key={index} name="star-outline" size={20} color={theme.color} />
+                <Ionicons
+                  key={index}
+                  name="star-outline"
+                  size={20}
+                  color={theme.color}
+                />
               ))}
           </View>
         )}
         {children}
-        {overview && (
-          <Pressable onPress={() => setExpand(!expand)}>
-            <Text
-              style={{ fontSize: 20, color: theme.color }}
-              numberOfLines={expand ? null : 3}
-            >
-              {overview}
-            </Text>
-          </Pressable>
-        )}
+
+        <Pressable onPress={() => setExpand(!expand)}>
+          <P numberOfLines={expand ? null : 3}>{overview}</P>
+        </Pressable>
       </View>
     </View>
   );

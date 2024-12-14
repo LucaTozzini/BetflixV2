@@ -1,83 +1,75 @@
-import { View, ScrollView, StyleSheet } from "react-native";
-import { Button } from "../../../components/buttons";
+import { View } from "react-native";
+import { Div, Footer, Scroll } from "../../../components/elements";
 import useQueries from "../../../hooks/useQueries";
 import { useContext, useEffect, useState } from "react";
-import { BrowseItem, BrowseList } from "../../../components/browseList";
 import ThemeContext from "../../../contexts/themeContext";
+import {
+  BlurredPoster,
+  PosterScroll,
+  SpotLight,
+  TopBar,
+} from "../../../components/ui";
+import { router } from "expo-router";
+import idToGenre from "../../../helpers/idToGenre";
+
 export default () => {
   const theme = useContext(ThemeContext);
-  const [browseType, setBrowseType] = useState(0);
   const latest = useQueries();
   const popular = useQueries();
+  const [spotlight, setSpotlight] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  async function handleRefresh() {
+    setRefreshing(true);
+    await popular.fetchPopularMovies();
+    await latest.selectMediaCollection(0, 10, "year", true, "any");
+
+    setRefreshing(false);
+  }
 
   useEffect(() => {
     latest.selectMediaCollection(0, 10, "year", true, "any");
     popular.fetchPopularMovies();
   }, []);
 
+  useEffect(() => {
+    if (popular.data) {
+      const rand = Math.floor(Math.random() * popular.data.length);
+      setSpotlight(popular.data[rand]);
+    }
+  }, [popular.data]);
+
   return (
-    <View style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
-      <View style={styles.buttons}>
-        <Button
-          handlePress={() => setBrowseType(0)}
-          text="Latest on Disc"
-          focused={browseType === 0}
+    <Div>
+      <TopBar />
+      <Scroll refreshing={refreshing} onRefresh={handleRefresh} gap={50}>
+        <View
+          style={{
+            pointerEvents: "none",
+            position: "relative",
+            top: 0,
+            right: 0,
+            left: 0,
+            height: 10,
+          }}
+        >
+          <BlurredPoster poster_path={spotlight?.poster_path} />
+        </View>
+        <SpotLight
+          // header={"Spotlight"}
+          title={spotlight?.title}
+          year={spotlight?.release_date?.split("-")[0]}
+          poster_path={spotlight?.poster_path}
+          genres={spotlight?.genre_ids?.map((i) => idToGenre[i]).slice(0, 3)}
+          onPress={() => router.push(`/external-media/${spotlight.id}`)}
         />
-        <Button
-          handlePress={() => setBrowseType(1)}
-          text="Popular Movies"
-          focused={browseType === 1}
-        />
-      </View>
 
-      {/* Set height of parent View for ScrollView height to be properly set */}
-      <ScrollView contentContainerStyle={styles.scroll}>
-        {browseType === 0 && (
-          <BrowseList>
-            {latest.data?.map((i) => (
-              <BrowseItem
-                key={i.media_id}
-                mediaId={i.media_id}
-                title={i.link_title ?? i.title}
-                year={i.year}
-                type={i.type}
-                backdrop={i.backdrop}
-                duration={i.duration}
-              />
-            ))}
-          </BrowseList>
-        )}
+        <PosterScroll data={popular.data} header={"Popular"} />
 
-        {browseType === 1 && (
-          <BrowseList>
-            {popular.data?.map((i) => (
-              <BrowseItem
-                key={i.id}
-                tmdbId={i.id}
-                title={i.title}
-                year={i.release_date.split("-")[0]}
-                type="movie"
-                backdrop={i.backdrop_path}
-                duration={i.duration}
-              />
-            ))}
-          </BrowseList>
-        )}
-      </ScrollView>
-    </View>
+        <PosterScroll data={latest.data} header={"Latest on Disc"} />
+
+        <Footer/>
+      </Scroll>
+    </Div>
   );
 };
-
-const styles = StyleSheet.create({
-  buttons: {
-    flexDirection: "row",
-    padding: 10,
-    gap: 10,
-    // borderBottomWidth: 1,
-    // borderColor: "grey"
-  },
-  scroll: {
-    marginHorizontal: 10,
-    paddingBottom: 20,
-  },
-});

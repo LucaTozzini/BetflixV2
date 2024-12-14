@@ -146,8 +146,8 @@ export function LocalMedia() {
 
   return (
     <div id="outlet" className={styles.container}>
-      {mediaLink.data?.backdrop && (
-        <img src={TMDB_IMG_BASE + mediaLink.data?.backdrop} alt="backdrop" />
+      {mediaLink.data?.poster_path && (
+        <img src={TMDB_IMG_BASE + mediaLink.data?.backdrop_path} alt="backdrop" />
       )}
       <div className={styles.wrap}>
         <MediaInfo

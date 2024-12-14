@@ -38,7 +38,7 @@ export default function useQueries() {
    * @param {string} order
    * @param {string} type
    */
-  function selectMediaCollection(offset, limit, order, desc, type) {
+  async function selectMediaCollection(offset, limit, order, desc, type) {
     const queryParams = `${[
       parString("offset", offset),
       parString("limit", limit),
@@ -49,7 +49,7 @@ export default function useQueries() {
       .filter((i) => i)
       .join("&")}`;
 
-    genericGET(`/media?${queryParams}`);
+    await genericGET(`/media?${queryParams}`);
   }
 
   /**
@@ -73,8 +73,8 @@ export default function useQueries() {
   /**
    * Fetch current popular movies from TMDb
    */
-  function fetchPopularMovies() {
-    genericGET(`/external/popular-movies`);
+  async function fetchPopularMovies() {
+    await genericGET(`/external/popular-movies`);
   }
 
   /**

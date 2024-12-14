@@ -76,7 +76,7 @@ export default () => {
                     ? i.release_date?.split("-")[0]
                     : i.first_air_date?.split("-")[0]
                 }
-                backdrop={i.backdrop_path}
+                backdrop_path={i.backdrop_path}
                 type={local.data.type}
                 handlePress={() => handleLink(i.id)}
               />

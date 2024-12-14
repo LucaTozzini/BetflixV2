@@ -3,30 +3,40 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import ThemeContext from "../contexts/themeContext";
 import { useContext } from "react";
 export default function Tabs({ state, descriptors, navigation }) {
-  const theme = useContext(ThemeContext)
-  
+  const theme = useContext(ThemeContext);
+
   const routeToIcon = {
     "(index)": "home",
     search: "search",
     console: "terminal",
     downloads: "download",
-    settings: "settings"
-  }
-  const Tab = ({ handlePress, iconName, focused }) => (
+    settings: "settings",
+  };
+  const Tab = ({ handlePress, label, iconName, focused }) => (
     <TouchableOpacity onPress={handlePress} style={styles.tab}>
       <Ionicons
         name={`${iconName}-${focused ? "sharp" : "outline"}`}
-        size={32}
+        size={23}
         color={focused ? theme.color : theme.colorDim}
       />
+      <Text style={{ color: theme.color, fontSize: 8 }}>{label}</Text>
     </TouchableOpacity>
   );
 
   return (
-    <View style={[styles.container, {backgroundColor: theme.backgroundColor, borderColor: theme.colorDim}]}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.tabsBackgroundColor,
+          borderColor: theme.colorDim,
+        },
+      ]}
+    >
       {state.routes.map((route, index) => {
         const options = descriptors[route.key];
-        // const label = options.tabBarLabel ?? options.title ?? route.name;
+        let label = options.tabBarLabel ?? options.title ?? route.name;
+        if (label === "(index)") label = "home";
         const focused = state.index === index;
 
         const handlePress = () => {
@@ -44,6 +54,7 @@ export default function Tabs({ state, descriptors, navigation }) {
         return (
           <Tab
             key={index}
+            label={label}
             handlePress={handlePress}
             iconName={routeToIcon[route.name]}
             focused={focused}
@@ -60,6 +71,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 10,
     borderTopWidth: 1,
+    paddingHorizontal: 10,
 
     // Set from ThemeContext
     // borderTopColor: "grey",
@@ -68,5 +80,6 @@ const styles = StyleSheet.create({
   tab: {
     alignItems: "center",
     padding: 10,
+    flex: 1,
   },
 });
