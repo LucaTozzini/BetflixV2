@@ -22,8 +22,8 @@
  * @typedef {Obj} linkRow
  * @property {number} media_id
  * @property {number} tmdb_id
- * @property {string} poster
- * @property {string} backdrop
+ * @property {string} poster_path
+ * @property {string} backdrop_path
  * @property {string} overview
  * @property {string} genres
  */
@@ -58,7 +58,7 @@ export function selectMediaCollection(offset, limit, order, desc, type) {
     dbPromise.then((db) => {
       const validColumns = ["year", "title", "duration"];
       db.all(
-        `SELECT media.*, link.title AS link_title, backdrop, poster, genres
+        `SELECT media.*, link.title AS link_title, backdrop_path, poster_path, genres
         FROM media
         LEFT JOIN link ON media.media_id = link.media_id 
         WHERE type = ? OR type = ? 
@@ -83,7 +83,7 @@ export function selectMedia(mediaId) {
   return new Promise((res, rej) =>
     dbPromise.then((db) =>
       db.get(
-        `SELECT media.*, link.title AS link_title, tmdb_id, backdrop, poster, genres, overview
+        `SELECT media.*, link.title AS link_title, tmdb_id, backdrop_path, poster_path, genres, overview
         FROM media 
         LEFT JOIN link ON link.media_id = media.media_id 
         WHERE media.media_id = ?`,
@@ -242,14 +242,14 @@ export function searchMedia(title) {
         // For universal ordering, set "difference" using corresponding title
         `SELECT * 
         FROM (
-          SELECT media.*, NULL AS link_title, link.genres, link.backdrop, link.poster, LENGTH(media.title) - LENGTH(?) AS difference
+          SELECT media.*, NULL AS link_title, link.genres, link.backdrop_path, link.poster_path, LENGTH(media.title) - LENGTH(?) AS difference
           FROM media 
           LEFT JOIN link ON link.media_id = media.media_id
           WHERE media.title LIKE ? AND link.title IS NULL
           
           UNION
           
-          SELECT media.*, link.title AS link_title, link.genres, link.backdrop, link.poster, LENGTH(link.title) - LENGTH(?) AS difference
+          SELECT media.*, link.title AS link_title, link.genres, link.backdrop_path, link.poster_path, LENGTH(link.title) - LENGTH(?) AS difference
           FROM media
           JOIN link ON link.media_id = media.media_id
           WHERE link.title LIKE ?
