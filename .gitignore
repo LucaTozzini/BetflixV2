@@ -2,3 +2,4 @@
 *.db
 *.env
 /frontend/mobile/android
+/frontend/mobile/reference-images
