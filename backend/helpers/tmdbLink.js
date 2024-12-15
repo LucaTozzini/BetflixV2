@@ -149,7 +149,7 @@ export async function fetchPopularMovies() {
  */
 export async function fetchMovieDetails(tmdbId) {
   try {
-    const url = `${API_ADDRESS}/movie/${tmdbId}`;
+    const url = `${API_ADDRESS}/movie/${tmdbId}?append_to_response=credits`;
     const response = await fetch(url, GET_OPTIONS);
     const json = await response.json();
     return json;
