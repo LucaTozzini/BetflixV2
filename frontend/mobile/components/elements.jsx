@@ -11,10 +11,10 @@ import ThemeContext from "../contexts/themeContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 const fontTiny = 13;
-const fontSmall = 18;
-const fontMedium = 23;
-const fontLarge = 30;
-const fontHuge = 40;
+const fontSmall = 16;
+const fontMedium = 18;
+const fontLarge = 24;
+const fontHuge = 30;
 
 const padding = 15;
 
@@ -56,7 +56,7 @@ export const Scroll = ({
   );
 };
 
-export const H1 = ({ children, dim, serif, numberOfLines }) => {
+export const H1 = ({ children, center, dim, serif, numberOfLines }) => {
   if (!children) return;
   const theme = useContext(ThemeContext);
 
@@ -68,6 +68,7 @@ export const H1 = ({ children, dim, serif, numberOfLines }) => {
         fontSize: fontHuge,
         fontWeight: "bold",
         fontFamily: serif ? "serif" : undefined,
+        textAlign: center ? "center" : undefined,
       }}
     >
       {children}
@@ -75,7 +76,7 @@ export const H1 = ({ children, dim, serif, numberOfLines }) => {
   );
 };
 
-export const H2 = ({ children, dim, serif, numberOfLines }) => {
+export const H2 = ({ children, center, dim, serif, numberOfLines }) => {
   if (!children) return;
   const theme = useContext(ThemeContext);
 
@@ -87,6 +88,7 @@ export const H2 = ({ children, dim, serif, numberOfLines }) => {
         fontSize: fontLarge,
         fontWeight: "bold",
         fontFamily: serif ? "serif" : undefined,
+        textAlign: center ? "center" : undefined,
       }}
     >
       {children}
@@ -94,7 +96,7 @@ export const H2 = ({ children, dim, serif, numberOfLines }) => {
   );
 };
 
-export const H3 = ({ children, dim, serif, numberOfLines }) => {
+export const H3 = ({ children, center, dim, serif, numberOfLines }) => {
   if (!children) return;
   const theme = useContext(ThemeContext);
 
@@ -105,6 +107,8 @@ export const H3 = ({ children, dim, serif, numberOfLines }) => {
         color: theme[dim ? "colorDim" : "color"],
         fontSize: fontMedium,
         fontFamily: serif ? "serif" : undefined,
+        textAlign: center ? "center" : undefined,
+        fontWeight: "bold",
       }}
     >
       {children}
@@ -189,24 +193,27 @@ export const SearchBar = ({
 
 export const Button = ({ children, grow, onPress }) => {
   const theme = useContext(ThemeContext);
+  // Wrap button in View so that when multiple buttons are placed in a row, flex 1 will stretch them evenly without being
+  // without being influenced by each button's content
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={{
-        padding: 10,
-        flexDirection: "row",
-        borderWidth: 1,
-        borderColor: "grey",
-        justifyContent: "center",
-        backgroundColor: theme.buttonBackgroundColor,
-        borderRadius: 10,
-        alignItems: "center",
-        gap: 10,
-        flex: grow ? 1 : undefined,
-      }}
-    >
-      {children}
-    </TouchableOpacity>
+    <View style={{ flex: grow ? 1 : undefined }}>
+      <TouchableOpacity
+        onPress={onPress}
+        style={{
+          padding: 10,
+          flexDirection: "row",
+          borderWidth: 1,
+          borderColor: "grey",
+          justifyContent: "center",
+          backgroundColor: theme.buttonBackgroundColor,
+          borderRadius: 10,
+          alignItems: "center",
+          gap: 10,
+        }}
+      >
+        {children}
+      </TouchableOpacity>
+    </View>
   );
 };
 

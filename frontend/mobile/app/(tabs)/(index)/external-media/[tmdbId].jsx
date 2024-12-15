@@ -1,18 +1,24 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { ScrollView, StyleSheet, View } from "react-native";
+import usePosts from "../../../../hooks/usePosts";
 import useQueries from "../../../../hooks/useQueries";
 import MediaView from "../../../../components/mediaView";
-import { TorrentButton } from "../../../../components/buttons";
 import ThemeContext from "../../../../contexts/themeContext";
+import { H3 } from "../../../../components/elements";
+import { Toast, TorrentButton } from "../../../../components/ui";
 
 export default () => {
   const theme = useContext(ThemeContext);
   const { tmdbId } = useLocalSearchParams();
+  const [showToast, setShowToast] = useState(false);
+  const [showToastError, setShowToastError] = useState(false);
 
   const media = useQueries();
   const link = useQueries();
   const torrents = useQueries();
+
+  const { postTorrent } = usePosts();
 
   useEffect(() => {
     media.fetchMovieDetails(tmdbId);
@@ -33,6 +39,8 @@ export default () => {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
+      <Toast show={showToast} throb message={"Adding torrent"} />
+      <Toast show={showToastError} isError message={"Something whent wrong"} />
       <ScrollView contentContainerStyle={styles.scroll}>
         <MediaView
           title={media.data?.title}
@@ -44,25 +52,42 @@ export default () => {
               : null
           }
           overview={media.data?.overview}
-          backdrop={media.data?.backdrop_path}
-          marginHorizontal={10}
+          backdrop_path={media.data?.backdrop_path}
+          cast={media.data?.credits?.cast}
         />
-        {torrents.data && (
-          <View style={styles.torrents}>
-            {torrents.data.map((i) => (
-              <TorrentButton
-                key={i.hash}
-                quality={i.quality}
-                seeds={i.seeds}
-                peers={i.peers}
-                size={i.size}
-                codec={i.video_codec}
-                type={i.type}
-                url={i.url}
-              />
-            ))}
-          </View>
-        )}
+        <View style={{ marginHorizontal: 10 }}>
+          {torrents.data?.length ? (
+            <View style={styles.torrents}>
+              <H3>Torrents</H3>
+              {torrents.data.map((i) => (
+                <TorrentButton
+                  key={i.hash}
+                  quality={i.quality}
+                  seeds={i.seeds}
+                  peers={i.peers}
+                  size={i.size}
+                  codec={i.video_codec}
+                  type={i.type}
+                  onPress={async () => {
+                    try {
+                      setShowToast(true);
+                      const response = await postTorrent(i.url);
+                      if (!response.ok) throw new Error("not ok");
+                      router.push("/downloads");
+                    } catch (err) {
+                      console.error(err.message);
+                      setShowToastError(true);
+                      setTimeout(() => setShowToastError(false), 4000);
+                    }
+                    setShowToast(false);
+                  }}
+                />
+              ))}
+            </View>
+          ) : (
+            <H3>No Torrents Available</H3>
+          )}
+        </View>
       </ScrollView>
     </View>
   );
@@ -75,6 +100,5 @@ const styles = StyleSheet.create({
   },
   torrents: {
     gap: 10,
-    marginHorizontal: 10,
   },
 });

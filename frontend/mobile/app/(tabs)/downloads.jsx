@@ -3,6 +3,8 @@ import useSocket from "../../hooks/useSocket";
 import { useContext, useEffect, useState } from "react";
 import secToString from "../../helpers/secToString";
 import ThemeContext from "../../contexts/themeContext";
+import { Div, H2, H3, P } from "../../components/elements";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default () => {
   const theme = useContext(ThemeContext);
@@ -15,34 +17,49 @@ export default () => {
   const Item = ({ name, progress, timeRemaining }) => (
     <View
       style={{
-        padding: 10,
+        padding: 20,
         borderWidth: 1,
+        borderRadius: 20,
         borderColor: theme.colorDim,
         gap: 10,
       }}
     >
       <Text style={{ fontSize: 17, color: theme.color }}>{name}</Text>
-      <Text style={{color: theme.color}}>{secToString(timeRemaining, true)}</Text>
+      <Text style={{ color: theme.color }}>
+        {secToString(timeRemaining, true)}
+      </Text>
       <View
         style={{
           borderRadius: 100,
           overflow: "hidden",
-          backgroundColor: "rgb(210,210,210)",
+          backgroundColor: theme.color,
         }}
       >
         <View
           style={{
-            height: 10,
+            height: 5,
             width: progress * 100 + "%",
-            backgroundColor: "blue",
+            backgroundColor: theme.accentColor,
           }}
         />
       </View>
     </View>
   );
 
+  if (!data?.length)
+    return (
+      <Div pad>
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center", gap: 20 }}
+        >
+          <P center>Active Downloads Will Appear Here</P>
+          <Ionicons name="file-tray-outline" style={{textAlign: "center"}} color={theme.color} size={40} />
+        </View>
+      </Div>
+    );
+
   return (
-    <View style={{ backgroundColor: theme.backgroundColor, flex: 1 }}>
+    <Div>
       <ScrollView
         contentContainerStyle={{
           marginHorizontal: 10,
@@ -59,6 +76,6 @@ export default () => {
           />
         ))}
       </ScrollView>
-    </View>
+    </Div>
   );
 };

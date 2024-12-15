@@ -3,17 +3,12 @@ import useZeroconf from "../hooks/useZeroconf";
 import ServerContext from "../contexts/serverContext";
 import ThemeContext from "../contexts/themeContext";
 import useTheme from "../hooks/useTheme";
-import { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
-
 import { Div, H2 } from "../components/elements";
 
 export default () => {
   const serverAddress = useZeroconf();
   const theme = useTheme();
-  useEffect(() => {
-    theme.setLightTheme();
-  }, []);
 
   if (!serverAddress) {
     return (

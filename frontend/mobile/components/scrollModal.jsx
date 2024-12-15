@@ -12,7 +12,7 @@ export default function ScrollModal({ showModal, setShowModal, children }) {
       onRequestClose={() => setShowModal(false)}
     >
       <Pressable style={styles.container} onPress={() => setShowModal(false)}>
-        <Pressable style={[styles.content, {backgroundColor: theme.backgroundColor}]}>
+        <Pressable style={[styles.content, {backgroundColor: theme.backgroundColor, shadowColor: theme.colorDim}]}>
           <View style={[styles.top, {borderColor: theme.colorDim}]}>
             <View style={[styles.lip, {backgroundColor: theme.colorDim}]} />
           </View>
@@ -32,12 +32,12 @@ const styles = StyleSheet.create({
   },
   content: {
     margin: 10,
-    // backgroundColor: "white",
     height: "50%",
     borderRadius: 20,
     overflow: "hidden",
-    elevation: 20,
     paddingBottom: 10,
+    
+    elevation: 20,
   },
   top: {
     alignItems: "center",
@@ -48,8 +48,8 @@ const styles = StyleSheet.create({
   lip: {
     borderRadius: 50,
     // backgroundColor: "grey",
-    height: 7,
+    height: 4,
     width: 50,
   },
-  scroll: { padding: 10 },
+  scroll: { padding: 10, gap: 7 },
 });

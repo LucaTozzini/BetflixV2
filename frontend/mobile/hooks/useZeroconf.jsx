@@ -15,9 +15,9 @@ export default function useZeroconf() {
       zeroconf.stop();
     }
 
-    zeroconf.on("start", () => console.log("zeroconf started."));
-    zeroconf.on("stop", () => console.log("zeroconf stopped."));
-    zeroconf.on("found", (name) => console.log("zeroconf found", name));
+    // zeroconf.on("start", () => console.log("zeroconf started."));
+    // zeroconf.on("stop", () => console.log("zeroconf stopped."));
+    // zeroconf.on("found", (name) => console.log("zeroconf found", name));
     zeroconf.on("resolved", handleResolve);
     // setServerAddress("192.168.1.76:5340")
     zeroconf.scan("http", "tcp", "local.");

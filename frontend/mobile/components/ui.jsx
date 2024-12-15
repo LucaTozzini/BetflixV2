@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import ThemeContext from "../contexts/themeContext";
 import { Chip, H2, H3, P } from "./elements";
 import {
@@ -7,12 +7,15 @@ import {
   TouchableOpacity,
   FlatList,
   ImageBackground,
+  Animated,
+  ActivityIndicator,
+  useAnimatedValue,
 } from "react-native";
 import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-const paddingHorizontal = 15
+const paddingHorizontal = 15;
 
 export const SpotLight = ({
   header,
@@ -91,7 +94,7 @@ export const Poster = ({ title, year, poster, onPress }) => {
 };
 
 export const PosterScroll = ({ header, data }) => {
-  if (!data) return;
+  if (!data?.length) return;
   return (
     <View style={{ gap: 10 }}>
       <View style={{ paddingHorizontal }}>
@@ -143,7 +146,10 @@ export const TopBar = () => {
         }}
         style={{ width: 25, aspectRatio: 1, objectFit: "contain" }}
       />
-      <TouchableOpacity onPress={() => router.push("/search")} style={{padding: 7, justifyContent: "center", alignItems: "center"}}>
+      <TouchableOpacity
+        onPress={() => router.push("/search")}
+        style={{ padding: 7, justifyContent: "center", alignItems: "center" }}
+      >
         <Ionicons name="search-outline" color={theme.color} size={25} />
       </TouchableOpacity>
     </View>
@@ -161,7 +167,7 @@ export const BlurredPoster = ({ poster_path }) => {
       }}
       source={{ uri: IMG_BASE + poster_path }}
       blurRadius={20}
-      imageStyle={{ opacity: 0.5 }}
+      imageStyle={{ opacity: 0.4 }}
     >
       <LinearGradient
         // Background Linear Gradient
@@ -169,5 +175,115 @@ export const BlurredPoster = ({ poster_path }) => {
         style={{ flex: 1 }}
       />
     </ImageBackground>
+  );
+};
+
+export const Toast = ({ offsetTop, show, throb, isError, message }) => {
+  const theme = useContext(ThemeContext);
+  const [hidden, setHidden] = useState(true);
+  const translateY = useAnimatedValue(-100);
+
+  function slideIn() {
+    setHidden(false);
+    Animated.timing(translateY, {
+      toValue: offsetTop,
+      duration: 700,
+      useNativeDriver: true,
+    }).start();
+  }
+
+  function slideOut() {
+    Animated.timing(translateY, {
+      toValue: -100,
+      duration: 700,
+      useNativeDriver: true,
+    }).start((finished) => {
+      setHidden(finished);
+    });
+  }
+
+  useEffect(() => {
+    if (show) {
+      slideIn();
+    } else {
+      slideOut();
+    }
+  }, [show]);
+
+  if (hidden) return null;
+  
+  return (
+    <Animated.View
+      style={{
+        position: "absolute",
+        flexDirection: "row",
+        alignSelf: "center",
+        alignItems: "center",
+
+        backgroundColor: theme.backgroundColor,
+        shadowColor: theme.color,
+        shadowRadius: 5,
+        elevation: 10,
+        zIndex: 1000,
+
+        borderRadius: 100,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        margin: 20,
+        marginHorizontal: "10%",
+        overflow: "hidden",
+        gap: 10,
+
+        transform: [{ translateY }],
+      }}
+    >
+      {throb && <ActivityIndicator color={theme.color} />}
+      {isError && <Ionicons name="warning-outline" size={25} color={"red"}/>}
+      <P>{message}</P>
+    </Animated.View>
+  );
+};
+
+export const TorrentButton = ({
+  quality,
+  size,
+  type,
+  codec,
+  seeds,
+  peers,
+  onPress,
+}) => {
+  const theme = useContext(ThemeContext);
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-evenly",
+
+        padding: 10,
+
+        borderWidth: 1,
+        borderColor: theme.colorDim,
+        borderRadius: 20,
+
+        backgroundColor: theme.backgroundColor,
+      }}
+    >
+      <P>{quality}</P>
+      <P>{size}</P>
+      <P>{type}</P>
+      <P>{codec}</P>
+      <View style={{ flexDirection: "row" }}>
+        <Ionicons color={theme.color} name="arrow-up-outline" size={20} />
+        <P>{seeds}</P>
+      </View>
+
+      {/* <View style={{ flexDirection: "row" }}>
+        <Ionicons color={theme.color} name="arrow-down-outline" size={20} />
+        <P>{peers}</P>
+      </View> */}
+    </TouchableOpacity>
   );
 };

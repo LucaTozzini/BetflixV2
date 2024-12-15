@@ -1,8 +1,7 @@
 import { View } from "react-native";
 import { Div, Footer, Scroll } from "../../../components/elements";
 import useQueries from "../../../hooks/useQueries";
-import { useContext, useEffect, useState } from "react";
-import ThemeContext from "../../../contexts/themeContext";
+import { useEffect, useState } from "react";
 import {
   BlurredPoster,
   PosterScroll,
@@ -13,7 +12,6 @@ import { router } from "expo-router";
 import idToGenre from "../../../helpers/idToGenre";
 
 export default () => {
-  const theme = useContext(ThemeContext);
   const latest = useQueries();
   const popular = useQueries();
   const [spotlight, setSpotlight] = useState(null);
@@ -64,7 +62,7 @@ export default () => {
           onPress={() => router.push(`/external-media/${spotlight.id}`)}
         />
 
-        <PosterScroll data={popular.data} header={"Popular"} />
+        <PosterScroll data={popular.data} header={"Popular Movies"} />
 
         <PosterScroll data={latest.data} header={"Latest on Disc"} />
 
