@@ -4,6 +4,7 @@ import { fetchMovieTorrents } from "../helpers/yifiLink.js";
 async function post(req, res) {
   if (!req.query.fileURL) {
     res.sendStatus(400);
+    return;
   }
   await addTorrent(req.query.fileURL);
   res.sendStatus(201);
