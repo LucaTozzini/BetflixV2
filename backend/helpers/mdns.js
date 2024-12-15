@@ -81,22 +81,26 @@ for (const interf of validInterf) {
   }
 
   function handleMessage(msg, rinfo) {
-    const packet = dnsPacket.decode(msg, 0);
-    if (packet.type === "query") {
-      const answers = [];
-      for (const question of packet.questions) {
-        if (question.name === "_http._tcp.local" && question.type === "PTR") {
-          answers.push(answerPTR);
-        } else if (
-          question.name === "Betflix.local" &&
-          question.type === "ANY"
-        ) {
-          answers.push(answerA);
-          answers.push(answerSRV);
-          answers.push(answerTXT);
+    try {
+      const packet = dnsPacket.decode(msg, 0);
+      if (packet.type === "query") {
+        const answers = [];
+        for (const question of packet.questions) {
+          if (question.name === "_http._tcp.local" && question.type === "PTR") {
+            answers.push(answerPTR);
+          } else if (
+            question.name === "Betflix.local" &&
+            question.type === "ANY"
+          ) {
+            answers.push(answerA);
+            answers.push(answerSRV);
+            answers.push(answerTXT);
+          }
         }
+        if (answers.length) respond(answers, rinfo.port, rinfo.address);
       }
-      if (answers.length) respond(answers, rinfo.port, rinfo.address);
+    } catch (err) {
+      // console.error("mdns handleMessage() error ->", err.message);
     }
   }
 
