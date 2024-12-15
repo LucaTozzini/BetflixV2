@@ -3,7 +3,7 @@ import http from "http";
 import cors from "cors";
 import { WebSocketServer } from "ws";
 import { onSocketConnect } from "./helpers/websockets.js";
-import "./helpers/mdns.js"
+import "./helpers/mdns.js";
 //
 import mediaRouter from "./routes/media.js";
 import externalRouter from "./routes/external.js";
@@ -31,8 +31,8 @@ Since this is a local server not exposed to the public this should not be a secu
 */
 app.use(cors());
 
-// 
-app.get("/", (req, res) => res.sendStatus(200))
+//
+app.get("/", (req, res) => res.sendStatus(200));
 
 // Use routers
 app.use("/link", linkRouter);
@@ -55,15 +55,13 @@ app.use((err, req, res, next) => {
 
 wss.on("connection", onSocketConnect);
 
+
 // Start HTTP server
-server.listen(process.env.SERVER_PORT, (err) => {
+server.listen(process.env.SERVER_PORT, "0.0.0.0", (err) => {
   if (err) {
     console.error(err.message);
     process.exit(1);
   }
-  console.log(
-    "HTTP server listening on port",
-    process.env.SERVER_PORT,
-    `\nConnect from this machine @ http://localhost:${process.env.SERVER_PORT}`
-  );
+  const address = server.address();
+  console.log(`HTTP server listening @ ${address.address}:${address.port}`);
 });
