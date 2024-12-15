@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useQueries from "../hooks/useQueries";
 import { Link } from "react-router-dom";
@@ -147,7 +147,10 @@ export function LocalMedia() {
   return (
     <div id="outlet" className={styles.container}>
       {mediaLink.data?.poster_path && (
-        <img src={TMDB_IMG_BASE + mediaLink.data?.backdrop_path} alt="backdrop" />
+        <img
+          src={TMDB_IMG_BASE + mediaLink.data?.backdrop_path}
+          alt="backdrop"
+        />
       )}
       <div className={styles.wrap}>
         <MediaInfo
