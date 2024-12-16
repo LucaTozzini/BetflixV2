@@ -27,9 +27,13 @@ async function post(req, res) {
   }
 
   // Fetch details
-  const details = req.query.type === "movie" ? await fetchMovieDetails(req.query.tmdbId) : await fetchShowDetails(req.query.tmdbId);
+  const details =
+    req.query.type === "movie"
+      ? await fetchMovieDetails(req.query.tmdbId)
+      : await fetchShowDetails(req.query.tmdbId);
   if (!details) {
     res.status(404).send("tmdb id doesn not exist"); // Not found
+    return;
   }
 
   // link TABLE COLUMNS: media_id	tmdb_id	poster backdrop overview genres
@@ -40,7 +44,8 @@ async function post(req, res) {
     details.poster_path,
     details.backdrop_path,
     details.overview,
-    details.genres.map((i) => i.name).join(", ")
+    details.genres.map((i) => i.name).join(", "),
+    req.query.type === "movie" ? details.release_date : details.first_air_date
   );
 
   res.sendStatus(201);
