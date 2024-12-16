@@ -20,13 +20,13 @@ export default () => {
   async function handleRefresh() {
     setRefreshing(true);
     await popular.fetchPopularMovies();
-    await latest.selectMediaCollection(0, 10, "year", true, "any");
+    await latest.selectMediaCollection(0, 20, "date", true, "any");
 
     setRefreshing(false);
   }
 
   useEffect(() => {
-    latest.selectMediaCollection(0, 10, "year", true, "any");
+    latest.selectMediaCollection(0, 20, "date", true, "any");
     popular.fetchPopularMovies();
   }, []);
 

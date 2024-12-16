@@ -85,7 +85,7 @@ export default () => {
       <ScrollView contentContainerStyle={styles.scroll}>
         <MediaView
           title={media.data?.link_title ?? media.data?.title}
-          year={media.data?.year}
+          year={media.data?.date?.split("-")[0] ?? media.data?.year}
           genres={media.data?.genres}
           overview={media.data?.overview}
           vote={vote}

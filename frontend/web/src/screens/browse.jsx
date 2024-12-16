@@ -11,7 +11,7 @@ export default function Browse() {
   }, [])
 
   useEffect(() => {
-    latest.selectMediaCollection(null, 30, "year", true, null);
+    latest.selectMediaCollection(null, 30, "date", true, null);
     popularMovies.fetchPopularMovies();
   }, []);
 

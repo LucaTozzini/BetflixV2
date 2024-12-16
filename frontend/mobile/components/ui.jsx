@@ -111,6 +111,7 @@ export const PosterScroll = ({ header, data }) => {
             title={item.title ?? item.name}
             year={
               // if from local db
+              item.date?.split("-")[0] ??
               item.year ??
               // if tmdb movie
               item.release_date?.split("-")[0] ??
@@ -211,7 +212,7 @@ export const Toast = ({ offsetTop, show, throb, isError, message }) => {
   }, [show]);
 
   if (hidden) return null;
-  
+
   return (
     <Animated.View
       style={{
@@ -238,7 +239,7 @@ export const Toast = ({ offsetTop, show, throb, isError, message }) => {
       }}
     >
       {throb && <ActivityIndicator color={theme.color} />}
-      {isError && <Ionicons name="warning-outline" size={25} color={"red"}/>}
+      {isError && <Ionicons name="warning-outline" size={25} color={"red"} />}
       <P>{message}</P>
     </Animated.View>
   );
