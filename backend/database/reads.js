@@ -15,6 +15,10 @@
  * @property {number} year
  * @property {number} duration
  * @property {string} type movie or show
+ * @property {string} poster_path
+ * @property {string} backdrop_path
+ * @property {string} genres
+ * @property {string} date
  *
  */
 
@@ -26,6 +30,7 @@
  * @property {string} backdrop_path
  * @property {string} overview
  * @property {string} genres
+ * @property {string} date
  */
 
 /**
@@ -53,17 +58,19 @@ export function selectMediaCollection(offset, limit, order, desc, type) {
   // If no type is specified, assume all types are requested
   const typeA = type && type !== "any" ? type : "movie";
   const typeB = type && type !== "any" ? type : "show";
+  let orderSQL = "COALESCE(date, year || '-01-01')";
+  if (order === "title") orderSQL = "title";
+  else if (order === "duration") orderSQL = "duration";
 
   return new Promise((res, rej) => {
     dbPromise.then((db) => {
-      const validColumns = ["year", "title", "duration"];
       db.all(
-        `SELECT media.*, link.title AS link_title, backdrop_path, poster_path, genres
+        `SELECT media.*, link.title AS link_title, backdrop_path, poster_path, genres, date
         FROM media
         LEFT JOIN link ON media.media_id = link.media_id 
         WHERE type = ? OR type = ? 
         ORDER BY 
-          ${validColumns.includes(order) ? order : "year"} 
+          ${orderSQL} 
           ${desc ? "DESC" : "ASC"}
         LIMIT ?
         OFFSET ?`,
@@ -83,7 +90,7 @@ export function selectMedia(mediaId) {
   return new Promise((res, rej) =>
     dbPromise.then((db) =>
       db.get(
-        `SELECT media.*, link.title AS link_title, tmdb_id, backdrop_path, poster_path, genres, overview
+        `SELECT media.*, link.title AS link_title, tmdb_id, backdrop_path, poster_path, genres, overview, date
         FROM media 
         LEFT JOIN link ON link.media_id = media.media_id 
         WHERE media.media_id = ?`,
