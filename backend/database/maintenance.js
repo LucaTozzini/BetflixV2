@@ -27,7 +27,8 @@ async function createDB() {
           poster_path TEXT,
           backdrop_path TEXT,
           overview TEXT,
-          genres TEXT
+          genres TEXT,
+          date TEXT
         );
         `,
         (err) => (err ? rej(err) : res())
