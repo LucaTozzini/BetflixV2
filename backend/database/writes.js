@@ -15,6 +15,7 @@ import dbPromise from "./connection.js";
  * @param {string} backdrop_path
  * @param {string} overview
  * @param {string} genres
+ * @param {string} date
  * @returns {Promise<object>}
  */
 export function insertLink(
@@ -24,13 +25,23 @@ export function insertLink(
   poster_path,
   backdrop_path,
   overview,
-  genres
+  genres,
+  date
 ) {
   return new Promise((res, rej) =>
     dbPromise.then((db) =>
       db.run(
-        "INSERT INTO link (media_id, tmdb_id, title, poster_path, backdrop_path, overview, genres) VALUES (?,?,?,?,?,?,?)",
-        [mediaId, tmdbId, title, poster_path, backdrop_path, overview, genres],
+        "INSERT INTO link (media_id, tmdb_id, title, poster_path, backdrop_path, overview, genres, date) VALUES (?,?,?,?,?,?,?,?)",
+        [
+          mediaId,
+          tmdbId,
+          title,
+          poster_path,
+          backdrop_path,
+          overview,
+          genres,
+          date,
+        ],
         (err) => (err ? rej(err) : res())
       )
     )
