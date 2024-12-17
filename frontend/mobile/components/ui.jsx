@@ -10,12 +10,14 @@ import {
   Animated,
   ActivityIndicator,
   useAnimatedValue,
+  Pressable,
+  Text,
 } from "react-native";
 import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-const paddingHorizontal = 15;
+const paddingHorizontal = 10;
 
 export const SpotLight = ({
   header,
@@ -93,7 +95,7 @@ export const Poster = ({ title, year, poster, onPress }) => {
   );
 };
 
-export const PosterScroll = ({ header, data }) => {
+export const PosterScroll = ({ header, data, onPress }) => {
   if (!data?.length) return;
   return (
     <View style={{ gap: 10 }}>
@@ -119,10 +121,15 @@ export const PosterScroll = ({ header, data }) => {
               item.first_air_date?.split("-")[0]
             }
             poster={item.poster_path}
-            onPress={() => {
-              if (item.media_id) router.push(`/local-media/${item.media_id}`);
-              else if (item.id) router.push(`/external-media/${item.id}`);
-            }}
+            onPress={
+              onPress
+                ? () => onPress(item)
+                : () => {
+                    if (item.media_id)
+                      router.push(`/local-media/${item.media_id}`);
+                    else if (item.id) router.push(`/external-media/${item.id}`);
+                  }
+            }
           />
         )}
       />
@@ -286,5 +293,92 @@ export const TorrentButton = ({
         <P>{peers}</P>
       </View> */}
     </TouchableOpacity>
+  );
+};
+
+export const Cast = ({ name, profile_path }) => {
+  const IMAGE_BASE = "https://image.tmdb.org/t/p/w185";
+  return (
+    <View style={{ width: 100 }}>
+      <Image
+        src={IMAGE_BASE + profile_path}
+        style={{
+          aspectRatio: 1,
+          backgroundColor: "grey",
+          objectFit: "cover",
+          borderRadius: 50,
+        }}
+      />
+      <P center tiny numberOfLines={1}>
+        {name}
+      </P>
+    </View>
+  );
+};
+
+export const CastScroll = ({ data }) => {
+  if (!data) return null;
+  // https://developer.themoviedb.org/reference/movie-credits
+  return (
+    <View style={{ marginTop: 15, marginBottom: 20, gap: 5 }}>
+      <H3 style={{ paddingHorizontal }}>Cast</H3>
+      <FlatList
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal,
+          gap: 8,
+        }}
+        data={data}
+        keyExtractor={(i) => `${i.order}_${i.id}`}
+        renderItem={({ item }) => (
+          <Cast name={item.name} profile_path={item.profile_path} />
+        )}
+      />
+    </View>
+  );
+};
+
+export const Backdrop = ({ backdrop_path }) => {
+  if (!backdrop_path) return null;
+  const IMAGE_BASE = "https://image.tmdb.org/t/p/w780";
+  return (
+    <ImageBackground
+      source={{ uri: IMAGE_BASE + backdrop_path }}
+      style={{ aspectRatio: 1.7 }}
+    ></ImageBackground>
+  );
+};
+
+export const Overview = ({ text }) => {
+  if (!text) return null;
+  const [expand, setExpand] = useState(false);
+  // Not sure why but not wrapping <P> in <Text> causes an error w
+  return (
+    <Pressable onPress={() => setExpand(!expand)}>
+      <Text
+        numberOfLines={expand ? undefined : 5}
+        style={{ paddingHorizontal }}
+      >
+        <P>{text}</P>;
+      </Text>
+    </Pressable>
+  );
+};
+
+export const Vote = ({ vote_average }) => {
+  if (!vote_average) return null;
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        gap: 3,
+        paddingHorizontal,
+        paddingTop: 10,
+      }}
+    >
+      <Ionicons name="star" color={"rgb(255, 208, 0)"} size={17} />
+      <P>{Math.round(vote_average * 10)}</P>
+    </View>
   );
 };

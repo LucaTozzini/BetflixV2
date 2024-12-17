@@ -1,8 +1,9 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import useSocket from "../../hooks/useSocket";
 import { useContext, useEffect, useRef, useState } from "react";
-import { Button } from "../../components/buttons";
+import { Button, Div, P } from "../../components/elements";
 import ThemeContext from "../../contexts/themeContext";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default () => {
   const theme = useContext(ThemeContext);
@@ -28,17 +29,38 @@ export default () => {
   }
 
   return (
-    <View
-      style={[styles.container, { backgroundColor: theme.backgroundColor }]}
-    >
-      <View style={[styles.top, {borderColor: theme.colorDim}]}>
-        <Text style={{ fontSize: theme.h1Size, fontWeight: "bold", color: theme.color }}>
+    <Div>
+      <View style={[styles.top, { borderColor: theme.colorDim }]}>
+        <Text
+          style={{
+            fontSize: theme.h1Size,
+            fontWeight: "bold",
+            color: theme.color,
+          }}
+        >
           {connections} Active Connection{connections > 1 ? "s" : ""}
         </Text>
-        <View style={{ flexDirection: "row" }}>
-          <Button text="Scan" handlePress={() => handleSend("scan")} />
-          <Button text="Create" handlePress={() => handleSend("create")} />
-          <Button text="Purge" handlePress={() => handleSend("purge")} />
+        <View style={{ flexDirection: "row", gap: 10 }}>
+          <Button grow onPress={() => handleSend("scan")}>
+            <Ionicons color={theme.color} size={20} name="eye-outline" />
+            <P>Scan</P>
+          </Button>
+
+          <Button grow onPress={() => handleSend("autolink")}>
+            <Ionicons color={theme.color} size={20} name="link-outline" />
+            <P>Autolink</P>
+          </Button>
+        </View>
+        <View style={{ flexDirection: "row", gap: 10 }}>
+          <Button grow onPress={() => handleSend("create")}>
+            <Ionicons color={theme.color} size={20} name="hammer-outline" />
+            <P>Create</P>
+          </Button>
+
+          <Button grow onPress={() => handleSend("purge")}>
+            <Ionicons color={theme.color} size={20} name="trash-outline" />
+            <P>Purge</P>
+          </Button>
         </View>
       </View>
 
@@ -55,7 +77,7 @@ export default () => {
           </Text>
         ))}
       </ScrollView>
-    </View>
+    </Div>
   );
 };
 

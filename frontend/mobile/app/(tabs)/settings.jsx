@@ -12,26 +12,28 @@ export default () => {
   return (
     <Div>
       <Scroll pad gap={20}>
-      
         <View style={{ gap: 7 }}>
           <H2>Set Theme</H2>
           <View style={{ flexDirection: "row", gap: 10 }}>
-            <Button grow onPress={() => theme.setLightTheme()}>
-              <Ionicons name="sunny-outline" color={theme.color} size={25} />
+            <Button grow onPress={() => theme.setUsing("system")}>
+              <Ionicons name="cog-outline" color={theme.color} size={20} />
+              <P>System</P>
+            </Button>
+            <Button grow onPress={() => theme.setUsing("light")}>
+              <Ionicons name="sunny-outline" color={theme.color} size={20} />
               <P>Light</P>
             </Button>
-            <Button grow onPress={() => theme.setDarkTheme()}>
-              <Ionicons name="moon-outline" color={theme.color} size={25} />
+            <Button grow onPress={() => theme.setUsing("dark")}>
+              <Ionicons name="moon-outline" color={theme.color} size={20} />
               <P>Dark</P>
             </Button>
           </View>
         </View>
-        
+
         <View style={{ gap: 7 }}>
           <H2>Server Address</H2>
           <P>{serverAddress}</P>
         </View>
-      
       </Scroll>
     </Div>
   );

@@ -6,17 +6,17 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import ThemeContext from "../contexts/themeContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-const fontTiny = 13;
-const fontSmall = 16;
+const fontTiny = 12;
+const fontSmall = 15;
 const fontMedium = 18;
-const fontLarge = 24;
-const fontHuge = 30;
+const fontLarge = 21;
+const fontHuge = 25;
 
-const padding = 15;
+const padding = 10;
 
 export const Div = ({ children, pad }) => {
   const theme = useContext(ThemeContext);
@@ -56,78 +56,90 @@ export const Scroll = ({
   );
 };
 
-export const H1 = ({ children, center, dim, serif, numberOfLines }) => {
+export const H1 = ({ children, center, dim, serif, numberOfLines, style }) => {
   if (!children) return;
   const theme = useContext(ThemeContext);
 
   return (
     <Text
       numberOfLines={numberOfLines}
-      style={{
-        color: theme[dim ? "colorDim" : "color"],
-        fontSize: fontHuge,
-        fontWeight: "bold",
-        fontFamily: serif ? "serif" : undefined,
-        textAlign: center ? "center" : undefined,
-      }}
+      style={[
+        {
+          color: theme[dim ? "colorDim" : "color"],
+          fontSize: fontHuge,
+          fontWeight: "bold",
+          fontFamily: serif ? "serif" : undefined,
+          textAlign: center ? "center" : undefined,
+        },
+        style,
+      ]}
     >
       {children}
     </Text>
   );
 };
 
-export const H2 = ({ children, center, dim, serif, numberOfLines }) => {
+export const H2 = ({ children, center, dim, serif, numberOfLines, style }) => {
   if (!children) return;
   const theme = useContext(ThemeContext);
 
   return (
     <Text
       numberOfLines={numberOfLines}
-      style={{
-        color: theme[dim ? "colorDim" : "color"],
-        fontSize: fontLarge,
-        fontWeight: "bold",
-        fontFamily: serif ? "serif" : undefined,
-        textAlign: center ? "center" : undefined,
-      }}
+      style={[
+        {
+          color: theme[dim ? "colorDim" : "color"],
+          fontSize: fontLarge,
+          fontWeight: "bold",
+          fontFamily: serif ? "serif" : undefined,
+          textAlign: center ? "center" : undefined,
+        },
+        style,
+      ]}
     >
       {children}
     </Text>
   );
 };
 
-export const H3 = ({ children, center, dim, serif, numberOfLines }) => {
+export const H3 = ({ children, center, dim, serif, numberOfLines, style }) => {
   if (!children) return;
   const theme = useContext(ThemeContext);
 
   return (
     <Text
       numberOfLines={numberOfLines}
-      style={{
-        color: theme[dim ? "colorDim" : "color"],
-        fontSize: fontMedium,
-        fontFamily: serif ? "serif" : undefined,
-        textAlign: center ? "center" : undefined,
-        fontWeight: "bold",
-      }}
+      style={[
+        {
+          color: theme[dim ? "colorDim" : "color"],
+          fontSize: fontMedium,
+          fontFamily: serif ? "serif" : undefined,
+          textAlign: center ? "center" : undefined,
+          fontWeight: "bold",
+        },
+        style,
+      ]}
     >
       {children}
     </Text>
   );
 };
 
-export const P = ({ children, center, dim, numberOfLines, tiny }) => {
+export const P = ({ children, center, dim, numberOfLines, tiny, style }) => {
   if (!children) return;
   const theme = useContext(ThemeContext);
 
   return (
     <Text
       numberOfLines={numberOfLines}
-      style={{
-        color: theme[dim ? "colorDim" : "color"],
-        fontSize: tiny ? fontTiny : fontSmall,
-        textAlign: center ? "center" : undefined,
-      }}
+      style={[
+        {
+          color: theme[dim ? "colorDim" : "color"],
+          fontSize: tiny ? fontTiny : fontSmall,
+          textAlign: center ? "center" : undefined,
+        },
+        style,
+      ]}
     >
       {children}
     </Text>
@@ -141,6 +153,7 @@ export const P = ({ children, center, dim, numberOfLines, tiny }) => {
  ___________________   _
 |___________________| |_|
 
+Must be placed inside a scrollview for it to display properly, don't know why but it works
 */
 export const SearchBar = ({
   placeholder,
@@ -148,14 +161,16 @@ export const SearchBar = ({
   setValue,
   onSubmit,
   autoFocus,
+  numberPad,
+  style,
 }) => {
   const theme = useContext(ThemeContext);
   return (
     <View
-      style={{
+      style={[{
         padding,
         backgroundColor: theme.backgroundColor,
-      }}
+      }, style]}
     >
       <View
         style={{
@@ -164,24 +179,24 @@ export const SearchBar = ({
           borderColor: theme.colorDim,
           borderWidth: 1,
           alignItems: "center",
-          paddingVertical: 7,
           borderRadius: 50,
-          flex: 1,
           paddingHorizontal: 10,
         }}
       >
-        <Ionicons name="search-outline" size={25} color={theme.color} />
+        {!numberPad && <Ionicons name="search-outline" size={25} color={theme.color} />}
         <TextInput
           autoFocus={autoFocus}
           numberOfLines={1}
-          style={{ flex: 1, color: theme.color, fontSize: fontSmall }}
+          textAlign={numberPad ? "center" : undefined}
+          style={{ flex: 1, color: theme.color, fontSize: fontSmall, height: 45 }}
           placeholder={placeholder}
           placeholderTextColor={theme.colorDim}
           onChangeText={setValue}
           value={value}
           onSubmitEditing={onSubmit ?? null}
+          keyboardType={numberPad ? "numeric" : "default"}
         />
-        {value !== null && (
+        {!numberPad && value !== null && (
           <TouchableOpacity onPress={() => setValue(null)}>
             <Ionicons name="close-outline" size={25} color={theme.color} />
           </TouchableOpacity>
@@ -193,14 +208,12 @@ export const SearchBar = ({
 
 export const Button = ({ children, grow, onPress }) => {
   const theme = useContext(ThemeContext);
-  // Wrap button in View so that when multiple buttons are placed in a row, flex 1 will stretch them evenly without being
-  // without being influenced by each button's content
   return (
-    <View style={{ flex: grow ? 1 : undefined }}>
       <TouchableOpacity
         onPress={onPress}
         style={{
           padding: 10,
+          flex: grow ? 1 : undefined,
           flexDirection: "row",
           borderWidth: 1,
           borderColor: "grey",
@@ -213,7 +226,6 @@ export const Button = ({ children, grow, onPress }) => {
       >
         {children}
       </TouchableOpacity>
-    </View>
   );
 };
 
@@ -239,4 +251,4 @@ export const Chip = ({ children }) => {
   );
 };
 
-export const Footer = ({}) => <View style={{ height: 30 }} />;
+export const Footer = ({}) => <View style={{ height: 70 }} />;

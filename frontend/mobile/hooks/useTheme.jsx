@@ -1,59 +1,58 @@
 import { useEffect, useState } from "react";
 import * as NavigationBar from "expo-navigation-bar";
+import { useColorScheme } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function useTheme() {
+  const colorScheme = useColorScheme();
   const [using, setUsing] = useState();
+
   const [color, setColor] = useState();
   const [colorDim, setColorDim] = useState();
   const [accentColor, setAccentColor] = useState();
-  const [buttonBackgroundColor, setButtonBackgroundColor] = useState();
-  const [backgroundColor, setBackgroundColor] = useState();
   const [statusBarStyle, setStatusBarStyle] = useState();
+  const [backgroundColor, setBackgroundColor] = useState();
   const [tabsBackgroundColor, setTabsBackgroundColor] = useState();
+  const [buttonBackgroundColor, setButtonBackgroundColor] = useState();
 
-  async function initialize() {
-    const value = await AsyncStorage.getItem("theme");
-    if (!value || value === "light") {
+  function setLightTheme() {
+    setColor("black");
+    setColorDim("rgb(146, 146, 146)");
+    setAccentColor("skyblue");
+    setStatusBarStyle("dark");
+    setBackgroundColor("white");
+    setTabsBackgroundColor("rgb(238, 238, 238)");
+    setButtonBackgroundColor("rgba(180, 180, 180, 0.1)");
+    NavigationBar.setBackgroundColorAsync("rgb(238, 238, 238)");
+  }
+
+  function setDarkTheme() {
+    setColor("white");
+    setColorDim("grey");
+    setAccentColor("red");
+    setStatusBarStyle("light");
+    setBackgroundColor("rgb(19, 19, 19)");
+    setTabsBackgroundColor("rgb(27, 27, 27)");
+    setButtonBackgroundColor("rgba(58, 58, 58, 0.27)");
+    NavigationBar.setBackgroundColorAsync("rgb(27, 27, 27)");
+  }
+
+  useEffect(() => {
+    AsyncStorage.getItem("theme", (err, result) => {
+      if (err) setUsing("system"); // default to system on error
+      setUsing(result);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!using) return;
+    if (using === "light" || (using === "system" && colorScheme === "light")) {
       setLightTheme();
     } else {
       setDarkTheme();
     }
-  }
-
-  function setLightTheme() {
-    setUsing("light");
-    setButtonBackgroundColor("rgba(180, 180, 180, 0.1)");
-    setStatusBarStyle("dark");
-    setColor("black");
-    setColorDim("rgb(146, 146, 146)");
-    setAccentColor("skyblue");
-    setBackgroundColor("white");
-    setTabsBackgroundColor("rgb(238, 238, 238)");
-    AsyncStorage.setItem("theme", "light");
-  }
-
-  function setDarkTheme() {
-    setUsing("dark");
-    setButtonBackgroundColor("rgba(58, 58, 58, 0.27)");
-    setAccentColor("limegreen");
-    setStatusBarStyle("light");
-    setColor("white");
-    setColorDim("grey");
-    setBackgroundColor("rgb(19, 19, 19)");
-    setTabsBackgroundColor("rgb(27, 27, 27)");
-    AsyncStorage.setItem("theme", "dark");
-  }
-
-  useEffect(() => {
-    initialize();
-  }, []);
-
-  useEffect(() => {
-    if (tabsBackgroundColor) {
-      NavigationBar.setBackgroundColorAsync(tabsBackgroundColor);
-    }
-  }, [tabsBackgroundColor]);
+    AsyncStorage.setItem("theme", using);
+  }, [using, colorScheme]);
 
   return {
     using,
@@ -64,7 +63,6 @@ export default function useTheme() {
     backgroundColor,
     accentColor,
     tabsBackgroundColor,
-    setLightTheme,
-    setDarkTheme,
+    setUsing,
   };
 }

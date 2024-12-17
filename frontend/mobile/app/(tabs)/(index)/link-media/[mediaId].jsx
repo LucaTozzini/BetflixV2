@@ -1,13 +1,12 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
-import { ScrollView, StyleSheet, TextInput, View } from "react-native";
 import usePosts from "../../../../hooks/usePosts";
 import useQueries from "../../../../hooks/useQueries";
-import { BrowseItem, BrowseList } from "../../../../components/browseList";
-import ThemeContext from "../../../../contexts/themeContext";
+import { PosterScroll } from "../../../../components/ui";
+import { Div, Footer, Scroll, SearchBar } from "../../../../components/elements";
+import { View } from "react-native";
 
 export default () => {
-  const theme = useContext(ThemeContext);
   const { mediaId } = useLocalSearchParams();
   const local = useQueries();
   const matches = useQueries();
@@ -33,7 +32,7 @@ export default () => {
   useEffect(() => {
     if (local.data) {
       setTitle(local.data.title);
-      setYear(local.data.year);
+      if(local.data.year) setYear(local.data.year.toString());
     }
   }, [local.data]);
 
@@ -49,60 +48,35 @@ export default () => {
   // #endregion
 
   return (
-    <View style={{flex: 1, backgroundColor: theme.backgroundColor}}>
-      <View style={styles.inputs}>
-        <TextInput
-          style={styles.titleInput}
-          value={title}
-          onChangeText={setTitle}
-        />
-        <TextInput
-          keyboardType="number-pad"
-          style={styles.yearInput}
-          value={String(year)}
-          onChangeText={setYear}
-        ></TextInput>
+    <Div>
+      <View style={{ flexDirection: "row" }}>
+        <View style={{ flex: 1 }}>
+          <SearchBar
+            value={title}
+            setValue={setTitle}
+            placeholder={"Search movies and shows..."}
+          />
+        </View>
+        <View style={{ width: 100 }}>
+          <SearchBar
+            style={{paddingLeft: 0}}
+            numberPad
+            value={year}
+            setValue={setYear}
+            placeholder={"Set Year"}
+          />
+        </View>
       </View>
-      <ScrollView contentContainerStyle={styles.scroll}>
-        <BrowseList>
-          {local.data &&
-            matches.data?.map((i) => (
-              <BrowseItem
-                key={i.id}
-                tmdbId={i.id}
-                title={i.title ?? i.name}
-                year={
-                  local.data.type === "movie"
-                    ? i.release_date?.split("-")[0]
-                    : i.first_air_date?.split("-")[0]
-                }
-                backdrop_path={i.backdrop_path}
-                type={local.data.type}
-                handlePress={() => handleLink(i.id)}
-              />
-            ))}
-        </BrowseList>
-      </ScrollView>
-    </View>
+      <Scroll>
+        <PosterScroll
+          header={"Matches"}
+          data={matches.data}
+          onPress={(item) => {
+            handleLink(item.id);
+          }}
+        />
+        <Footer/>
+      </Scroll>
+    </Div>
   );
 };
-
-const styles = StyleSheet.create({
-  inputs: {
-    flexDirection: "row",
-    padding: 10,
-  },
-  titleInput: {
-    borderWidth: 1,
-    borderColor: "grey",
-    flex: 1,
-    fontSize: 20,
-  },
-  yearInput: {
-    borderWidth: 1,
-    borderColor: "grey",
-    width: 100,
-    fontSize: 20,
-  },
-  scroll: { marginHorizontal: 10 },
-});

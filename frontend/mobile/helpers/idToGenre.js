@@ -13,7 +13,7 @@ const idToGenre = {
   53: "Thriller",
   80: "Crime",
   99: "Documentary",
-  878: "Science Fiction",
+  878: "Sci-Fi",
   9648: "Mystery",
   10402: "Music",
   10749: "Romance",

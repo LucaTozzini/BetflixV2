@@ -5,7 +5,7 @@ import usePosts from "../../../../hooks/usePosts";
 import useQueries from "../../../../hooks/useQueries";
 import MediaView from "../../../../components/mediaView";
 import ThemeContext from "../../../../contexts/themeContext";
-import { H3 } from "../../../../components/elements";
+import { Footer, H3 } from "../../../../components/elements";
 import { Toast, TorrentButton } from "../../../../components/ui";
 
 export default () => {
@@ -37,6 +37,41 @@ export default () => {
     }
   }, [media.data]);
 
+  const Torrents = () => {
+    if (!torrents.data?.length) return <H3 center>No Torrents Available</H3>;
+    return (
+      <View style={{ marginHorizontal: 10 }}>
+        <View style={styles.torrents}>
+          <H3>Torrents</H3>
+          {torrents.data.map((i) => (
+            <TorrentButton
+              key={i.hash}
+              quality={i.quality}
+              seeds={i.seeds}
+              peers={i.peers}
+              size={i.size}
+              codec={i.video_codec}
+              type={i.type}
+              onPress={async () => {
+                try {
+                  setShowToast(true);
+                  const response = await postTorrent(i.url);
+                  if (!response.ok) throw new Error("not ok");
+                  router.push("/downloads");
+                } catch (err) {
+                  console.error(err.message);
+                  setShowToastError(true);
+                  setTimeout(() => setShowToastError(false), 4000);
+                }
+                setShowToast(false);
+              }}
+            />
+          ))}
+        </View>
+      </View>
+    );
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
       <Toast show={showToast} throb message={"Adding torrent"} />
@@ -46,48 +81,14 @@ export default () => {
           title={media.data?.title}
           year={media.data?.release_date?.split("-")[0]}
           genres={media.data?.genres?.map((i) => i.name).join(", ")}
-          vote={
-            media.data?.vote_average
-              ? Math.round(media.data?.vote_average / 2)
-              : null
-          }
+          vote_average={media.data?.vote_average}
+          duration={media.data?.runtime * 60}
           overview={media.data?.overview}
           backdrop_path={media.data?.backdrop_path}
           cast={media.data?.credits?.cast}
         />
-        <View style={{ marginHorizontal: 10 }}>
-          {torrents.data?.length ? (
-            <View style={styles.torrents}>
-              <H3>Torrents</H3>
-              {torrents.data.map((i) => (
-                <TorrentButton
-                  key={i.hash}
-                  quality={i.quality}
-                  seeds={i.seeds}
-                  peers={i.peers}
-                  size={i.size}
-                  codec={i.video_codec}
-                  type={i.type}
-                  onPress={async () => {
-                    try {
-                      setShowToast(true);
-                      const response = await postTorrent(i.url);
-                      if (!response.ok) throw new Error("not ok");
-                      router.push("/downloads");
-                    } catch (err) {
-                      console.error(err.message);
-                      setShowToastError(true);
-                      setTimeout(() => setShowToastError(false), 4000);
-                    }
-                    setShowToast(false);
-                  }}
-                />
-              ))}
-            </View>
-          ) : (
-            <H3>No Torrents Available</H3>
-          )}
-        </View>
+        <Torrents/>
+        <Footer />
       </ScrollView>
     </View>
   );
@@ -95,7 +96,7 @@ export default () => {
 
 const styles = StyleSheet.create({
   scroll: {
-    gap: 10,
+    // gap: 10,
     paddingBottom: 20,
   },
   torrents: {

@@ -14,6 +14,7 @@ import idToGenre from "../../../helpers/idToGenre";
 export default () => {
   const latest = useQueries();
   const popular = useQueries();
+  const randomShows = useQueries();
   const [spotlight, setSpotlight] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -21,6 +22,7 @@ export default () => {
     setRefreshing(true);
     await popular.fetchPopularMovies();
     await latest.selectMediaCollection(0, 20, "date", true, "any");
+    await randomShows.selectMediaCollection(0, 20, "random", false, "show");
 
     setRefreshing(false);
   }
@@ -28,6 +30,7 @@ export default () => {
   useEffect(() => {
     latest.selectMediaCollection(0, 20, "date", true, "any");
     popular.fetchPopularMovies();
+    randomShows.selectMediaCollection(0, 20, "random", false, "show");
   }, []);
 
   useEffect(() => {
@@ -40,7 +43,7 @@ export default () => {
   return (
     <Div>
       <TopBar />
-      <Scroll refreshing={refreshing} onRefresh={handleRefresh} gap={50}>
+      <Scroll refreshing={refreshing} onRefresh={handleRefresh} gap={20}>
         <View
           style={{
             pointerEvents: "none",
@@ -48,13 +51,12 @@ export default () => {
             top: 0,
             right: 0,
             left: 0,
-            height: 10,
+            height: 0,
           }}
         >
           <BlurredPoster poster_path={spotlight?.poster_path} />
         </View>
         <SpotLight
-          // header={"Spotlight"}
           title={spotlight?.title}
           year={spotlight?.release_date?.split("-")[0]}
           poster_path={spotlight?.poster_path}
@@ -65,8 +67,9 @@ export default () => {
         <PosterScroll data={popular.data} header={"Popular Movies"} />
 
         <PosterScroll data={latest.data} header={"Latest on Disc"} />
+        <PosterScroll data={randomShows.data} header={"TV Shows"} />
 
-        <Footer/>
+        <Footer />
       </Scroll>
     </Div>
   );
