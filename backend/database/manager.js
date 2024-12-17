@@ -11,9 +11,10 @@ import path from "path";
 import dotenv from "dotenv";
 import EventEmitter from "node:events";
 import dbPromise from "./connection.js";
+import { fetchMovies, fetchShows } from "../helpers/tmdbLink.js";
 import { createDB, purgeDB } from "./maintenance.js";
-import { insertEpisode, insertShow } from "./writes.js";
-import { existsEpisodePath, existsMediaPath } from "./reads.js";
+import { insertEpisode, insertShow, insertLink } from "./writes.js";
+import { existsEpisodePath, existsMediaPath, selectLinkless } from "./reads.js";
 import { getVideoDurationInSeconds as getDuration } from "get-video-duration";
 
 dotenv.config();
@@ -27,12 +28,13 @@ INSTRUCT_FUNCT is to map the instruct name to its function
 VALID_EXT are the valid media types to include in the DB 
 */
 const STATUS = ["open", "busy"];
-const INSTRUCT = ["scan", "clean", "create", "purge"];
+const INSTRUCT = ["scan", "clean", "create", "purge", "autolink"];
 const INSTRUCT_FUNCT = {
   scan: scan,
   clean: () => {},
   create: create,
   purge: purge,
+  autolink: autolink,
 };
 const VALID_EXT = [".mp4", ".mkv", ".m4v"];
 // #endregion
@@ -340,6 +342,60 @@ async function purge() {
     dbUpdate(STATUS[0], null, "Finished purge");
   } catch (err) {
     dbUpdate(STATUS[0], null, `Error purge | ${err.message}`);
+    console.error(err.stack);
+  }
+}
+
+async function autolink() {
+  if (_status !== STATUS[0]) {
+    dbUpdate(_status, _instruct, "Busy, autolink rejected");
+    return;
+  }
+  try {
+    dbUpdate(STATUS[1], INSTRUCT[4], "Started autolink");
+    let offset = 0;
+    const limit = 20;
+
+    // Process 20 media items at a time
+    while (true) {
+      const group = await selectLinkless(offset, limit);
+      if (!group.length) break;
+      for (const media of group) {
+        const data =
+          media.type === "movie"
+            ? await fetchMovies(media.title, media.year)
+            : await fetchShows(media.title, media.year);
+
+        // If there is no match for item
+        // Increment the offset so that on next loop, the item will be skipped
+        if (!data || !data.length) {
+          offset++;
+          continue;
+        }
+        await insertLink(
+          media.media_id,
+          data[0].id,
+          data[0].title ?? data[0].name,
+          data[0].poster_path,
+          data[0].backdrop_path,
+          data[0].overview,
+          data[0].genres?.map((i) => i.name),
+          data[0].release_date ?? data[0].first_air_date
+        );
+
+        dbUpdate(
+          _status,
+          _instruct,
+          `Autolinked | ${data[0].title ?? data[0].name} ${
+            data[0].release_date ?? data[0].first_air_date
+          }`
+        );
+      }
+      offset += limit;
+    }
+    dbUpdate(STATUS[0], null, `Finished autolink`);
+  } catch (err) {
+    dbUpdate(STATUS[0], null, `Error autolink | ${err.message}`);
     console.error(err.stack);
   }
 }

@@ -61,6 +61,7 @@ export function selectMediaCollection(offset, limit, order, desc, type) {
   let orderSQL = "COALESCE(date, year || '-01-01')";
   if (order === "title") orderSQL = "title";
   else if (order === "duration") orderSQL = "duration";
+  else if (order === "random") orderSQL = "RANDOM()";
 
   return new Promise((res, rej) => {
     dbPromise.then((db) => {
@@ -264,6 +265,23 @@ export function searchMedia(title) {
         ORDER BY difference
         `,
         [title, `%${title}%`, title, `%${title}%`],
+        (err, rows) => (err ? rej(err) : res(rows))
+      )
+    )
+  );
+}
+
+export function selectLinkless(offset, limit) {
+  return new Promise((res, rej) =>
+    dbPromise.then((db) =>
+      db.all(
+        `SELECT media.* 
+        FROM media 
+        LEFT JOIN link ON media.media_id = link.media_id
+        WHERE tmdb_id IS NULL
+        LIMIT ?
+        OFFSET ? `,
+        [limit, offset],
         (err, rows) => (err ? rej(err) : res(rows))
       )
     )

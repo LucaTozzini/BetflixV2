@@ -164,7 +164,7 @@ export async function fetchMovieDetails(tmdbId) {
  */
 export async function fetchShowDetails(tmdbId) {
   try {
-    const url = `${API_ADDRESS}/tv/${tmdbId}`;
+    const url = `${API_ADDRESS}/tv/${tmdbId}?append_to_response=aggregate_credits`;
     const response = await fetch(url, GET_OPTIONS);
     const json = await response.json();
     return json;
