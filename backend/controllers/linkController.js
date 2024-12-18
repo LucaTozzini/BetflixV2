@@ -44,7 +44,7 @@ async function post(req, res) {
     details.poster_path,
     details.backdrop_path,
     details.overview,
-    details.genres.map((i) => i.name).join(", "),
+    details.genres?.map((i) => i.name).join(", "),
     req.query.type === "movie" ? details.release_date : details.first_air_date
   );
 
