@@ -3,7 +3,7 @@ import { fetchMovieDetails, fetchShowDetails } from "../helpers/tmdbLink.js";
 import { insertLink } from "../database/writes.js";
 import { selectLink, selectLinkByTmdbId } from "../database/reads.js";
 import { deleteLink } from "../database/deletes.js";
-
+import idToGenre from "../helpers/idToGenre.js";
 /**
  * @param {import('express').Request} req
  * @param {import('express').Response} res
@@ -44,7 +44,7 @@ async function post(req, res) {
     details.poster_path,
     details.backdrop_path,
     details.overview,
-    details.genres?.map((i) => i.name).join(", "),
+    details.genres?.map((i) => idToGenre[i.id]).join(", "),
     req.query.type === "movie" ? details.release_date : details.first_air_date
   );
 

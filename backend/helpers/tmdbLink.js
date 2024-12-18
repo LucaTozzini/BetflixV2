@@ -10,7 +10,7 @@
  * @typedef {Object} listMovieItem
  * @property {boolean} adult
  * @property {string} backdrop_path
- * @property {Array<number>} genres_ids
+ * @property {Array<number>} genre_ids
  * @property {number} id
  * @property {string} original_language
  * @property {string} original_title
