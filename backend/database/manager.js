@@ -360,6 +360,7 @@ async function autolink() {
     // Process 20 media items at a time
     while (true) {
       const group = await selectLinkless(offset, limit);
+      console.log(offset, limit, group.length)
       if (!group.length) break;
       for (const media of group) {
         const data =
@@ -373,6 +374,7 @@ async function autolink() {
           offset++;
           continue;
         }
+
         await insertLink(
           media.media_id,
           data[0].id,
@@ -392,7 +394,6 @@ async function autolink() {
           }`
         );
       }
-      offset += limit;
     }
     dbUpdate(STATUS[0], null, `Finished autolink`);
   } catch (err) {

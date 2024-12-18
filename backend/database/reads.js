@@ -279,6 +279,7 @@ export function selectLinkless(offset, limit) {
         FROM media 
         LEFT JOIN link ON media.media_id = link.media_id
         WHERE tmdb_id IS NULL
+        ORDER BY title DESC
         LIMIT ?
         OFFSET ? `,
         [limit, offset],
