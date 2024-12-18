@@ -379,7 +379,7 @@ async function autolink() {
           data[0].poster_path,
           data[0].backdrop_path,
           data[0].overview,
-          data[0].genres?.map((i) => i.name),
+          data[0].genres?.map((i) => i.name).join(", "),
           data[0].release_date ?? data[0].first_air_date
         );
 
