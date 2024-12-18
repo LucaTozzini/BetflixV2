@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "mobile",
+    "name": "Betflix",
     "slug": "mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -40,10 +40,26 @@
         }
       ],
       "expo-video",
-      "expo-build-properties"
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "771eb238-4860-4871-b2df-bde1c8499b17"
+      }
+    },
+    "owner": "luca_tozzini"
   }
 }
