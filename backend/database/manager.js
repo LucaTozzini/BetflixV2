@@ -360,7 +360,6 @@ async function autolink() {
     // Process 20 media items at a time
     while (true) {
       const group = await selectLinkless(offset, limit);
-      console.log(offset, limit, group.length)
       if (!group.length) break;
       for (const media of group) {
         const data =
