@@ -11,6 +11,7 @@ import streamRouter from "./routes/stream.js";
 import torrentsRouter from "./routes/torrents.js";
 import linkRouter from "./routes/link.js";
 import searchRouter from "./routes/search.js";
+import webappRouter from "./routes/webapp.js";
 //
 import dotenv from "dotenv";
 dotenv.config();
@@ -41,6 +42,7 @@ app.use("/stream", streamRouter);
 app.use("/search", searchRouter);
 app.use("/external", externalRouter);
 app.use("/torrents", torrentsRouter);
+app.use("/webapp", webappRouter);
 
 /*
 Global error handler
@@ -54,7 +56,6 @@ app.use((err, req, res, next) => {
 // #endregion
 
 wss.on("connection", onSocketConnect);
-
 
 // Start HTTP server
 server.listen(process.env.SERVER_PORT, "0.0.0.0", (err) => {
