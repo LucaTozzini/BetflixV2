@@ -1,5 +1,10 @@
 import { useState } from "react";
-const SERVER = "localhost:5340";
+
+// for dev
+// const SERVER = "http://localhost:5340";
+
+// for build
+const SERVER = "";
 
 export default function useQueries() {
   const [data, setData] = useState(null);
@@ -12,7 +17,7 @@ export default function useQueries() {
    * @param {string} endpoint
    */
   async function genericGET(endpoint) {
-    const response = await fetch(`http://${SERVER}${endpoint}`);
+    const response = await fetch(`${SERVER}${endpoint}`);
     if (response.ok) {
       const json = await response.json();
       setData(json);

@@ -53,3 +53,11 @@
 .info p {
   margin-top: 1rem;
 }
+
+.select {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-size: 1.2rem;
+  padding: .2rem;
+  margin-bottom: 1rem;
+}

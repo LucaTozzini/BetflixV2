@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, } from "react-router-dom";
 import "./index.css";
 
 import Root from "./screens/root";
@@ -55,8 +55,10 @@ const router = createBrowserRouter([
   {
     path: "/video/:mediaId",
     element: <Video />,
-  },
-]);
+  }
+], {
+  basename: "/webapp"
+});
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

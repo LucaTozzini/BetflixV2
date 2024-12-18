@@ -1,11 +1,11 @@
-import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import useQueries from "../hooks/useQueries";
 import { Link } from "react-router-dom";
-import { TorrentsTable, TorrentRow } from "../components/torrents-table";
-import styles from "../styles/media.module.css";
+import { useEffect, useState } from "react";
 import useDeletes from "../hooks/useDeletes";
+import useQueries from "../hooks/useQueries";
+import { useNavigate, useParams } from "react-router-dom";
+import { TorrentsTable, TorrentRow } from "../components/torrents-table";
 import { EpisodeRow, EpisodesTable } from "../components/episodes-table";
+import styles from "../styles/media.module.css";
 
 const TMDB_IMG_BASE = "https://image.tmdb.org/t/p/original";
 
@@ -89,6 +89,7 @@ export function LocalMedia() {
   const external = useQueries();
   const episodes = useQueries();
   const seasons = useQueries();
+  const [curSeason, setCurSeason] = useState(null);
 
   useEffect(() => {
     document.title = "Media | Betflix";
@@ -116,17 +117,30 @@ export function LocalMedia() {
   }, [media.data]);
 
   useEffect(() => {
-    if (seasons.data) {
-      episodes.selectSeason(mediaId, seasons.data[0].season_num);
+    if (seasons.data?.length) {
+      setCurSeason(seasons.data[0].season_num);
     }
   }, [seasons.data]);
 
+  useEffect(() => {
+    if (curSeason !== null) {
+      episodes.selectSeason(mediaId, curSeason);
+    }
+  }, [curSeason]);
+
   const Episodes = () => {
+    if (curSeason === null) return;
     return (
       <>
-        <select name="" id="">
+        <select
+          className={styles.select}
+          value={curSeason}
+          onChange={(i) => setCurSeason(i.target.value)}
+        >
           {seasons.data?.map(({ season_num }, i) => (
-            <option key={i}>Season {season_num}</option>
+            <option key={i} value={season_num}>
+              Season {season_num}
+            </option>
           ))}
         </select>
         <EpisodesTable>
