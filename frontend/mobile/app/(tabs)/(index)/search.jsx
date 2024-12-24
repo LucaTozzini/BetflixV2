@@ -1,16 +1,15 @@
-import useQueries from "../../../hooks/useQueries";
 import { useContext, useEffect, useState } from "react";
-import ThemeContext from "../../../contexts/themeContext";
+import { StatusBar } from "expo-status-bar";
+
+import useQueries from "../../../hooks/useQueries";
+
 import { Scroll, SearchBar, Div, Footer } from "../../../components/elements";
-import { PosterScroll } from "../../../components/ui";
+import { PosterScroll, ThemedStatusBar } from "../../../components/ui";
 
 export default () => {
-  const theme = useContext(ThemeContext);
   const local = useQueries();
   const external = useQueries();
   const [value, setValue] = useState(null);
-
-  function onSubmit() {}
 
   useEffect(() => {
     if (!value) {
@@ -25,6 +24,7 @@ export default () => {
 
   return (
     <Div>
+      <ThemedStatusBar translucent={false}/>
       <Scroll gap={10} stickyHeaderIndices={[0]}>
         <SearchBar
           autoFocus
@@ -35,7 +35,7 @@ export default () => {
 
         <PosterScroll header={"On Disc"} data={local.data} />
         <PosterScroll header={"External"} data={external.data} />
-        <Footer/>
+        <Footer />
       </Scroll>
     </Div>
   );

@@ -1,9 +1,4 @@
-import {
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import useQueries from "../../../../hooks/useQueries";
 import { useContext, useEffect, useState } from "react";
@@ -14,6 +9,7 @@ import { Button, Footer, P } from "../../../../components/elements";
 import ScrollModal from "../../../../components/scrollModal";
 import ThemeContext from "../../../../contexts/themeContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { ThemedStatusBar } from "../../../../components/ui";
 
 export default () => {
   const theme = useContext(ThemeContext);
@@ -22,6 +18,8 @@ export default () => {
   const seasons = useQueries();
   const season = useQueries();
   const external = useQueries();
+  const images = useQueries();
+  const imagesEn = useQueries();
   const { deleteLink } = useDeletes();
   const [showModal, setShowModal] = useState(null);
 
@@ -32,6 +30,8 @@ export default () => {
       if (response?.ok) {
         media.selectMedia(mediaId);
         external.reset();
+        imagesEn.reset()
+        images.reset()
       }
     } else {
       router.push(`/link-media/${mediaId}`);
@@ -52,8 +52,12 @@ export default () => {
       if (media.data.tmdb_id) {
         if (media.data.type === "movie") {
           external.fetchMovieDetails(media.data.tmdb_id);
+          images.fetchMovieImages(media.data.tmdb_id, null);
+          imagesEn.fetchMovieImages(media.data.tmdb_id, "en");
         } else {
           external.fetchShowDetails(media.data.tmdb_id);
+          images.fetchShowImages(media.data.tmdb_id, null);
+          imagesEn.fetchShowImages(media.data.tmdb_id, "en");
         }
       }
     }
@@ -135,6 +139,7 @@ export default () => {
     <View
       style={[styles.container, { backgroundColor: theme.backgroundColor }]}
     >
+      <ThemedStatusBar translucent={true} />
       <ScrollView>
         <MediaView
           title={media.data?.link_title ?? media.data?.title}
@@ -144,14 +149,20 @@ export default () => {
           vote_average={external.data?.vote_average}
           duration={media.data?.duration}
           backdrop_path={
-            external.data?.backdrop_path ?? media.data?.backdrop_path ?? null
+            images.data?.posters?.length
+              ? images.data.posters[0].file_path
+              : null
           }
-          cast={external.data?.credits?.cast ?? external.data?.aggregate_credits?.cast}
+          logo_path={imagesEn.data?.logos?.length ? imagesEn.data.logos[0].file_path : null}
+          cast={
+            external.data?.credits?.cast ??
+            external.data?.aggregate_credits?.cast
+          }
         >
           <Buttons />
         </MediaView>
-        <TVShowUI/>
-        <Footer/>
+        <TVShowUI />
+        <Footer />
       </ScrollView>
     </View>
   );
@@ -164,7 +175,7 @@ const styles = StyleSheet.create({
   episodes: {
     gap: 10,
     marginHorizontal: 10,
-    marginTop: 10
+    marginTop: 10,
   },
   episode: {
     padding: 10,

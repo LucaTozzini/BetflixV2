@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     gap: 10,
-    borderTopWidth: 1,
+    borderTopWidth: .2,
     paddingHorizontal: 10,
 
     // Set from ThemeContext

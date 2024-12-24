@@ -5,8 +5,9 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Animated,
 } from "react-native";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import ThemeContext from "../contexts/themeContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
@@ -43,6 +44,7 @@ export const Scroll = ({
 }) => {
   return (
     <ScrollView
+      showsVerticalScrollIndicator={false}
       contentContainerStyle={{ gap, padding: pad ? padding : 0 }}
       refreshControl={
         onRefresh ? (
@@ -53,6 +55,33 @@ export const Scroll = ({
     >
       {children}
     </ScrollView>
+  );
+};
+
+export const AnimatedScroll = ({
+  children,
+  pad,
+  refreshing,
+  onRefresh,
+  stickyHeaderIndices,
+  gap,
+  onScroll,
+}) => {
+  return (
+    <Animated.ScrollView
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ gap, padding: pad ? padding : 0 }}
+      refreshControl={
+        onRefresh ? (
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        ) : null
+      }
+      stickyHeaderIndices={stickyHeaderIndices}
+      onScroll={onScroll}
+      scrollEventThrottle={16}
+    >
+      {children}
+    </Animated.ScrollView>
   );
 };
 
@@ -167,10 +196,13 @@ export const SearchBar = ({
   const theme = useContext(ThemeContext);
   return (
     <View
-      style={[{
-        padding,
-        backgroundColor: theme.backgroundColor,
-      }, style]}
+      style={[
+        {
+          padding,
+          backgroundColor: theme.backgroundColor,
+        },
+        style,
+      ]}
     >
       <View
         style={{
@@ -183,12 +215,19 @@ export const SearchBar = ({
           paddingHorizontal: 10,
         }}
       >
-        {!numberPad && <Ionicons name="search-outline" size={25} color={theme.color} />}
+        {!numberPad && (
+          <Ionicons name="search-outline" size={25} color={theme.color} />
+        )}
         <TextInput
           autoFocus={autoFocus}
           numberOfLines={1}
           textAlign={numberPad ? "center" : undefined}
-          style={{ flex: 1, color: theme.color, fontSize: fontSmall, height: 45 }}
+          style={{
+            flex: 1,
+            color: theme.color,
+            fontSize: fontSmall,
+            height: 45,
+          }}
           placeholder={placeholder}
           placeholderTextColor={theme.colorDim}
           onChangeText={setValue}
@@ -209,23 +248,23 @@ export const SearchBar = ({
 export const Button = ({ children, grow, onPress }) => {
   const theme = useContext(ThemeContext);
   return (
-      <TouchableOpacity
-        onPress={onPress}
-        style={{
-          padding: 10,
-          flex: grow ? 1 : undefined,
-          flexDirection: "row",
-          borderWidth: 1,
-          borderColor: "grey",
-          justifyContent: "center",
-          backgroundColor: theme.buttonBackgroundColor,
-          borderRadius: 10,
-          alignItems: "center",
-          gap: 10,
-        }}
-      >
-        {children}
-      </TouchableOpacity>
+    <TouchableOpacity
+      onPress={onPress}
+      style={{
+        padding: 10,
+        flex: grow ? 1 : undefined,
+        flexDirection: "row",
+        borderWidth: 1,
+        borderColor: "grey",
+        justifyContent: "center",
+        backgroundColor: theme.buttonBackgroundColor,
+        borderRadius: 10,
+        alignItems: "center",
+        gap: 10,
+      }}
+    >
+      {children}
+    </TouchableOpacity>
   );
 };
 

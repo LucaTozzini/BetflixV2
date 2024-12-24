@@ -12,10 +12,14 @@ import {
   useAnimatedValue,
   Pressable,
   Text,
+  StatusBar,
+  ScrollView,
 } from "react-native";
 import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { StatusBar as ExpoStatusBar } from "expo-status-bar";
+import { Image as ExpoImage } from "expo-image";
 
 const paddingHorizontal = 10;
 
@@ -110,7 +114,7 @@ export const PosterScroll = ({ header, data, onPress }) => {
         key={(item) => item.mediaId ?? item.id}
         renderItem={({ item }) => (
           <Poster
-            title={item.title ?? item.name}
+            title={item.link_title ?? item.title ?? item.name}
             year={
               // if from local db
               item.date?.split("-")[0] ??
@@ -137,15 +141,23 @@ export const PosterScroll = ({ header, data, onPress }) => {
   );
 };
 
-export const TopBar = () => {
+export const TopBar = ({ backgroundColor }) => {
   const theme = useContext(ThemeContext);
+
   return (
-    <View
+    <Animated.View
       style={{
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
         paddingHorizontal,
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 100,
+        paddingTop: StatusBar.currentHeight,
+        backgroundColor,
       }}
     >
       <Image
@@ -160,7 +172,7 @@ export const TopBar = () => {
       >
         <Ionicons name="search-outline" color={theme.color} size={25} />
       </TouchableOpacity>
-    </View>
+    </Animated.View>
   );
 };
 
@@ -339,14 +351,65 @@ export const CastScroll = ({ data }) => {
   );
 };
 
-export const Backdrop = ({ backdrop_path }) => {
-  if (!backdrop_path) return null;
-  const IMAGE_BASE = "https://image.tmdb.org/t/p/w780";
+export const Backdrop = ({ backdrop_path, children }) => {
+  const IMAGE_BASE = "https://image.tmdb.org/t/p/original";
+  const theme = useContext(ThemeContext);
   return (
     <ImageBackground
       source={{ uri: IMAGE_BASE + backdrop_path }}
-      style={{ aspectRatio: 1.7 }}
-    ></ImageBackground>
+      style={{ width: "100%", aspectRatio: 0.7 }}
+    >
+      <LinearGradient
+        colors={["transparent", theme.backgroundColor]}
+        style={{
+          flex: 1,
+          justifyContent: "flex-end",
+          alignItems: "center",
+          padding: paddingHorizontal + 10
+        }}
+      >
+        {children}
+      </LinearGradient>
+    </ImageBackground>
+  );
+};
+
+export const Logo = ({ logo_path }) => {
+  const IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
+  console.log(IMAGE_BASE + logo_path);
+  return (
+    <ExpoImage
+      source={{ uri: IMAGE_BASE + logo_path }}
+      contentFit="contain"
+      contentPosition="bottom center"
+      style={{
+        height: 130,
+        width: "90%",
+      }}
+    />
+  );
+};
+
+export const Genres = ({ genres }) => {
+  return (
+    <View
+      style={{
+        justifyContent: "center",
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: 10,
+        width: "80%",
+        margin: "auto"
+      }}
+    >
+      {genres?.map((i) => (
+        <Chip>
+          <P tiny dim>
+            {i.trim()}
+          </P>
+        </Chip>
+      ))}
+    </View>
   );
 };
 
@@ -380,5 +443,16 @@ export const Vote = ({ vote_average }) => {
       <Ionicons name="star" color={"rgb(255, 208, 0)"} size={17} />
       <P>{Math.round(vote_average * 10)}</P>
     </View>
+  );
+};
+
+export const ThemedStatusBar = ({ translucent }) => {
+  const theme = useContext(ThemeContext);
+  return (
+    <ExpoStatusBar
+      style={theme.statusBarStyle}
+      translucent={translucent}
+      backgroundColor={translucent ? "transparent" : theme.backgroundColor}
+    />
   );
 };

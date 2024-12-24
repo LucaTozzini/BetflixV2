@@ -6,13 +6,19 @@ import useQueries from "../../../../hooks/useQueries";
 import MediaView from "../../../../components/mediaView";
 import ThemeContext from "../../../../contexts/themeContext";
 import { Footer, H3 } from "../../../../components/elements";
-import { Toast, TorrentButton } from "../../../../components/ui";
+import {
+  ThemedStatusBar,
+  Toast,
+  TorrentButton,
+} from "../../../../components/ui";
 
 export default () => {
   const theme = useContext(ThemeContext);
   const { tmdbId } = useLocalSearchParams();
   const [showToast, setShowToast] = useState(false);
   const [showToastError, setShowToastError] = useState(false);
+  const images = useQueries();
+  const imagesEn = useQueries();
 
   const media = useQueries();
   const link = useQueries();
@@ -23,6 +29,8 @@ export default () => {
   useEffect(() => {
     media.fetchMovieDetails(tmdbId);
     link.selectLink({ tmdbId });
+    images.fetchMovieImages(tmdbId, null);
+    imagesEn.fetchMovieImages(tmdbId, "en");
   }, []);
 
   useEffect(() => {
@@ -74,6 +82,8 @@ export default () => {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
+      <ThemedStatusBar translucent={true} />
+
       <Toast show={showToast} throb message={"Adding torrent"} />
       <Toast show={showToastError} isError message={"Something whent wrong"} />
       <ScrollView contentContainerStyle={styles.scroll}>
@@ -84,10 +94,11 @@ export default () => {
           vote_average={media.data?.vote_average}
           duration={media.data?.runtime * 60}
           overview={media.data?.overview}
-          backdrop_path={media.data?.backdrop_path}
+          backdrop_path={images.data?.posters?.length ? images.data.posters[0].file_path : null}
+          logo_path={imagesEn.data?.logos?.length ? imagesEn.data.logos[0].file_path : null}
           cast={media.data?.credits?.cast}
         />
-        <Torrents/>
+        <Torrents />
         <Footer />
       </ScrollView>
     </View>

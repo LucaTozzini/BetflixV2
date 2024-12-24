@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { Tabs } from "expo-router/tabs";
 import TabBar from "../../components/tabBar";
 
 export default () => {

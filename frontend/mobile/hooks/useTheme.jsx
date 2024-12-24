@@ -40,7 +40,7 @@ export default function useTheme() {
   useEffect(() => {
     AsyncStorage.getItem("theme", (err, result) => {
       if (err) setUsing("system"); // default to system on error
-      setUsing(result);
+      setUsing(result ?? "system");
     });
   }, []);
 

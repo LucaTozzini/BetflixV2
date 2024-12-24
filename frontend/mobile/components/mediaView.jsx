@@ -1,9 +1,15 @@
-import { useContext } from "react";
-import ThemeContext from "../contexts/themeContext";
-import { H1, H2, P } from "./elements";
+import { H1, P } from "./elements";
 import secToString from "../helpers/secToString";
-import { CastScroll, Backdrop, Overview, Vote } from "./ui";
-
+import {
+  CastScroll,
+  Backdrop,
+  Overview,
+  Vote,
+  Logo,
+  Genres,
+  ThemedStatusBar,
+} from "./ui";
+import { Image } from "react-native";
 const pad = 10;
 
 export default function MediaView({
@@ -14,18 +20,22 @@ export default function MediaView({
   overview,
   duration,
   backdrop_path,
+  logo_path,
   children,
   cast,
 }) {
-  const theme = useContext(ThemeContext);
   return (
     <>
-      <Backdrop backdrop_path={backdrop_path} />
-
+      {(backdrop_path || logo_path || genres) && (
+        <Backdrop backdrop_path={backdrop_path}>
+          <Logo logo_path={logo_path} />
+        </Backdrop>
+      )}
+      <Genres genres={genres?.split(/[,&]/)} />
       <Vote vote_average={vote_average} />
-      <H1 style={{paddingHorizontal: pad}}>{title}</H1>
-      <P dim tiny style={{paddingHorizontal: pad}}>
-        {[year, secToString(duration), genres].filter((i) => i).join(" | ")}
+      <H1 style={{ paddingHorizontal: pad }}>{title}</H1>
+      <P dim tiny style={{ paddingHorizontal: pad }}>
+        {[year, secToString(duration)].filter((i) => i).join(" | ")}
       </P>
 
       {children}

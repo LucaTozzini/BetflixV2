@@ -1,15 +1,17 @@
-import { View } from "react-native";
-import { Div, Footer, Scroll } from "../../../components/elements";
+import { Animated, useAnimatedValue, View } from "react-native";
+import { AnimatedScroll, Div, Footer } from "../../../components/elements";
 import useQueries from "../../../hooks/useQueries";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import {
   BlurredPoster,
   PosterScroll,
   SpotLight,
+  ThemedStatusBar,
   TopBar,
 } from "../../../components/ui";
 import { router } from "expo-router";
 import idToGenre from "../../../helpers/idToGenre";
+import ThemeContext from "../../../contexts/themeContext";
 
 export default () => {
   const latest = useQueries();
@@ -17,6 +19,14 @@ export default () => {
   const randomShows = useQueries();
   const [spotlight, setSpotlight] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const theme = useContext(ThemeContext);
+
+  const scrollY = useAnimatedValue(0);
+  const topBarBackgroundColor = scrollY.interpolate({
+    inputRange: [0, 50],
+    outputRange: ["transparent", theme.backgroundColor],
+    extrapolate: "clamp",
+  });
 
   async function handleRefresh() {
     setRefreshing(true);
@@ -42,8 +52,26 @@ export default () => {
 
   return (
     <Div>
-      <TopBar />
-      <Scroll refreshing={refreshing} onRefresh={handleRefresh} gap={20}>
+      <ThemedStatusBar translucent={true} />
+      <TopBar backgroundColor={topBarBackgroundColor} />
+      <AnimatedScroll
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+        gap={20}
+        onScroll={Animated.event(
+          // scrollY = e.nativeEvent.contentOffset.y
+          [
+            {
+              nativeEvent: {
+                contentOffset: {
+                  y: scrollY,
+                },
+              },
+            },
+          ],
+          { useNativeDriver: false }
+        )}
+      >
         <View
           style={{
             pointerEvents: "none",
@@ -51,7 +79,7 @@ export default () => {
             top: 0,
             right: 0,
             left: 0,
-            height: 0,
+            height: 60,
           }}
         >
           <BlurredPoster poster_path={spotlight?.poster_path} />
@@ -70,7 +98,7 @@ export default () => {
         <PosterScroll data={randomShows.data} header={"TV Shows"} />
 
         <Footer />
-      </Scroll>
+      </AnimatedScroll>
     </Div>
   );
 };

@@ -116,12 +116,20 @@ export default function useQueries() {
     genericGET(`/external/movies/${tmdbId}`);
   }
 
+  function fetchMovieImages(tmdbId, language) {
+    genericGET(`/external/movies/${tmdbId}/images?language=${language}`)
+  }
+
   /**
    * Fetch show details from TMDb
    * @param {number} tmdbId
    */
   function fetchShowDetails(tmdbId) {
     genericGET(`/external/shows/${tmdbId}`);
+  }
+
+  function fetchShowImages(tmdbId, language) {
+    genericGET(`/external/shows/${tmdbId}/images?language=${language}`)
   }
 
   /**
@@ -135,6 +143,7 @@ export default function useQueries() {
   function searchMedia(title) {
     genericGET(`/search?title=${title}`);
   }
+
   return {
     data,
     reset,
@@ -147,7 +156,9 @@ export default function useQueries() {
     selectSeasons,
     selectSeason,
     fetchMovieDetails,
+    fetchMovieImages,
     fetchShowDetails,
+    fetchShowImages,
     fetchMovieTorrents,
     searchMedia,
   };
