@@ -158,6 +158,17 @@ export async function fetchMovieDetails(tmdbId) {
   }
 }
 
+export async function fetchMovieImages(tmdbId, language) {
+  try {
+    const url = `${API_ADDRESS}/movie/${tmdbId}/images?language=${language}`;
+    const response = await fetch(url, GET_OPTIONS);
+    const json = await response.json();
+    return json;
+  } catch (err) {
+    throw err;
+  }
+}
+
 /**
  * @param {number} tmdbId
  * @returns {Promise<showDetails>}
@@ -165,6 +176,17 @@ export async function fetchMovieDetails(tmdbId) {
 export async function fetchShowDetails(tmdbId) {
   try {
     const url = `${API_ADDRESS}/tv/${tmdbId}?append_to_response=aggregate_credits`;
+    const response = await fetch(url, GET_OPTIONS);
+    const json = await response.json();
+    return json;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function fetchShowImages(tmdbId, language) {
+  try {
+    const url = `${API_ADDRESS}/tv/${tmdbId}/images?language=${language}`;
     const response = await fetch(url, GET_OPTIONS);
     const json = await response.json();
     return json;
