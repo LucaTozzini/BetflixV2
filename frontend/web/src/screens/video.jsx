@@ -3,7 +3,10 @@ import styles from "../styles/video.module.css";
 import { useEffect, useState } from "react";
 import useQueries from "../hooks/useQueries";
 
-const SERVER = "localhost:5340";
+// dev
+// const SERVER = "http://localhost:5340";
+// build
+const SERVER = "";
 
 export default function Video() {
   const media = useQueries();
@@ -26,10 +29,10 @@ export default function Video() {
 
     if (seasoNum && episodeNum) {
       setStreamEndpoint(
-        `http://${SERVER}/stream/${mediaId}/s${seasoNum}-e${episodeNum}`
+        `${SERVER}/stream/${mediaId}/s${seasoNum}-e${episodeNum}`
       );
     } else {
-      setStreamEndpoint(`http://${SERVER}/stream/${mediaId}`);
+      setStreamEndpoint(`${SERVER}/stream/${mediaId}`);
     }
   }, []);
 
