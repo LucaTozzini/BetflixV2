@@ -1,16 +1,16 @@
 import { useEvent } from "expo";
+import { useContext, useEffect } from "react";
+import { View, StyleSheet } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
-import { useEffect } from "react";
-import { StyleSheet } from "react-native";
-import { View } from "react-native";
-const SERVER = "192.168.1.76:5340";
+import ServerContext from "../../contexts/serverContext";
 
 export default () => {
+  const serverAddress = useContext(ServerContext);
   const params = useLocalSearchParams();
   const player = useVideoPlayer(
     // If params include s (seasonNum) and e (episodeNum), assume tv show and query episode
-    `http://${SERVER}/stream/${params.mediaId}${
+    `http://${serverAddress}/stream/${params.mediaId}${
       params.s && params.e ? `/s${params.s}-e${params.e}` : ""
     }`,
     (player) => {

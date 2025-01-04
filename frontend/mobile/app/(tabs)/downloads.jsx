@@ -5,6 +5,7 @@ import secToString from "../../helpers/secToString";
 import ThemeContext from "../../contexts/themeContext";
 import { Div, H2, H3, P } from "../../components/elements";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { StatusBarFill } from "../../components/ui";
 
 export default () => {
   const theme = useContext(ThemeContext);
@@ -49,6 +50,7 @@ export default () => {
   if (!data?.length)
     return (
       <Div pad>
+        <StatusBarFill />
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center", gap: 20 }}
         >
@@ -60,6 +62,7 @@ export default () => {
 
   return (
     <Div>
+      <StatusBarFill />
       <ScrollView
         contentContainerStyle={{
           marginHorizontal: 10,

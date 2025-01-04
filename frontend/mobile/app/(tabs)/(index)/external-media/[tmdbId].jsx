@@ -7,7 +7,6 @@ import MediaView from "../../../../components/mediaView";
 import ThemeContext from "../../../../contexts/themeContext";
 import { Footer, H3 } from "../../../../components/elements";
 import {
-  ThemedStatusBar,
   Toast,
   TorrentButton,
 } from "../../../../components/ui";
@@ -82,7 +81,6 @@ export default () => {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
-      <ThemedStatusBar translucent={true} />
 
       <Toast show={showToast} throb message={"Adding torrent"} />
       <Toast show={showToastError} isError message={"Something whent wrong"} />

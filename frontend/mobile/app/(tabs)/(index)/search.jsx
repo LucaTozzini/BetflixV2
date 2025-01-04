@@ -1,10 +1,9 @@
-import { useContext, useEffect, useState } from "react";
-import { StatusBar } from "expo-status-bar";
+import {useEffect, useState } from "react";
 
 import useQueries from "../../../hooks/useQueries";
 
 import { Scroll, SearchBar, Div, Footer } from "../../../components/elements";
-import { PosterScroll, ThemedStatusBar } from "../../../components/ui";
+import { PosterScroll, StatusBarFill } from "../../../components/ui";
 
 export default () => {
   const local = useQueries();
@@ -24,7 +23,7 @@ export default () => {
 
   return (
     <Div>
-      <ThemedStatusBar translucent={false}/>
+      <StatusBarFill />
       <Scroll gap={10} stickyHeaderIndices={[0]}>
         <SearchBar
           autoFocus

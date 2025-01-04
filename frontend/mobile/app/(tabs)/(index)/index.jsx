@@ -6,7 +6,6 @@ import {
   BlurredPoster,
   PosterScroll,
   SpotLight,
-  ThemedStatusBar,
   TopBar,
 } from "../../../components/ui";
 import { router } from "expo-router";
@@ -52,7 +51,6 @@ export default () => {
 
   return (
     <Div>
-      <ThemedStatusBar translucent={true} />
       <TopBar backgroundColor={topBarBackgroundColor} />
       <AnimatedScroll
         refreshing={refreshing}

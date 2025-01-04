@@ -4,6 +4,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { Button, Div, P } from "../../components/elements";
 import ThemeContext from "../../contexts/themeContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { StatusBarFill } from "../../components/ui";
 
 export default () => {
   const theme = useContext(ThemeContext);
@@ -11,8 +12,8 @@ export default () => {
   const socket = useSocket("/");
   const [connections, setConnections] = useState(null);
   const [messages, setMessages] = useState([]);
-
   useEffect(() => {
+    
     if (socket.msg) {
       const json = JSON.parse(socket.msg);
       setConnections(json.connections);
@@ -30,6 +31,7 @@ export default () => {
 
   return (
     <Div>
+      <StatusBarFill/>
       <View style={[styles.top, { borderColor: theme.colorDim }]}>
         <Text
           style={{

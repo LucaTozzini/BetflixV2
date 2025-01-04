@@ -9,7 +9,6 @@ import { Button, Footer, P } from "../../../../components/elements";
 import ScrollModal from "../../../../components/scrollModal";
 import ThemeContext from "../../../../contexts/themeContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { ThemedStatusBar } from "../../../../components/ui";
 
 export default () => {
   const theme = useContext(ThemeContext);
@@ -139,7 +138,6 @@ export default () => {
     <View
       style={[styles.container, { backgroundColor: theme.backgroundColor }]}
     >
-      <ThemedStatusBar translucent={true} />
       <ScrollView>
         <MediaView
           title={media.data?.link_title ?? media.data?.title}

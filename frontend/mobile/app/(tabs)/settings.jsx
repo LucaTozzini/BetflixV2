@@ -5,12 +5,14 @@ import ServerContext from "../../contexts/serverContext";
 import { View } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Div, Scroll, P, H2, Button } from "../../components/elements";
+import { StatusBarFill } from "../../components/ui";
 
 export default () => {
   const theme = useContext(ThemeContext);
   const serverAddress = useContext(ServerContext);
   return (
     <Div>
+      <StatusBarFill />
       <Scroll pad gap={20}>
         <View style={{ gap: 7 }}>
           <H2>Set Theme</H2>

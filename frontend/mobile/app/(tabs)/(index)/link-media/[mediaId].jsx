@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import usePosts from "../../../../hooks/usePosts";
 import useQueries from "../../../../hooks/useQueries";
-import { PosterScroll } from "../../../../components/ui";
+import { PosterScroll, StatusBarFill } from "../../../../components/ui";
 import { Div, Footer, Scroll, SearchBar } from "../../../../components/elements";
 import { View } from "react-native";
 
@@ -49,6 +49,7 @@ export default () => {
 
   return (
     <Div>
+      <StatusBarFill />
       <View style={{ flexDirection: "row" }}>
         <View style={{ flex: 1 }}>
           <SearchBar

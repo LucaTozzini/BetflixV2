@@ -3,8 +3,8 @@ import useZeroconf from "../hooks/useZeroconf";
 import ServerContext from "../contexts/serverContext";
 import ThemeContext from "../contexts/themeContext";
 import useTheme from "../hooks/useTheme";
-import { StatusBar } from "expo-status-bar";
 import { Div, H2 } from "../components/elements";
+import { StatusBar } from "expo-status-bar";
 
 export default () => {
   const serverAddress = useZeroconf();
@@ -14,7 +14,6 @@ export default () => {
     return (
       <ThemeContext.Provider value={theme}>
         <StatusBar
-          translucent={false}
           style={theme.statusBarStyle}
           backgroundColor={theme.backgroundColor}
         />
@@ -29,10 +28,11 @@ export default () => {
     <ThemeContext.Provider value={theme}>
       <ServerContext.Provider value={serverAddress}>
         <StatusBar
-          translucent={false}
           style={theme.statusBarStyle}
-          backgroundColor={theme.backgroundColor}
+          backgroundColor={"transparent"}
+          translucent
         />
+
         <Stack screenOptions={{ headerShown: false }} />
       </ServerContext.Provider>
     </ThemeContext.Provider>

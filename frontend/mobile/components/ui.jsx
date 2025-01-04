@@ -361,6 +361,7 @@ export const Backdrop = ({ backdrop_path, children }) => {
     >
       <LinearGradient
         colors={["transparent", theme.backgroundColor]}
+        locations={[0.5, 1]}
         style={{
           flex: 1,
           justifyContent: "flex-end",
@@ -376,7 +377,6 @@ export const Backdrop = ({ backdrop_path, children }) => {
 
 export const Logo = ({ logo_path }) => {
   const IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
-  console.log(IMAGE_BASE + logo_path);
   return (
     <ExpoImage
       source={{ uri: IMAGE_BASE + logo_path }}
@@ -446,13 +446,9 @@ export const Vote = ({ vote_average }) => {
   );
 };
 
-export const ThemedStatusBar = ({ translucent }) => {
+export const StatusBarFill = () => {
   const theme = useContext(ThemeContext);
   return (
-    <ExpoStatusBar
-      style={theme.statusBarStyle}
-      translucent={translucent}
-      backgroundColor={translucent ? "transparent" : theme.backgroundColor}
-    />
+    <View style={{backgroundColor: theme.backgroundColor, height: StatusBar.currentHeight}}/>
   );
-};
+}
