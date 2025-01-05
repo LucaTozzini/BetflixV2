@@ -13,9 +13,11 @@ export default () => {
   if (!serverAddress) {
     return (
       <ThemeContext.Provider value={theme}>
+
         <StatusBar
           style={theme.statusBarStyle}
           backgroundColor={theme.backgroundColor}
+          translucent={false}
         />
         <Div pad>
           <H2>Scanning For Server...</H2>
