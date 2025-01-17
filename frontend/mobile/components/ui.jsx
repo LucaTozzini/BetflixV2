@@ -13,12 +13,10 @@ import {
   Pressable,
   Text,
   StatusBar,
-  ScrollView,
 } from "react-native";
 import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { StatusBar as ExpoStatusBar } from "expo-status-bar";
 import { Image as ExpoImage } from "expo-image";
 
 const paddingHorizontal = 10;
@@ -130,8 +128,8 @@ export const PosterScroll = ({ header, data, onPress }) => {
                 ? () => onPress(item)
                 : () => {
                     if (item.media_id)
-                      router.push(`/local-media/${item.media_id}`);
-                    else if (item.id) router.push(`/external-media/${item.id}`);
+                      router.push(`/media?mediaId=${item.media_id}`);
+                    else if (item.id) router.push(`/media?tmdbId=${item.id}`);
                   }
             }
           />
@@ -311,7 +309,7 @@ export const TorrentButton = ({
 export const Cast = ({ name, profile_path }) => {
   const IMAGE_BASE = "https://image.tmdb.org/t/p/w185";
   return (
-    <View style={{ width: 100 }}>
+    <View style={{ width: 90 }}>
       <Image
         src={IMAGE_BASE + profile_path}
         style={{
@@ -332,14 +330,14 @@ export const CastScroll = ({ data }) => {
   if (!data) return null;
   // https://developer.themoviedb.org/reference/movie-credits
   return (
-    <View style={{ marginTop: 15, marginBottom: 20, gap: 5 }}>
+    <View style={{ gap: 5 }}>
       <H3 style={{ paddingHorizontal }}>Cast</H3>
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal,
-          gap: 8,
+          gap: 10,
         }}
         data={data}
         keyExtractor={(i) => `${i.order}_${i.id}`}
@@ -357,17 +355,12 @@ export const Backdrop = ({ backdrop_path, children }) => {
   return (
     <ImageBackground
       source={{ uri: IMAGE_BASE + backdrop_path }}
-      style={{ width: "100%", aspectRatio: 0.7 }}
+      style={{ width: "100%", aspectRatio: 1.5 }}
     >
       <LinearGradient
         colors={["transparent", theme.backgroundColor]}
-        locations={[0.5, 1]}
-        style={{
-          flex: 1,
-          justifyContent: "flex-end",
-          alignItems: "center",
-          padding: paddingHorizontal + 10
-        }}
+        locations={[0.6, 1]}
+        style={{ flex: 1 }}
       >
         {children}
       </LinearGradient>
@@ -375,80 +368,82 @@ export const Backdrop = ({ backdrop_path, children }) => {
   );
 };
 
-export const Logo = ({ logo_path }) => {
-  const IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
-  return (
-    <ExpoImage
-      source={{ uri: IMAGE_BASE + logo_path }}
-      contentFit="contain"
-      contentPosition="bottom center"
-      style={{
-        height: 130,
-        width: "90%",
-      }}
-    />
-  );
-};
-
-export const Genres = ({ genres }) => {
-  return (
-    <View
-      style={{
-        justifyContent: "center",
-        flexDirection: "row",
-        flexWrap: "wrap",
-        gap: 10,
-        width: "80%",
-        margin: "auto"
-      }}
-    >
-      {genres?.map((i) => (
-        <Chip>
-          <P tiny dim>
-            {i.trim()}
-          </P>
-        </Chip>
-      ))}
-    </View>
-  );
-};
-
-export const Overview = ({ text }) => {
-  if (!text) return null;
+export const Overview = ({ children }) => {
+  if (!children) return null;
   const [expand, setExpand] = useState(false);
   // Not sure why but not wrapping <P> in <Text> causes an error w
   return (
     <Pressable onPress={() => setExpand(!expand)}>
-      <Text
-        numberOfLines={expand ? undefined : 5}
-        style={{ paddingHorizontal }}
-      >
-        <P>{text}</P>;
+      <Text numberOfLines={expand ? undefined : 3}>
+        <P dim>{children}</P>;
       </Text>
     </Pressable>
   );
 };
 
-export const Vote = ({ vote_average }) => {
+export const Vote = ({ vote_average, vote_count }) => {
   if (!vote_average) return null;
   return (
     <View
       style={{
         flexDirection: "row",
         gap: 3,
-        paddingHorizontal,
-        paddingTop: 10,
       }}
     >
       <Ionicons name="star" color={"rgb(255, 208, 0)"} size={17} />
       <P>{Math.round(vote_average * 10)}</P>
+      <P dim> | {vote_count}</P>
     </View>
   );
 };
 
-export const StatusBarFill = () => {
+export const LocalMediaActions = () => {
   const theme = useContext(ThemeContext);
   return (
-    <View style={{backgroundColor: theme.backgroundColor, height: StatusBar.currentHeight}}/>
+    <View>
+      <TouchableOpacity>
+        <Ionicons name="link-outline" color={theme.color} size={25} />
+      </TouchableOpacity>
+    </View>
   );
-}
+};
+
+export const StatusBarFill = ({ transparent }) => {
+  const theme = useContext(ThemeContext);
+  return (
+    <View
+      style={{
+        backgroundColor: transparent ? "transparent" : theme.backgroundColor,
+        height: StatusBar.currentHeight,
+      }}
+    />
+  );
+};
+
+export const PlayButton = ({mediaId}) => {
+  const theme = useContext(ThemeContext);
+  const size = 70
+  return (
+    <TouchableOpacity
+      onPress={mediaId ? () => router.push("/stream/"+mediaId) : null}
+      style={{
+        width: size,
+        aspectRatio: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor:
+          theme.using === "light"
+            ? "rgba(255, 255, 255, .6)"
+            : "rgba(0, 0, 0, .6)",
+        borderRadius: "50%",
+      }}
+    >
+      <Ionicons
+        name="play"
+        color={theme.color}
+        size={size / 1.8}
+        style={{ marginLeft: 1, width: size / 2 }}
+      />
+    </TouchableOpacity>
+  );
+};

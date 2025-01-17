@@ -19,7 +19,7 @@ export default function Tabs({ state, descriptors, navigation }) {
         size={23}
         color={focused ? theme.color : theme.colorDim}
       />
-      <Text style={{ color: theme.color, fontSize: 8 }}>{label}</Text>
+      <Text style={{ color: theme.color, fontSize: 9 }}>{label}</Text>
     </TouchableOpacity>
   );
 

@@ -1,4 +1,4 @@
-import { H1, P } from "./elements";
+import { H1, H2, P } from "./elements";
 import secToString from "../helpers/secToString";
 import {
   CastScroll,
@@ -8,6 +8,7 @@ import {
   Logo,
   Genres,
   ThemedStatusBar,
+  StatusBarFill,
 } from "./ui";
 import { Image } from "react-native";
 const pad = 10;
@@ -26,16 +27,15 @@ export default function MediaView({
 }) {
   return (
     <>
-      {(backdrop_path || logo_path || genres) && (
+      {backdrop_path ? (
         <Backdrop backdrop_path={backdrop_path}>
-          <Logo logo_path={logo_path} />
+          <Vote vote_average={vote_average} />
+          {/* <Logo logo_path={logo_path} /> */}
         </Backdrop>
-      )}
-      <Genres genres={genres?.split(/[,&]/)} />
-      <Vote vote_average={vote_average} />
-      <H1 style={{ paddingHorizontal: pad }}>{title}</H1>
+      ) : (<StatusBarFill />)}
+      <H2 style={{ paddingHorizontal: pad }}>{title}</H2>
       <P dim tiny style={{ paddingHorizontal: pad }}>
-        {[year, secToString(duration)].filter((i) => i).join(" | ")}
+        {[year, secToString(duration), genres].filter((i) => i).join(" | ")}
       </P>
 
       {children}

@@ -4,6 +4,7 @@ import ServerContext from "../contexts/serverContext";
 export default function useQueries() {
   const serverAddress = useContext(ServerContext)
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   function parString(key, value) {
     return !value || !key ? null : `${key}=${value}`;
@@ -17,6 +18,7 @@ export default function useQueries() {
    * @param {string} endpoint
    */
   async function genericGET(endpoint) {
+    setLoading(true);
     const response = await fetch(`http://${serverAddress}${endpoint}`);
     if (response.ok) {
       const json = await response.json();
@@ -30,6 +32,7 @@ export default function useQueries() {
       );
       setData(null);
     }
+    setLoading(false);
   }
 
   /**
@@ -147,6 +150,7 @@ export default function useQueries() {
   return {
     data,
     reset,
+    loading,
     selectMedia,
     selectMediaCollection,
     fetchPopularMovies,

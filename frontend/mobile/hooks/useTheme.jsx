@@ -28,7 +28,7 @@ export default function useTheme() {
 
   function setDarkTheme() {
     setColor("white");
-    setColorDim("grey");
+    setColorDim("rgb(180, 180, 180)");
     setAccentColor("red");
     setStatusBarStyle("light");
     setBackgroundColor("rgb(19, 19, 19)");

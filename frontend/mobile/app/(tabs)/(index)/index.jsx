@@ -22,7 +22,7 @@ export default () => {
 
   const scrollY = useAnimatedValue(0);
   const topBarBackgroundColor = scrollY.interpolate({
-    inputRange: [0, 50],
+    inputRange: [0, 10],
     outputRange: ["transparent", theme.backgroundColor],
     extrapolate: "clamp",
   });
@@ -87,7 +87,7 @@ export default () => {
           year={spotlight?.release_date?.split("-")[0]}
           poster_path={spotlight?.poster_path}
           genres={spotlight?.genre_ids?.map((i) => idToGenre[i]).slice(0, 3)}
-          onPress={() => router.push(`/external-media/${spotlight.id}`)}
+          onPress={() => router.push(`/media?tmdbId=${spotlight.id}`)}
         />
 
         <PosterScroll data={popular.data} header={"Popular Movies"} />

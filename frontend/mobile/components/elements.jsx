@@ -14,8 +14,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 const fontTiny = 12;
 const fontSmall = 15;
 const fontMedium = 18;
-const fontLarge = 21;
-const fontHuge = 25;
+const fontLarge = 20;
+const fontHuge = 22;
 
 const padding = 10;
 
@@ -85,7 +85,15 @@ export const AnimatedScroll = ({
   );
 };
 
-export const H1 = ({ children, center, dim, serif, numberOfLines, style }) => {
+export const H1 = ({
+  children,
+  center,
+  dim,
+  serif,
+  numberOfLines,
+  style,
+  pad,
+}) => {
   if (!children) return;
   const theme = useContext(ThemeContext);
 
@@ -99,6 +107,7 @@ export const H1 = ({ children, center, dim, serif, numberOfLines, style }) => {
           fontWeight: "bold",
           fontFamily: serif ? "serif" : undefined,
           textAlign: center ? "center" : undefined,
+          paddingHorizontal: pad ? padding : 0,
         },
         style,
       ]}
@@ -108,7 +117,7 @@ export const H1 = ({ children, center, dim, serif, numberOfLines, style }) => {
   );
 };
 
-export const H2 = ({ children, center, dim, serif, numberOfLines, style }) => {
+export const H2 = ({ children, center, dim, serif, numberOfLines, style, pad }) => {
   if (!children) return;
   const theme = useContext(ThemeContext);
 
@@ -122,6 +131,8 @@ export const H2 = ({ children, center, dim, serif, numberOfLines, style }) => {
           fontWeight: "bold",
           fontFamily: serif ? "serif" : undefined,
           textAlign: center ? "center" : undefined,
+          paddingHorizontal: pad ? padding : 0,
+
         },
         style,
       ]}
@@ -131,7 +142,7 @@ export const H2 = ({ children, center, dim, serif, numberOfLines, style }) => {
   );
 };
 
-export const H3 = ({ children, center, dim, serif, numberOfLines, style }) => {
+export const H3 = ({ children, center, dim, serif, numberOfLines, style, pad }) => {
   if (!children) return;
   const theme = useContext(ThemeContext);
 
@@ -145,6 +156,8 @@ export const H3 = ({ children, center, dim, serif, numberOfLines, style }) => {
           fontFamily: serif ? "serif" : undefined,
           textAlign: center ? "center" : undefined,
           fontWeight: "bold",
+          paddingHorizontal: pad ? padding : 0,
+
         },
         style,
       ]}
@@ -154,7 +167,7 @@ export const H3 = ({ children, center, dim, serif, numberOfLines, style }) => {
   );
 };
 
-export const P = ({ children, center, dim, numberOfLines, tiny, style }) => {
+export const P = ({ children, center, dim, numberOfLines, tiny, style, pad }) => {
   if (!children) return;
   const theme = useContext(ThemeContext);
 
@@ -166,6 +179,8 @@ export const P = ({ children, center, dim, numberOfLines, tiny, style }) => {
           color: theme[dim ? "colorDim" : "color"],
           fontSize: tiny ? fontTiny : fontSmall,
           textAlign: center ? "center" : undefined,
+          paddingHorizontal: pad ? padding : 0,
+
         },
         style,
       ]}
