@@ -28,7 +28,6 @@
  * @property {number} tmdb_id
  * @property {string} poster_path
  * @property {string} backdrop_path
- * @property {string} overview
  * @property {string} genres
  * @property {string} date
  */
@@ -66,7 +65,13 @@ export function selectMediaCollection(offset, limit, order, desc, type) {
   return new Promise((res, rej) => {
     dbPromise.then((db) => {
       db.all(
-        `SELECT media.*, link.title AS link_title, backdrop_path, poster_path, genres, date
+        `SELECT 
+          *,
+          CASE 
+            WHEN link.title IS NOT NULL
+              THEN link.title
+            ELSE  media.title
+          END AS title
         FROM media
         LEFT JOIN link ON media.media_id = link.media_id 
         WHERE type = ? OR type = ? 
@@ -90,8 +95,15 @@ export function selectMediaCollection(offset, limit, order, desc, type) {
 export function selectMedia(mediaId) {
   return new Promise((res, rej) =>
     dbPromise.then((db) =>
+      // If linked, select link.title as title
       db.get(
-        `SELECT media.*, link.title AS link_title, tmdb_id, backdrop_path, poster_path, genres, overview, date
+        `SELECT 
+          *, 
+          CASE 
+            WHEN link.title IS NOT NULL 
+              THEN link.title
+            ELSE media.title
+          END AS title
         FROM media 
         LEFT JOIN link ON link.media_id = media.media_id 
         WHERE media.media_id = ?`,

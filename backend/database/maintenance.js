@@ -26,7 +26,6 @@ async function createDB() {
           title TEXT,
           poster_path TEXT,
           backdrop_path TEXT,
-          overview TEXT,
           genres TEXT,
           date TEXT
         );

@@ -36,14 +36,13 @@ async function post(req, res) {
     return;
   }
 
-  // link TABLE COLUMNS: media_id	tmdb_id	poster backdrop overview genres
+  // link TABLE COLUMNS: media_id	tmdb_id	poster backdrop genres
   await insertLink(
     req.query.mediaId,
     details.id,
     req.query.type === "movie" ? details.title : details.name,
     details.poster_path,
     details.backdrop_path,
-    details.overview,
     details.genres?.map((i) => idToGenre[i.id]).join(", "),
     req.query.type === "movie" ? details.release_date : details.first_air_date
   );
