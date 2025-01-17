@@ -6,6 +6,7 @@ The websocket server will be interacting with the DB through this manager,
 so error and edge-case prevention/avoidance needs to be addressed here.
 */
 
+// #region imports
 import fs from "fs";
 import path from "path";
 import dotenv from "dotenv";
@@ -13,10 +14,16 @@ import EventEmitter from "node:events";
 import dbPromise from "./connection.js";
 import { fetchMovies, fetchShows } from "../helpers/tmdbLink.js";
 import { createDB, purgeDB } from "./maintenance.js";
-import { insertEpisode, insertShow, insertLink } from "./writes.js";
+import {
+  insertMedia,
+  insertEpisode,
+  insertShow,
+  insertLink,
+} from "./writes.js";
 import { existsEpisodePath, existsMediaPath, selectLinkless } from "./reads.js";
 import { getVideoDurationInSeconds as getDuration } from "get-video-duration";
 import idToGenre from "../helpers/idToGenre.js";
+// #endregion
 
 dotenv.config();
 
@@ -188,20 +195,7 @@ async function scanMovies(root) {
           const { title, year } = extractMovieData(item);
           const duration = await getDuration(item_path);
 
-          await new Promise((res, rej) =>
-            db.run(
-              "INSERT INTO media(path, title, year, duration, type) VALUES (?,?,?,?,?)",
-              [
-                item_path, // path
-                title,
-                year,
-                Math.floor(duration), // duration (seconds)
-                "movie", // type
-              ],
-              (err) => (err ? rej(err) : res())
-            )
-          );
-
+          await insertMedia(item_path, title, year, duration, "movie");
           dbUpdate(_status, _instruct, `Found movie | ${title} (${year})`);
         }
       } catch (err) {
@@ -380,7 +374,6 @@ async function autolink() {
           data[0].title ?? data[0].name,
           data[0].poster_path,
           data[0].backdrop_path,
-          data[0].overview,
           data[0].genre_ids?.map((i) => idToGenre[i]).join(", "),
           data[0].release_date ?? data[0].first_air_date
         );
