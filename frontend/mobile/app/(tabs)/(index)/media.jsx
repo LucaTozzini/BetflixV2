@@ -1,18 +1,20 @@
-import { useEffect, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Text, View } from "react-native";
+import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import useQueries from "../../../hooks/useQueries";
-import { Div, H1, P, Scroll } from "../../../components/elements";
+import { Div, H1, P, Scroll, Button } from "../../../components/elements";
 import {
   Backdrop,
   CastScroll,
   LocalMediaActions,
-  Overview,
   PlayButton,
   StatusBarFill,
   Vote,
+  ThemedBottomSheetModal,
 } from "../../../components/ui";
 import secToString from "../../../helpers/secToString";
+
+import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 
 export default function Media() {
   // Get mediaId or tmdbId from route
@@ -26,6 +28,8 @@ export default function Media() {
 
   const [duration, setDuration] = useState(null);
   const [genres, setGenres] = useState(null);
+
+  const modalRef = useRef(null);
 
   useEffect(() => {
     // If mediaId is given, select media
@@ -103,7 +107,7 @@ export default function Media() {
         <H1 style={{ marginTop: 5 }} pad>
           {external.data?.title || external.data?.name || local.data?.title}
         </H1>
-        <P dim pad>
+        <P dim pad numberOfLines={1}>
           {[duration, genres].filter((i) => i).join(" \u2022 ")}
         </P>
 
@@ -117,6 +121,68 @@ export default function Media() {
             external.data?.aggregate_credits?.cast
           }
         />
+
+        <Button onPress={() => modalRef.current?.present()}>
+          <P>Select Season</P>
+        </Button>
+
+        <ThemedBottomSheetModal ref={modalRef}>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+          <H1>Hello World!</H1>
+        </ThemedBottomSheetModal>
       </Scroll>
     </Div>
   );

@@ -94,9 +94,8 @@ export const H1 = ({
   style,
   pad,
 }) => {
-  if (!children) return;
+  if (!children || typeof children !== "string") return null;
   const theme = useContext(ThemeContext);
-
   return (
     <Text
       numberOfLines={numberOfLines}
@@ -167,7 +166,7 @@ export const H3 = ({ children, center, dim, serif, numberOfLines, style, pad }) 
   );
 };
 
-export const P = ({ children, center, dim, numberOfLines, tiny, style, pad }) => {
+export const P = ({ children, text, center, dim, numberOfLines, tiny, style, pad }) => {
   if (!children) return;
   const theme = useContext(ThemeContext);
 

@@ -5,6 +5,8 @@ import ThemeContext from "../contexts/themeContext";
 import useTheme from "../hooks/useTheme";
 import { Div, H2 } from "../components/elements";
 import { StatusBar } from "expo-status-bar";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 export default () => {
   const serverAddress = useZeroconf();
@@ -13,7 +15,6 @@ export default () => {
   if (!serverAddress) {
     return (
       <ThemeContext.Provider value={theme}>
-
         <StatusBar
           style={theme.statusBarStyle}
           backgroundColor={theme.backgroundColor}
@@ -29,13 +30,18 @@ export default () => {
   return (
     <ThemeContext.Provider value={theme}>
       <ServerContext.Provider value={serverAddress}>
-        <StatusBar
-          style={theme.statusBarStyle}
-          backgroundColor={"transparent"}
-          translucent
-        />
+        {/* GestureHandlerRootView and BottomSheetModalProvider needed for using BottomSheetModal in child views */}
+        <GestureHandlerRootView>
+          <BottomSheetModalProvider>
+            <StatusBar
+              style={theme.statusBarStyle}
+              backgroundColor={"transparent"}
+              translucent
+            />
 
-        <Stack screenOptions={{ headerShown: false }} />
+            <Stack screenOptions={{ headerShown: false }} />
+          </BottomSheetModalProvider>
+        </GestureHandlerRootView>
       </ServerContext.Provider>
     </ThemeContext.Provider>
   );

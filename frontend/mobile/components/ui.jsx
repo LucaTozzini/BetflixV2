@@ -1,4 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import ThemeContext from "../contexts/themeContext";
 import { Chip, H2, H3, P } from "./elements";
 import {
@@ -13,11 +20,18 @@ import {
   Pressable,
   Text,
   StatusBar,
+  BackHandler,
 } from "react-native";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Image as ExpoImage } from "expo-image";
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetScrollView,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
 
 const paddingHorizontal = 10;
 
@@ -420,12 +434,12 @@ export const StatusBarFill = ({ transparent }) => {
   );
 };
 
-export const PlayButton = ({mediaId}) => {
+export const PlayButton = ({ mediaId }) => {
   const theme = useContext(ThemeContext);
-  const size = 70
+  const size = 70;
   return (
     <TouchableOpacity
-      onPress={mediaId ? () => router.push("/stream/"+mediaId) : null}
+      onPress={mediaId ? () => router.push("/stream/" + mediaId) : null}
       style={{
         width: size,
         aspectRatio: 1,
@@ -447,3 +461,44 @@ export const PlayButton = ({mediaId}) => {
     </TouchableOpacity>
   );
 };
+
+export const ThemedBottomSheetModal = forwardRef(({ children }, ref) => {
+  const { color, tabsBackgroundColor } = useContext(ThemeContext);
+
+  const isOpen = useRef(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => ref.current?.close();
+    }, [])
+  );
+
+  useEffect(() => {
+    BackHandler.addEventListener("harwareBackPress", () => {
+      if (ref.current && isOpen.current) {
+        ref.current.close();
+        return true;
+      }
+      return false;
+    });
+  }, []);
+
+  return (
+    <BottomSheetModal
+      ref={ref}
+      snapPoints={["50%", "80%"]}
+      onChange={(index) => (isOpen.current = index !== -1)}
+      style={{ marginTop: StatusBar.currentHeight }}
+      backgroundStyle={{ backgroundColor: tabsBackgroundColor }}
+      handleIndicatorStyle={{ backgroundColor: color }}
+      enableTouchThrough={false}
+      backdropComponent={(backdropProps) => (
+        <BottomSheetBackdrop {...backdropProps} appearsOnIndex={0} disappearsOnIndex={-1} enableTouchThrough={false}  opacity={.8}/>
+      )}
+    >
+      <BottomSheetScrollView style={{ flex: 1 }}>
+        {children}
+      </BottomSheetScrollView>
+    </BottomSheetModal>
+  );
+});
