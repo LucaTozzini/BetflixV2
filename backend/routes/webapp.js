@@ -1,7 +1,7 @@
 import express from "express";
 import path from "path";
 import fs from "fs";
-const dir = path.resolve("./view/webapp");
+const dir = path.resolve("./view");
 const webappRouter = express.Router();
 
 // Serve static files from the "dist" directory
