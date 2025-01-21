@@ -29,7 +29,7 @@ export default function Tabs({ state, descriptors, navigation }) {
         styles.container,
         {
           backgroundColor: theme.tabsBackgroundColor,
-          borderColor: theme.colorDim,
+          borderColor: theme.using === "dark" ? "rgb(82, 82, 82)" : "rgb(100, 100, 100)",
         },
       ]}
     >
@@ -72,10 +72,6 @@ const styles = StyleSheet.create({
     gap: 10,
     borderTopWidth: .2,
     paddingHorizontal: 10,
-
-    // Set from ThemeContext
-    // borderTopColor: "grey",
-    // backgroundColor: "white",
   },
   tab: {
     alignItems: "center",

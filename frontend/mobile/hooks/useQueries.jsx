@@ -143,9 +143,14 @@ export default function useQueries() {
     genericGET(`/torrents?imdbId=${imdbId}`);
   }
 
+  function fetchSeasonDetails(tmdbId, seasonNum) {
+    genericGET(`/external/shows/${tmdbId}/seasons/${seasonNum}`);
+  }
+
   function searchMedia(title) {
     genericGET(`/search?title=${title}`);
   }
+
 
   return {
     data,
@@ -165,5 +170,6 @@ export default function useQueries() {
     fetchShowImages,
     fetchMovieTorrents,
     searchMedia,
+    fetchSeasonDetails,
   };
 }

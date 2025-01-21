@@ -1,8 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Text, View } from "react-native";
-import { useFocusEffect, useLocalSearchParams } from "expo-router";
+import { useEffect, useRef, useState } from "react";
+import { TouchableOpacity, View } from "react-native";
+import { useLocalSearchParams } from "expo-router";
 import useQueries from "../../../hooks/useQueries";
-import { Div, H1, P, Scroll, Button } from "../../../components/elements";
+import {
+  Div,
+  H1,
+  P,
+  Scroll,
+  Button,
+  H3,
+  H2,
+  Footer,
+} from "../../../components/elements";
 import {
   Backdrop,
   CastScroll,
@@ -11,10 +20,10 @@ import {
   StatusBarFill,
   Vote,
   ThemedBottomSheetModal,
+  SeasonButton,
+  EpisodesScroll,
 } from "../../../components/ui";
 import secToString from "../../../helpers/secToString";
-
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 
 export default function Media() {
   // Get mediaId or tmdbId from route
@@ -25,7 +34,11 @@ export default function Media() {
   const local = useQueries();
   const link = useQueries();
   const imagesNL = useQueries();
+  const availableSeasons = useQueries();
+  const episodes = useQueries();
+  const seasonDetails = useQueries();
 
+  const [currSeason, setCurrSeason] = useState(null);
   const [duration, setDuration] = useState(null);
   const [genres, setGenres] = useState(null);
 
@@ -66,10 +79,15 @@ export default function Media() {
   }, [link.data, local.data]);
 
   useEffect(() => {
-    if (local.data) {
+    if (local.data && !external.data) {
       setDuration(secToString(local.data.duration));
-      setGenres(local.data.genres);
-    } else if (external.data) {
+    }
+
+    if (local.data?.type === "show") {
+      availableSeasons.selectSeasons(local.data.media_id);
+    }
+
+    if (external.data) {
       setDuration(
         secToString(
           (external.data.runtime || external.data.episode_run_time) * 60
@@ -78,6 +96,21 @@ export default function Media() {
       setGenres(external.data.genres?.map((i) => i.name).join(", "));
     }
   }, [external.data, local.data]);
+
+  useEffect(() => {
+    if (availableSeasons.data) {
+      setCurrSeason(availableSeasons.data[0].season_num);
+    }
+  }, [availableSeasons.data]);
+
+  useEffect(() => {
+    if (typeof currSeason !== "number") return;
+    episodes.selectSeason(local.data?.media_id, currSeason);
+
+    if(link.data) {
+      seasonDetails.fetchSeasonDetails(link.data.tmdb_id, currSeason);
+    }
+  }, [currSeason, link.data]);
 
   return (
     <Div>
@@ -108,12 +141,47 @@ export default function Media() {
           {external.data?.title || external.data?.name || local.data?.title}
         </H1>
         <P dim pad numberOfLines={1}>
-          {[duration, genres].filter((i) => i).join(" \u2022 ")}
+          {[
+            external.data?.release_date?.split("-")[0] ||
+              external.data?.first_air_date?.split("-")[0] ||
+              local.data?.year,
+            duration,
+            genres,
+          ]
+            .filter((i) => i)
+            .join(" \u2022 ")}
         </P>
 
         <P dim pad style={{ marginVertical: 15 }} numberOfLines={3}>
           {external.data?.overview}
         </P>
+
+        {local.data?.type === "show" && (
+          <>
+            <SeasonButton
+              seasonNum={currSeason}
+              onPress={() => modalRef.current?.present()}
+            />
+            <ThemedBottomSheetModal ref={modalRef}>
+              {availableSeasons.data?.map((i) => (
+                <TouchableOpacity
+                  key={i.season_num}
+                  style={{ padding: 10 }}
+                  onPress={() => {
+                    setCurrSeason(i.season_num);
+                    modalRef.current?.dismiss();
+                  }}
+                >
+                  <H2 center>Season {i.season_num}</H2>
+                </TouchableOpacity>
+              ))}
+            </ThemedBottomSheetModal>
+
+            <View style={{ height: 10 }} />
+            <EpisodesScroll data={episodes.data} details={seasonDetails.data}/>
+            <View style={{ height: 40 }} />
+          </>
+        )}
 
         <CastScroll
           data={
@@ -121,68 +189,7 @@ export default function Media() {
             external.data?.aggregate_credits?.cast
           }
         />
-
-        <Button onPress={() => modalRef.current?.present()}>
-          <P>Select Season</P>
-        </Button>
-
-        <ThemedBottomSheetModal ref={modalRef}>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-          <H1>Hello World!</H1>
-        </ThemedBottomSheetModal>
+        <Footer />
       </Scroll>
     </Div>
   );

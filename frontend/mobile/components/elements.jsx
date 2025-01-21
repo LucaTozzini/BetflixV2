@@ -94,7 +94,7 @@ export const H1 = ({
   style,
   pad,
 }) => {
-  if (!children || typeof children !== "string") return null;
+  if (!children) return null;
   const theme = useContext(ThemeContext);
   return (
     <Text

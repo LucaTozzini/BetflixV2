@@ -1,13 +1,6 @@
-import {
-  forwardRef,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { forwardRef, useContext, useEffect, useRef, useState } from "react";
 import ThemeContext from "../contexts/themeContext";
-import { Chip, H2, H3, P } from "./elements";
+import { Chip, H1, H2, H3, P } from "./elements";
 import {
   View,
   Image,
@@ -22,15 +15,13 @@ import {
   StatusBar,
   BackHandler,
 } from "react-native";
-import { router, useFocusEffect } from "expo-router";
+import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Image as ExpoImage } from "expo-image";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetScrollView,
-  BottomSheetView,
 } from "@gorhom/bottom-sheet";
 
 const paddingHorizontal = 10;
@@ -321,7 +312,7 @@ export const TorrentButton = ({
 };
 
 export const Cast = ({ name, profile_path }) => {
-  const IMAGE_BASE = "https://image.tmdb.org/t/p/w185";
+  const IMAGE_BASE = "https://image.tmdb.org/t/p/h632";
   return (
     <View style={{ width: 90 }}>
       <Image
@@ -462,21 +453,83 @@ export const PlayButton = ({ mediaId }) => {
   );
 };
 
+export const SeasonButton = ({ seasonNum, onPress }) => {
+  const theme = useContext(ThemeContext);
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        paddingHorizontal,
+        gap: 10,
+      }}
+    >
+      <H3>Season {seasonNum}</H3>
+      <Ionicons name="caret-down-outline" size={20} color={theme.color} />
+    </TouchableOpacity>
+  );
+};
+
+export const EpisodesScroll = ({ data, details }) => {
+  const Item = ({ season_num, episode_num, duration }) => {
+    const episodeDetails = details?.find(
+      (i) => i.season_number === season_num && i.episode_number === episode_num
+    );
+    return (
+      <TouchableOpacity style={{ width: 250 }}>
+        <ImageBackground
+          source={{
+            uri: `https://image.tmdb.org/t/p/w500${episodeDetails?.still_path}`,
+          }}
+          style={{
+            width: "100%",
+            aspectRatio: 3 / 2,
+            backgroundColor: "grey",
+            borderRadius: 5,
+            overflow: "hidden",
+          }}
+        >
+          <LinearGradient
+            colors={["transparent", "rgba(0, 0, 0, .8)"]}
+            style={{
+              flex: 1,
+              justifyContent: "flex-end",
+              paddingLeft: 5,
+              paddingRight: 10
+            }}
+          >
+            <Text style={{ color: "white", fontSize: 30, fontWeight: "bold" }} numberOfLines={1}>
+              {episode_num}.{" "}
+              <Text style={{ fontSize: 18 }}>{episodeDetails?.name}</Text>
+            </Text>
+          </LinearGradient>
+        </ImageBackground>
+      </TouchableOpacity>
+    );
+  };
+  return (
+    <FlatList
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={{ paddingHorizontal, gap: 10 }}
+      keyExtractor={(i) => i.episode_num + "_" + i.season_num}
+      data={data}
+      renderItem={({ item }) => <Item {...item} />}
+    />
+  );
+};
+
 export const ThemedBottomSheetModal = forwardRef(({ children }, ref) => {
   const { color, tabsBackgroundColor } = useContext(ThemeContext);
 
   const isOpen = useRef(false);
 
-  useFocusEffect(
-    useCallback(() => {
-      return () => ref.current?.close();
-    }, [])
-  );
-
   useEffect(() => {
     BackHandler.addEventListener("harwareBackPress", () => {
+      ref.current?.dismiss();
       if (ref.current && isOpen.current) {
-        ref.current.close();
+        ref.current.dismiss();
         return true;
       }
       return false;
@@ -486,18 +539,24 @@ export const ThemedBottomSheetModal = forwardRef(({ children }, ref) => {
   return (
     <BottomSheetModal
       ref={ref}
-      snapPoints={["50%", "80%"]}
       onChange={(index) => (isOpen.current = index !== -1)}
       style={{ marginTop: StatusBar.currentHeight }}
       backgroundStyle={{ backgroundColor: tabsBackgroundColor }}
       handleIndicatorStyle={{ backgroundColor: color }}
       enableTouchThrough={false}
       backdropComponent={(backdropProps) => (
-        <BottomSheetBackdrop {...backdropProps} appearsOnIndex={0} disappearsOnIndex={-1} enableTouchThrough={false}  opacity={.8}/>
+        <BottomSheetBackdrop
+          {...backdropProps}
+          appearsOnIndex={0}
+          disappearsOnIndex={-1}
+          enableTouchThrough={false}
+          opacity={0.8}
+        />
       )}
     >
-      <BottomSheetScrollView style={{ flex: 1 }}>
+      <BottomSheetScrollView contentContainerStyle={{ height: "100%" }}>
         {children}
+        <View style={{ height: 30 }} />
       </BottomSheetScrollView>
     </BottomSheetModal>
   );
