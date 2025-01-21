@@ -112,6 +112,20 @@
 
 /**
  * @typedef {Object} episodeDetails
+ * @property {string} air_date
+ * @property {number} episode_number,
+ * @property {number} id 
+ * @property {string} name 
+ * @property {string} overview
+ * @property {string} production_code
+ * @property {number} runtime 
+ * @property {number} season_number 
+ * @property {number} show_id 
+ * @property {string} still_path
+ * @property {number} vote_average
+ * @property {number} vote_count 
+ * @property {Array} crew
+ * @property {Array} guest_stars
  */
 // #endregion
 
@@ -226,6 +240,23 @@ export async function fetchShows(query, year) {
     const response = await fetch(url, GET_OPTIONS);
     const json = await response.json();
     return json.results;
+  } catch (err) {
+    throw err;
+  }
+}
+
+/**
+ * 
+ * @param {number} tmdbId 
+ * @param {number} seasonNumber 
+ * @returns {Promise<Array<episodeDetails>>} 
+ */
+export async function fetchSeasonDetails(tmdbId, seasonNumber) {
+  try {
+    const url = `${API_ADDRESS}/tv/${tmdbId}/season/${seasonNumber}`;
+    const response = await fetch(url, GET_OPTIONS);
+    const json = await response.json();
+    return json.episodes;
   } catch (err) {
     throw err;
   }

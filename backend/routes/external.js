@@ -9,5 +9,6 @@ externalRouter.get("/movies/:tmdbId/images", externalController.movieImages);
 externalRouter.get("/shows", externalController.shows);
 externalRouter.get("/shows/:tmdbId", externalController.showDetails);
 externalRouter.get("/shows/:tmdbId/images", externalController.showImages);
+externalRouter.get("/shows/:tmdbId/seasons/:seasonNum", externalController.seasonDetails);
 
 export default externalRouter;
