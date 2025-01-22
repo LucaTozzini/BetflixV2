@@ -74,6 +74,7 @@
  */
 
 /**
+ * https://developer.themoviedb.org/reference/tv-series-details
  * @typedef {Object} showDetails
  * @property {boolean} adult
  * @property {string} backdrop_path
@@ -111,6 +112,7 @@
  */
 
 /**
+ * https://developer.themoviedb.org/reference/tv-season-details
  * @typedef {Object} episodeDetails
  * @property {string} air_date
  * @property {number} episode_number,
@@ -127,6 +129,8 @@
  * @property {Array} crew
  * @property {Array} guest_stars
  */
+
+
 // #endregion
 
 import dotenv from "dotenv";
