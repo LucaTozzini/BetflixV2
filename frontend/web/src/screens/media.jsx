@@ -85,7 +85,6 @@ const MediaInfo = ({
 export function LocalMedia() {
   const { mediaId } = useParams();
   const media = useQueries();
-  const mediaLink = useQueries();
   const external = useQueries();
   const episodes = useQueries();
   const seasons = useQueries();
@@ -94,18 +93,17 @@ export function LocalMedia() {
   useEffect(() => {
     document.title = "Media | Betflix";
     media.selectMedia(mediaId);
-    mediaLink.selectLink({ mediaId });
   }, []);
 
   useEffect(() => {
-    if (mediaLink.data && media.data) {
+    if (media.data?.tmdb_id) {
       if (media.data.type === "movie") {
-        external.fetchMovieDetails(mediaLink.data.tmdb_id);
+        external.fetchMovieDetails(media.data.tmdb_id);
       } else {
-        external.fetchShowDetails(mediaLink.data.tmdb_id);
+        external.fetchShowDetails(media.data.tmdb_id);
       }
     }
-  }, [mediaLink.data, media.data]);
+  }, [media.data]);
 
   useEffect(() => {
     if (media.data) {
@@ -160,21 +158,21 @@ export function LocalMedia() {
 
   return (
     <div id="outlet" className={styles.container}>
-      {mediaLink.data?.poster_path && (
+      {media.data?.poster_path && (
         <img
-          src={TMDB_IMG_BASE + mediaLink.data?.backdrop_path}
+          src={TMDB_IMG_BASE + media.data?.backdrop_path}
           alt="backdrop"
         />
       )}
       <div className={styles.wrap}>
         <MediaInfo
-          title={mediaLink.data?.title ?? media.data?.title}
+          title={media.data?.title ?? media.data?.title}
           year={media.data?.year}
           duration={media.data?.duration}
-          overview={mediaLink.data?.overview}
-          genres={mediaLink.data?.genres}
+          overview={media.data?.overview}
+          genres={media.data?.genres}
           buttons={true}
-          linked={mediaLink.data != null}
+          linked={media.data?.tmdb_id != null}
           vote={
             external.data?.vote_average
               ? Math.round(external.data?.vote_average / 2)
@@ -196,7 +194,7 @@ export function ExternalMedia() {
 
   useEffect(() => {
     document.title = "Media | Betflix";
-    link.selectLink({ tmdbId });
+    link.selectLink({ tmdbId, type: "movie" });
     media.fetchMovieDetails(tmdbId);
   }, []);
 

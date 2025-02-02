@@ -74,11 +74,11 @@ export default function useQueries() {
   /**
    * @param {{mediaId: number, tmdbId: number}} param0 Either mediaId or tmdbId
    */
-  function selectLink({ mediaId, tmdbId }) {
+  function selectLink({ mediaId, tmdbId, type }) {
     if (mediaId) {
       genericGET(`/link?mediaId=${mediaId}`);
     } else {
-      genericGET(`/link?tmdbId=${tmdbId}`);
+      genericGET(`/link?tmdbId=${tmdbId}&type=${type}`);
     }
   }
 
