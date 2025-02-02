@@ -66,7 +66,7 @@ export function selectMediaCollection(offset, limit, order, desc, type) {
     dbPromise.then((db) => {
       db.all(
         `SELECT 
-          *,
+          *, media.media_id AS media_id,
           CASE 
             WHEN link.title IS NOT NULL
               THEN link.title
@@ -98,7 +98,7 @@ export function selectMedia(mediaId) {
       // If linked, select link.title as title
       db.get(
         `SELECT 
-          *, 
+          *, media.media_id AS media_id,
           CASE 
             WHEN link.title IS NOT NULL 
               THEN link.title
@@ -143,7 +143,7 @@ export function selectSeason(mediaId, seasonNum) {
   return new Promise((res, rej) =>
     dbPromise.then((db) =>
       db.all(
-        "SELECT * FROM episodes WHERE media_id = ? AND season_num = ?",
+        "SELECT * FROM episodes WHERE media_id = ? AND season_num = ? ORDER BY episode_num ASC",
         [mediaId, seasonNum],
         (err, rows) => (err ? rej(err) : res(rows))
       )
@@ -192,10 +192,10 @@ export function selectLink(mediaId) {
  * @param {number} tmdbId
  * @returns {Promise<linkRow>}
  */
-export function selectLinkByTmdbId(tmdbId) {
+export function selectLinkByTmdbId(tmdbId, type) {
   return new Promise((res, rej) =>
     dbPromise.then((db) =>
-      db.get("SELECT * FROM link WHERE tmdb_id = ?", [tmdbId], (err, row) =>
+      db.get("SELECT * FROM link JOIN media ON link.media_id = media.media_id WHERE tmdb_id = ? AND type = ?", [tmdbId, type], (err, row) =>
         err ? rej(err) : res(row)
       )
     )
