@@ -15,15 +15,13 @@ async function post(req, res) {
     isNaN(req.query.tmdbId) ||
     !["show", "movie"].includes(req.query.type)
   ) {
-    res.sendStatus(400); // Bad request
-    return;
+    return res.sendStatus(400); // Bad request
   }
 
   // Check if given mediaId exists
   const existsId = await existsMediaId(req.query.mediaId);
   if (!existsId) {
-    res.status(404).send("media id does not exist"); // Not found
-    return;
+    return res.status(404).send("media id does not exist"); // Not found
   }
 
   // Fetch details
@@ -32,8 +30,7 @@ async function post(req, res) {
       ? await fetchMovieDetails(req.query.tmdbId)
       : await fetchShowDetails(req.query.tmdbId);
   if (!details) {
-    res.status(404).send("tmdb id doesn not exist"); // Not found
-    return;
+    return res.status(404).send("tmdb id doesn not exist"); // Not found
   }
 
   // link TABLE COLUMNS: media_id	tmdb_id	poster backdrop genres
@@ -56,8 +53,7 @@ async function post(req, res) {
  */
 async function del(req, res) {
   if (isNaN(req.query.mediaId)) {
-    res.sendStatus(400);
-    return;
+    return res.sendStatus(400);
   }
 
   await deleteLink(req.query.mediaId);
@@ -70,16 +66,14 @@ async function del(req, res) {
  */
 async function get(req, res) {
   if (isNaN(req.query.mediaId) && isNaN(req.query.tmdbId)) {
-    res.sendStatus(400);
-    return;
+    return res.sendStatus(400);
   }
 
   const data = req.query.mediaId
     ? await selectLink(req.query.mediaId)
-    : await selectLinkByTmdbId(req.query.tmdbId);
+    : await selectLinkByTmdbId(req.query.tmdbId, req.query.type);
   if (!data) {
-    res.sendStatus(404);
-    return;
+    return res.sendStatus(404);
   }
 
   res.json(data);
