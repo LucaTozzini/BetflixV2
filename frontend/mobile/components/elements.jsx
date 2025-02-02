@@ -11,13 +11,13 @@ import { useContext } from "react";
 import ThemeContext from "../contexts/themeContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-const fontTiny = 12;
-const fontSmall = 15;
-const fontMedium = 18;
-const fontLarge = 20;
-const fontHuge = 22;
+export const fontTiny = 12;
+export const fontSmall = 15;
+export const fontMedium = 18;
+export const fontLarge = 20;
+export const fontHuge = 22;
 
-const padding = 10;
+export const padding = 10;
 
 export const Div = ({ children, pad }) => {
   const theme = useContext(ThemeContext);
@@ -85,15 +85,11 @@ export const AnimatedScroll = ({
   );
 };
 
-export const H1 = ({
-  children,
-  center,
-  dim,
-  serif,
-  numberOfLines,
-  style,
-  pad,
-}) => {
+const T = (
+  fontSize,
+  fontWeight,
+  { children, center, dim, serif, numberOfLines, style, pad }
+) => {
   if (!children) return null;
   const theme = useContext(ThemeContext);
   return (
@@ -102,8 +98,8 @@ export const H1 = ({
       style={[
         {
           color: theme[dim ? "colorDim" : "color"],
-          fontSize: fontHuge,
-          fontWeight: "bold",
+          fontSize,
+          fontWeight,
           fontFamily: serif ? "serif" : undefined,
           textAlign: center ? "center" : undefined,
           paddingHorizontal: pad ? padding : 0,
@@ -116,78 +112,10 @@ export const H1 = ({
   );
 };
 
-export const H2 = ({ children, center, dim, serif, numberOfLines, style, pad }) => {
-  if (!children) return;
-  const theme = useContext(ThemeContext);
-
-  return (
-    <Text
-      numberOfLines={numberOfLines}
-      style={[
-        {
-          color: theme[dim ? "colorDim" : "color"],
-          fontSize: fontLarge,
-          fontWeight: "bold",
-          fontFamily: serif ? "serif" : undefined,
-          textAlign: center ? "center" : undefined,
-          paddingHorizontal: pad ? padding : 0,
-
-        },
-        style,
-      ]}
-    >
-      {children}
-    </Text>
-  );
-};
-
-export const H3 = ({ children, center, dim, serif, numberOfLines, style, pad }) => {
-  if (!children) return;
-  const theme = useContext(ThemeContext);
-
-  return (
-    <Text
-      numberOfLines={numberOfLines}
-      style={[
-        {
-          color: theme[dim ? "colorDim" : "color"],
-          fontSize: fontMedium,
-          fontFamily: serif ? "serif" : undefined,
-          textAlign: center ? "center" : undefined,
-          fontWeight: "bold",
-          paddingHorizontal: pad ? padding : 0,
-
-        },
-        style,
-      ]}
-    >
-      {children}
-    </Text>
-  );
-};
-
-export const P = ({ children, text, center, dim, numberOfLines, tiny, style, pad }) => {
-  if (!children) return;
-  const theme = useContext(ThemeContext);
-
-  return (
-    <Text
-      numberOfLines={numberOfLines}
-      style={[
-        {
-          color: theme[dim ? "colorDim" : "color"],
-          fontSize: tiny ? fontTiny : fontSmall,
-          textAlign: center ? "center" : undefined,
-          paddingHorizontal: pad ? padding : 0,
-
-        },
-        style,
-      ]}
-    >
-      {children}
-    </Text>
-  );
-};
+export const H1 = (params) => T(fontHuge, "bold", params);
+export const H2 = (params) => T(fontLarge, "bold",params);
+export const H3 = (params) => T(fontMedium, "bold",params);
+export const P = (params) => T(params.tiny ? fontTiny : fontSmall, "normal", params);
 
 /* 
   Searchbar          clear (hide when value is empty)

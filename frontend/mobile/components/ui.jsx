@@ -1,6 +1,6 @@
 import { forwardRef, useContext, useEffect, useRef, useState } from "react";
 import ThemeContext from "../contexts/themeContext";
-import { Chip, H1, H2, H3, P } from "./elements";
+import { Chip, H3, P } from "./elements";
 import {
   View,
   Image,
@@ -14,32 +14,33 @@ import {
   Text,
   StatusBar,
   BackHandler,
+  ScrollView,
 } from "react-native";
 import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetScrollView,
-} from "@gorhom/bottom-sheet";
-
+  FlatList as GestureHandlerFlatList,
+  ScrollView as GestureHandlerScrollView,
+} from "react-native-gesture-handler";
 const paddingHorizontal = 10;
 
 export const SpotLight = ({
-  header,
+  loading,
   title,
   year,
   poster_path,
   genres,
   onPress,
 }) => {
+  const theme = useContext(ThemeContext);
   const IMG_BASE = "https://image.tmdb.org/t/p/w500";
 
-  return (
+  const Content = () => (
     <TouchableOpacity
-      activeOpacity={onPress ? 0.6 : 1}
-      onPress={onPress}
+      onPress={loading ? null : onPress}
+      activeOpacity={loading ? 1 : undefined}
       style={{
         gap: 10,
         width: "80%",
@@ -47,22 +48,22 @@ export const SpotLight = ({
         alignItems: "center",
       }}
     >
-      {header && <H2 serif>{header}</H2>}
       <Image
         source={{ uri: IMG_BASE + poster_path }}
         style={{
           height: 350,
           aspectRatio: 2 / 3,
-          borderRadius: 20,
+          borderRadius: 10,
+          backgroundColor: theme.colorDim,
         }}
       />
 
       <P center numberOfLines={1}>
         {title}
-        <P dim> {year}</P>
+        <P dim> {loading ? "█".repeat(10) : year}</P>
       </P>
 
-      {genres && (
+      {genres ? (
         <View
           style={{
             flexDirection: "row",
@@ -75,71 +76,151 @@ export const SpotLight = ({
             <Chip key={index}>{i}</Chip>
           ))}
         </View>
+      ) : (
+        <Chip>{"█".repeat(10)}</Chip>
       )}
     </TouchableOpacity>
   );
+
+  const Skeleton = () => {
+    const opacity = useAnimatedValue(0.5);
+    useEffect(() => {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: false,
+          }),
+          Animated.timing(opacity, {
+            toValue: 0.5,
+            duration: 1000,
+            useNativeDriver: false,
+          }),
+        ])
+      ).start();
+    }, []);
+
+    return (
+      <Animated.View style={{ opacity }}>
+        <Content />
+      </Animated.View>
+    );
+  };
+
+  return loading ? <Skeleton /> : <Content />;
 };
 
-export const Poster = ({ title, year, poster, onPress }) => {
+export const Poster = ({ skeleton, title, year, poster, onPress }) => {
   const IMG_BASE = "https://image.tmdb.org/t/p/w500";
+  const theme = useContext(ThemeContext);
   return (
-    <TouchableOpacity onPress={onPress} style={{ width: 150 }}>
+    <TouchableOpacity onPress={onPress} style={{ width: 150, gap: 1 }}>
       <Image
         source={{ uri: `${IMG_BASE}${poster}` }}
         style={{
           aspectRatio: 2 / 3,
-          backgroundColor: "grey",
+          backgroundColor: theme.colorDim,
           borderRadius: 10,
         }}
       />
       <P tiny numberOfLines={1}>
-        {title}
+        {skeleton ? "█".repeat(10) : title}
       </P>
       <P tiny dim>
-        {year}
+        {skeleton ? "█".repeat(4) : year}
       </P>
     </TouchableOpacity>
   );
 };
 
-export const PosterScroll = ({ header, data, onPress }) => {
-  if (!data?.length) return;
-  return (
-    <View style={{ gap: 10 }}>
-      <View style={{ paddingHorizontal }}>
-        <H3>{header}</H3>
-      </View>
-      <FlatList
+export const PosterScroll = ({ header, data, onPress, useGestureHandler }) => {
+  const Header = () => (
+    <View style={{ paddingHorizontal }}>
+      <H3>{header}</H3>
+    </View>
+  );
+
+  const SkeletonList = () => {
+    const opacity = useAnimatedValue(0.5);
+
+    useEffect(() => {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: false,
+          }),
+          Animated.timing(opacity, {
+            toValue: 0.5,
+            duration: 1000,
+            useNativeDriver: false,
+          }),
+        ])
+      ).start();
+    }, []);
+
+    const Scroll = useGestureHandler ? GestureHandlerScrollView : ScrollView;
+
+    return (
+      <Scroll horizontal showsHorizontalScrollIndicator={false}>
+        <Animated.View
+          style={{ gap: 10, paddingHorizontal, opacity, flexDirection: "row" }}
+        >
+          <Poster skeleton />
+          <Poster skeleton />
+          <Poster skeleton />
+        </Animated.View>
+      </Scroll>
+    );
+  };
+
+  const List = () => {
+    const handlePress = (item) => {
+      if (onPress) onPress(item);
+      // if no onPress function is given, default to router.push
+      else {
+        if (item.media_id) router.push(`/media?mediaId=${item.media_id}`);
+        else if (item.id) router.push(`/media?tmdbId=${item.id}`);
+      }
+    };
+
+    const renderItem = ({ item }) => (
+      <Poster
+        title={item.link_title ?? item.title ?? item.name}
+        year={
+          // if from local db
+          item.date?.split("-")[0] ??
+          item.year ??
+          // if tmdb movie
+          item.release_date?.split("-")[0] ??
+          // if tmdb show
+          item.first_air_date?.split("-")[0]
+        }
+        poster={item.poster_path}
+        onPress={() => handlePress(item)}
+      />
+    );
+
+    const Scroll = useGestureHandler ? GestureHandlerFlatList : FlatList;
+
+    return (
+      <Scroll
         showsHorizontalScrollIndicator={false}
         data={data}
         horizontal
         contentContainerStyle={{ gap: 10, paddingHorizontal }}
         key={(item) => item.mediaId ?? item.id}
-        renderItem={({ item }) => (
-          <Poster
-            title={item.link_title ?? item.title ?? item.name}
-            year={
-              // if from local db
-              item.date?.split("-")[0] ??
-              item.year ??
-              // if tmdb movie
-              item.release_date?.split("-")[0] ??
-              // if tmdb show
-              item.first_air_date?.split("-")[0]
-            }
-            poster={item.poster_path}
-            onPress={
-              onPress
-                ? () => onPress(item)
-                : () => {
-                    if (item.media_id)
-                      router.push(`/media?mediaId=${item.media_id}`);
-                    else if (item.id) router.push(`/media?tmdbId=${item.id}`);
-                  }
-            }
-          />
-        )}
+        renderItem={renderItem}
       />
+    );
+  };
+
+  return (
+    <View style={{ gap: 10 }}>
+      <Header />
+      {data?.length ? <List /> : <SkeletonList />}
     </View>
   );
 };
@@ -267,76 +348,63 @@ export const Toast = ({ offsetTop, show, throb, isError, message }) => {
   );
 };
 
-export const TorrentButton = ({
-  quality,
-  size,
-  type,
-  codec,
-  seeds,
-  peers,
-  onPress,
-}) => {
-  const theme = useContext(ThemeContext);
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-evenly",
-
-        padding: 10,
-
-        borderWidth: 1,
-        borderColor: theme.colorDim,
-        borderRadius: 20,
-
-        backgroundColor: theme.backgroundColor,
-      }}
-    >
-      <P>{quality}</P>
-      <P>{size}</P>
-      <P>{type}</P>
-      <P>{codec}</P>
-      <View style={{ flexDirection: "row" }}>
-        <Ionicons color={theme.color} name="arrow-up-outline" size={20} />
-        <P>{seeds}</P>
-      </View>
-
-      {/* <View style={{ flexDirection: "row" }}>
-        <Ionicons color={theme.color} name="arrow-down-outline" size={20} />
-        <P>{peers}</P>
-      </View> */}
-    </TouchableOpacity>
-  );
-};
-
-export const Cast = ({ name, profile_path }) => {
-  const IMAGE_BASE = "https://image.tmdb.org/t/p/h632";
-  return (
-    <View style={{ width: 90 }}>
-      <Image
-        src={IMAGE_BASE + profile_path}
-        style={{
-          aspectRatio: 1,
-          backgroundColor: "grey",
-          objectFit: "cover",
-          borderRadius: 50,
-        }}
-      />
-      <P center tiny numberOfLines={1}>
-        {name}
-      </P>
-    </View>
-  );
-};
-
-export const CastScroll = ({ data }) => {
-  if (!data) return null;
+export const CastScroll = ({ data, skeleton }) => {
   // https://developer.themoviedb.org/reference/movie-credits
-  return (
-    <View style={{ gap: 5 }}>
-      <H3 style={{ paddingHorizontal }}>Cast</H3>
+
+  const Cast = ({ name, profile_path }) => {
+    const IMAGE_BASE = "https://image.tmdb.org/t/p/h632";
+    return (
+      <View style={{ width: 90 }}>
+        <Image
+          src={IMAGE_BASE + profile_path}
+          style={{
+            aspectRatio: 1,
+            backgroundColor: "grey",
+            objectFit: "cover",
+            borderRadius: 50,
+          }}
+        />
+        <P center tiny numberOfLines={1} dim={skeleton !== null}>
+          {skeleton ? "█".repeat(10) : name}
+        </P>
+      </View>
+    );
+  };
+
+  const SkeletonList = () => {
+    const opacity = useAnimatedValue(0.5);
+    useEffect(() => {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: false,
+          }),
+          Animated.timing(opacity, {
+            toValue: 0.5,
+            duration: 1000,
+            useNativeDriver: false,
+          }),
+        ])
+      ).start();
+    }, []);
+    return (
+      <Animated.ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal, gap: 10, opacity }}
+      >
+        <Cast skeleton />
+        <Cast skeleton />
+        <Cast skeleton />
+        <Cast skeleton />
+      </Animated.ScrollView>
+    );
+  };
+
+  const List = () => {
+    return (
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -350,16 +418,37 @@ export const CastScroll = ({ data }) => {
           <Cast name={item.name} profile_path={item.profile_path} />
         )}
       />
+    );
+  };
+
+  return (
+    <View style={{ gap: 5 }}>
+      <H3 style={{ paddingHorizontal }}>Cast</H3>
+      {data ? <List /> : <SkeletonList />}
     </View>
   );
 };
 
 export const Backdrop = ({ backdrop_path, children }) => {
-  const IMAGE_BASE = "https://image.tmdb.org/t/p/original";
+  const IMAGE_FALLBACK =
+    "https://media.istockphoto.com/id/1284969926/vector/abstract-blue-pattern-background.jpg?s=612x612&w=0&k=20&c=PoTWtlOHO9yOdJer9LI-aM6kKr-2K_iTcLPf3TAMuxU=";
+  const IMAGE_BASE = "https://image.tmdb.org/t/p/w780";
   const theme = useContext(ThemeContext);
+  const timeout = useRef(null);
+  const [uri, setUri] = useState(null);
+
+  useEffect(() => {
+    clearTimeout(timeout.current);
+    if (!backdrop_path) {
+      timeout.current = setTimeout(() => setUri(IMAGE_FALLBACK), 1000);
+      return;
+    }
+    setUri(IMAGE_BASE + backdrop_path);
+  }, [backdrop_path]);
+
   return (
     <ImageBackground
-      source={{ uri: IMAGE_BASE + backdrop_path }}
+      source={{ uri }}
       style={{ width: "100%", aspectRatio: 1.5 }}
     >
       <LinearGradient
@@ -387,7 +476,6 @@ export const Overview = ({ children }) => {
 };
 
 export const Vote = ({ vote_average, vote_count }) => {
-  if (!vote_average) return null;
   return (
     <View
       style={{
@@ -396,20 +484,22 @@ export const Vote = ({ vote_average, vote_count }) => {
       }}
     >
       <Ionicons name="star" color={"rgb(255, 208, 0)"} size={17} />
-      <P>{Math.round(vote_average * 10)}</P>
-      <P dim> | {vote_count}</P>
+      <P>{vote_average ? Math.round(vote_average * 10) : "█".repeat(2)}</P>
+      <P dim> | {vote_count || "█".repeat(3)}</P>
     </View>
   );
 };
 
-export const LocalMediaActions = () => {
+export const LinkButton = ({ handleLink, isLinked }) => {
   const theme = useContext(ThemeContext);
   return (
-    <View>
-      <TouchableOpacity>
-        <Ionicons name="link-outline" color={theme.color} size={25} />
-      </TouchableOpacity>
-    </View>
+    <TouchableOpacity onPress={handleLink}>
+      <Ionicons
+        name={isLinked ? "unlink-outline" : "link-outline"}
+        color={theme.color}
+        size={30}
+      />
+    </TouchableOpacity>
   );
 };
 
@@ -465,30 +555,36 @@ export const SeasonButton = ({ seasonNum, onPress }) => {
         gap: 10,
       }}
     >
-      <H3>Season {seasonNum}</H3>
+      <H3>{seasonNum ? `Season ${seasonNum}` : "█".repeat(6)}</H3>
       <Ionicons name="caret-down-outline" size={20} color={theme.color} />
     </TouchableOpacity>
   );
 };
 
 export const EpisodesScroll = ({ data, details }) => {
-  const Item = ({ season_num, episode_num, duration }) => {
+  const theme = useContext(ThemeContext);
+
+  const Item = ({ season_num, episode_num, duration, skeleton }) => {
+    const style = {
+      width: 250,
+      aspectRatio: 3 / 2,
+      backgroundColor: theme.colorDim,
+      borderRadius: 5,
+      overflow: "hidden",
+    };
+
+    if (skeleton) return <View style={style} />;
+
     const episodeDetails = details?.find(
       (i) => i.season_number === season_num && i.episode_number === episode_num
     );
     return (
-      <TouchableOpacity style={{ width: 250 }}>
+      <TouchableOpacity>
         <ImageBackground
           source={{
             uri: `https://image.tmdb.org/t/p/w500${episodeDetails?.still_path}`,
           }}
-          style={{
-            width: "100%",
-            aspectRatio: 3 / 2,
-            backgroundColor: "grey",
-            borderRadius: 5,
-            overflow: "hidden",
-          }}
+          style={style}
         >
           <LinearGradient
             colors={["transparent", "rgba(0, 0, 0, .8)"]}
@@ -496,10 +592,13 @@ export const EpisodesScroll = ({ data, details }) => {
               flex: 1,
               justifyContent: "flex-end",
               paddingLeft: 5,
-              paddingRight: 10
+              paddingRight: 10,
             }}
           >
-            <Text style={{ color: "white", fontSize: 30, fontWeight: "bold" }} numberOfLines={1}>
+            <Text
+              style={{ color: "white", fontSize: 30, fontWeight: "bold" }}
+              numberOfLines={1}
+            >
               {episode_num}.{" "}
               <Text style={{ fontSize: 18 }}>{episodeDetails?.name}</Text>
             </Text>
@@ -508,16 +607,62 @@ export const EpisodesScroll = ({ data, details }) => {
       </TouchableOpacity>
     );
   };
-  return (
-    <FlatList
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{ paddingHorizontal, gap: 10 }}
-      keyExtractor={(i) => i.episode_num + "_" + i.season_num}
-      data={data}
-      renderItem={({ item }) => <Item {...item} />}
-    />
-  );
+
+  const SkeletonList = () => {
+    const opacity = useAnimatedValue(0.5);
+    useEffect(() => {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: false,
+          }),
+          Animated.timing(opacity, {
+            toValue: 0.5,
+            duration: 1000,
+            useNativeDriver: false,
+          }),
+        ])
+      ).start();
+    }, []);
+
+    return (
+      <Animated.ScrollView
+        horizontal
+        contentContainerStyle={{ paddingHorizontal, gap: 10, opacity }}
+      >
+        <Item skeleton={true} />
+        <Item skeleton={true} />
+        <Item skeleton={true} />
+        <Item skeleton={true} />
+        <Item skeleton={true} />
+      </Animated.ScrollView>
+    );
+  };
+
+  const List = () => {
+    const ref = useRef(null);
+
+    // When episodes change, scroll to the start of the list
+    useEffect(() => {
+      ref.current?.scrollToOffset({ offset: 0, animated: false });
+    }, [data]);
+
+    return (
+      <FlatList
+        ref={ref}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal, gap: 10 }}
+        keyExtractor={(i) => i.episode_num + "_" + i.season_num}
+        data={data}
+        renderItem={({ item }) => <Item {...item} />}
+      />
+    );
+  };
+
+  return data ? <List /> : <SkeletonList />;
 };
 
 export const ThemedBottomSheetModal = forwardRef(({ children }, ref) => {
@@ -540,7 +685,6 @@ export const ThemedBottomSheetModal = forwardRef(({ children }, ref) => {
     <BottomSheetModal
       ref={ref}
       onChange={(index) => (isOpen.current = index !== -1)}
-      style={{ marginTop: StatusBar.currentHeight }}
       backgroundStyle={{ backgroundColor: tabsBackgroundColor }}
       handleIndicatorStyle={{ backgroundColor: color }}
       enableTouchThrough={false}
@@ -554,10 +698,7 @@ export const ThemedBottomSheetModal = forwardRef(({ children }, ref) => {
         />
       )}
     >
-      <BottomSheetScrollView contentContainerStyle={{ height: "100%" }}>
-        {children}
-        <View style={{ height: 30 }} />
-      </BottomSheetScrollView>
+      {children}
     </BottomSheetModal>
   );
 });

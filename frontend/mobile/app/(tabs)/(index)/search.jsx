@@ -1,4 +1,4 @@
-import {useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import useQueries from "../../../hooks/useQueries";
 
@@ -32,8 +32,12 @@ export default () => {
           placeholder={"Search movies and shows..."}
         />
 
-        <PosterScroll header={"On Disc"} data={local.data} />
-        <PosterScroll header={"External"} data={external.data} />
+        {value && (
+          <>
+            <PosterScroll header={"On Disc"} data={local.data} />
+            <PosterScroll header={"External"} data={external.data} />
+          </>
+        )}
         <Footer />
       </Scroll>
     </Div>

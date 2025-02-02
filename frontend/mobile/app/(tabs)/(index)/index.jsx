@@ -83,6 +83,7 @@ export default () => {
           <BlurredPoster poster_path={spotlight?.poster_path} />
         </View>
         <SpotLight
+          loading={!spotlight}
           title={spotlight?.title}
           year={spotlight?.release_date?.split("-")[0]}
           poster_path={spotlight?.poster_path}
