@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
   Animated,
+  StatusBar,
 } from "react-native";
 import { useContext } from "react";
 import ThemeContext from "../contexts/themeContext";
@@ -13,7 +14,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 export const fontTiny = 12;
 export const fontSmall = 15;
-export const fontMedium = 18;
+export const fontMedium = 17;
 export const fontLarge = 20;
 export const fontHuge = 22;
 
@@ -48,7 +49,7 @@ export const Scroll = ({
       contentContainerStyle={{ gap, padding: pad ? padding : 0 }}
       refreshControl={
         onRefresh ? (
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={StatusBar.currentHeight}/>
         ) : null
       }
       stickyHeaderIndices={stickyHeaderIndices}
@@ -73,7 +74,7 @@ export const AnimatedScroll = ({
       contentContainerStyle={{ gap, padding: pad ? padding : 0 }}
       refreshControl={
         onRefresh ? (
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressViewOffset={StatusBar.currentHeight}/>
         ) : null
       }
       stickyHeaderIndices={stickyHeaderIndices}
@@ -220,7 +221,7 @@ export const Chip = ({ children }) => {
         textAlign: "center",
 
         paddingHorizontal: 8,
-        paddingVertical: 5,
+        paddingVertical: 2,
 
         borderWidth: 1,
         borderColor: theme.colorDim,

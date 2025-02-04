@@ -8,7 +8,6 @@ import {
   FlatList,
   ImageBackground,
   Animated,
-  ActivityIndicator,
   useAnimatedValue,
   Pressable,
   Text,
@@ -135,12 +134,6 @@ export const Poster = ({ skeleton, title, year, poster, onPress }) => {
 };
 
 export const PosterScroll = ({ header, data, onPress, useGestureHandler }) => {
-  const Header = () => (
-    <View style={{ paddingHorizontal }}>
-      <H3>{header}</H3>
-    </View>
-  );
-
   const SkeletonList = () => {
     const opacity = useAnimatedValue(0.5);
 
@@ -219,7 +212,7 @@ export const PosterScroll = ({ header, data, onPress, useGestureHandler }) => {
 
   return (
     <View style={{ gap: 10 }}>
-      <Header />
+      <H3 style={{ paddingHorizontal }}>{header}</H3>
       {data?.length ? <List /> : <SkeletonList />}
     </View>
   );
@@ -282,76 +275,8 @@ export const BlurredPoster = ({ poster_path }) => {
   );
 };
 
-export const Toast = ({ offsetTop, show, throb, isError, message }) => {
-  const theme = useContext(ThemeContext);
-  const [hidden, setHidden] = useState(true);
-  const translateY = useAnimatedValue(-100);
-
-  function slideIn() {
-    setHidden(false);
-    Animated.timing(translateY, {
-      toValue: offsetTop,
-      duration: 700,
-      useNativeDriver: true,
-    }).start();
-  }
-
-  function slideOut() {
-    Animated.timing(translateY, {
-      toValue: -100,
-      duration: 700,
-      useNativeDriver: true,
-    }).start((finished) => {
-      setHidden(finished);
-    });
-  }
-
-  useEffect(() => {
-    if (show) {
-      slideIn();
-    } else {
-      slideOut();
-    }
-  }, [show]);
-
-  if (hidden) return null;
-
-  return (
-    <Animated.View
-      style={{
-        position: "absolute",
-        flexDirection: "row",
-        alignSelf: "center",
-        alignItems: "center",
-
-        backgroundColor: theme.backgroundColor,
-        shadowColor: theme.color,
-        shadowRadius: 5,
-        elevation: 10,
-        zIndex: 1000,
-
-        borderRadius: 100,
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        margin: 20,
-        marginHorizontal: "10%",
-        overflow: "hidden",
-        gap: 10,
-
-        transform: [{ translateY }],
-      }}
-    >
-      {throb && <ActivityIndicator color={theme.color} />}
-      {isError && <Ionicons name="warning-outline" size={25} color={"red"} />}
-      <P>{message}</P>
-    </Animated.View>
-  );
-};
-
-export const CastScroll = ({ data, skeleton }) => {
-  // https://developer.themoviedb.org/reference/movie-credits
-
-  const Cast = ({ name, profile_path }) => {
+export const CastScroll = ({ data, loading }) => {
+  const Cast = ({ name, profile_path, skeleton }) => {
     const IMAGE_BASE = "https://image.tmdb.org/t/p/h632";
     return (
       <View style={{ width: 90 }}>
@@ -393,7 +318,8 @@ export const CastScroll = ({ data, skeleton }) => {
       <Animated.ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal, gap: 10, opacity }}
+        contentContainerStyle={{ paddingHorizontal, gap: 10 }}
+        style={{opacity}}
       >
         <Cast skeleton />
         <Cast skeleton />
@@ -424,7 +350,7 @@ export const CastScroll = ({ data, skeleton }) => {
   return (
     <View style={{ gap: 5 }}>
       <H3 style={{ paddingHorizontal }}>Cast</H3>
-      {data ? <List /> : <SkeletonList />}
+      {loading ? <SkeletonList /> : data?.length ? <List /> : <P dim pad>No cast available</P>}
     </View>
   );
 };
@@ -561,7 +487,7 @@ export const SeasonButton = ({ seasonNum, onPress }) => {
   );
 };
 
-export const EpisodesScroll = ({ data, details }) => {
+export const EpisodesScroll = ({ data, details, loading }) => {
   const theme = useContext(ThemeContext);
 
   const Item = ({ season_num, episode_num, duration, skeleton }) => {
@@ -630,7 +556,8 @@ export const EpisodesScroll = ({ data, details }) => {
     return (
       <Animated.ScrollView
         horizontal
-        contentContainerStyle={{ paddingHorizontal, gap: 10, opacity }}
+        contentContainerStyle={{ paddingHorizontal, gap: 10 }}
+        style={{opacity}}
       >
         <Item skeleton={true} />
         <Item skeleton={true} />
@@ -655,14 +582,118 @@ export const EpisodesScroll = ({ data, details }) => {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal, gap: 10 }}
-        keyExtractor={(i) => i.episode_num + "_" + i.season_num}
+        keyExtractor={(i) => i.path}
         data={data}
         renderItem={({ item }) => <Item {...item} />}
       />
     );
   };
 
-  return data ? <List /> : <SkeletonList />;
+  return loading ? <SkeletonList /> : <List />;
+};
+
+export const TorrentList = ({ data, onPress, loading }) => {
+  const theme = useContext(ThemeContext);
+  const Torrent = ({ peers, seeds, quality, size, type, codec, url }) => {
+    const pink = "rgba(204, 1, 255, 0.3)";
+    const green = "rgba(50, 255, 211, 0.3)";
+    const orange = "rgba(255, 200, 50, 0.3)";
+
+    const Chip = ({ iconName, text, backgroundColor }) => (
+      <View
+        style={{
+          flexDirection: "row",
+          paddingVertical: 3,
+          paddingHorizontal: 10,
+          alignItems: "center",
+          backgroundColor,
+          borderRadius: 5,
+          gap: 4,
+        }}
+      >
+        {iconName && <Ionicons name={iconName} color={theme.color} size={18} />}
+        <P>{text}</P>
+      </View>
+    );
+
+    return (
+      <TouchableOpacity
+        onPress={() => onPress(url)}
+        style={{
+          borderWidth: 0.5,
+          borderColor: theme.colorDim,
+          padding: 10,
+          borderRadius: 5,
+          gap: 7,
+        }}
+      >
+        <View style={{ flexDirection: "row", gap: 7 }}>
+          <Chip
+            backgroundColor={pink}
+            iconName={"scan-outline"}
+            text={quality}
+          />
+          <Chip backgroundColor={pink} iconName={"disc-outline"} text={type} />
+        </View>
+
+        <View style={{ flexDirection: "row", gap: 7 }}>
+          <Chip
+            backgroundColor={green}
+            iconName={"cloud-download-outline"}
+            text={seeds}
+          />
+          <Chip
+            backgroundColor={green}
+            iconName={"cloud-upload-outline"}
+            text={peers}
+          />
+        </View>
+
+        <View style={{ flexDirection: "row", gap: 7 }}>
+          <Chip
+            backgroundColor={orange}
+            iconName={"server-outline"}
+            text={size}
+          />
+          <Chip backgroundColor={orange} iconName={null} text={codec} />
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const List = () => (
+    <FlatList
+      horizontal
+      data={data}
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={{ paddingHorizontal, gap: 10 }}
+      keyExtractor={(item) => item.hash}
+      renderItem={({ item }) => (
+        <Torrent
+          peers={item.peers}
+          seeds={item.seeds}
+          quality={item.quality}
+          size={item.size}
+          type={item.type}
+          url={item.url}
+          codec={item.video_codec}
+        />
+      )}
+    />
+  );
+
+  return (
+    <View style={{ gap: 5 }}>
+      <H3 style={{ paddingHorizontal }}>Torrents</H3>
+      {data || loading ? (
+        <List />
+      ) : (
+        <P pad dim>
+          No Torrents Available
+        </P>
+      )}
+    </View>
+  );
 };
 
 export const ThemedBottomSheetModal = forwardRef(({ children }, ref) => {

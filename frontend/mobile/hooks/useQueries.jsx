@@ -18,19 +18,23 @@ export default function useQueries() {
    * @param {string} endpoint
    */
   async function genericGET(endpoint) {
-    setLoading(true);
-    const response = await fetch(`http://${serverAddress}${endpoint}`);
-    if (response.ok) {
-      const json = await response.json();
-      setData(json);
-    } else {
-      console.error(
-        "genericGET NOT OK on",
-        `http://${SERVER}${endpoint}`,
-        "status",
-        response.status
-      );
-      setData(null);
+    try {
+      setLoading(true);
+      const response = await fetch(`http://${serverAddress}${endpoint}`);
+      if (response.ok) {
+        const json = await response.json();
+        setData(json);
+      } else {
+        console.error(
+          "genericGET NOT OK on",
+          `http://${SERVER}${endpoint}`,
+          "status",
+          response.status
+        );
+        setData(null);
+      }
+    } catch(err) {
+
     }
     setLoading(false);
   }
@@ -83,11 +87,11 @@ export default function useQueries() {
   /**
    * @param {{mediaId: number, tmdbId: number}} param0 Either mediaId or tmdbId
    */
-  function selectLink({ mediaId, tmdbId }) {
+  function selectLink({ mediaId, tmdbId, type }) {
     if (mediaId) {
       genericGET(`/link?mediaId=${mediaId}`);
     } else {
-      genericGET(`/link?tmdbId=${tmdbId}`);
+      genericGET(`/link?tmdbId=${tmdbId}&type=${type}`);
     }
   }
 

@@ -18,17 +18,15 @@ export default () => {
   const Item = ({ name, progress, timeRemaining }) => (
     <View
       style={{
-        padding: 20,
-        borderWidth: 1,
-        borderRadius: 20,
+        padding: 15,
+        borderWidth: 0.5,
+        borderRadius: 7,
         borderColor: theme.colorDim,
         gap: 10,
       }}
     >
-      <Text style={{ fontSize: 17, color: theme.color }}>{name}</Text>
-      <Text style={{ color: theme.color }}>
-        {secToString(timeRemaining, true)}
-      </Text>
+      <H3>{name}</H3>
+      <P>{secToString(timeRemaining, true)}</P>
       <View
         style={{
           borderRadius: 100,
@@ -52,10 +50,20 @@ export default () => {
       <Div pad>
         <StatusBarFill />
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center", gap: 20 }}
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 20,
+          }}
         >
           <P center>Active Downloads Will Appear Here</P>
-          <Ionicons name="file-tray-outline" style={{textAlign: "center"}} color={theme.color} size={40} />
+          <Ionicons
+            name="file-tray-outline"
+            style={{ textAlign: "center" }}
+            color={theme.color}
+            size={40}
+          />
         </View>
       </Div>
     );
@@ -63,13 +71,7 @@ export default () => {
   return (
     <Div>
       <StatusBarFill />
-      <ScrollView
-        contentContainerStyle={{
-          marginHorizontal: 10,
-          marginVertical: 20,
-          gap: 10,
-        }}
-      >
+      <ScrollView contentContainerStyle={{ gap: 10, padding: 10 }}>
         {data?.map((i) => (
           <Item
             key={i.name}
